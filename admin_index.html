@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — The Lightbulb Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171717;--muted:#6f6f76;--soft:#9b9ba3;--bg:#f7f6f2;--panel:#fff;--line:rgba(0,0,0,.08);
+  --green:#3f9f7f;--green-soft:#e7f4ef;
+  --amber:#d99a35;--amber-soft:#fbf0df;
+  --red:#d8644a;--red-soft:#fbe8e1;
+  --purple:#7b68d9;--purple-soft:#eeeafd;
+  --blue:#5B8AA6;--blue-soft:#e8eff4;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:28px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:'DM Sans',sans-serif}
+button{border:0;cursor:pointer;transition:.15s ease}
+a{text-decoration:none;color:inherit}
+.app{max-width:1180px;margin:0 auto}
+.platform-shell-bar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:11px 18px;background:#fff;border:1px solid var(--line);border-radius:999px;margin-bottom:22px;box-shadow:0 6px 20px rgba(0,0,0,.025);flex-wrap:wrap}
+.platform-shell-back{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);transition:.15s ease}
+.platform-shell-mark{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#d99a35 0%,#2BBE92 100%);color:#fff;font-weight:700;font-size:11px;flex-shrink:0}
+.platform-shell-text{display:flex;flex-direction:column;line-height:1.15}
+.platform-shell-name{font-size:12.5px;font-weight:700;color:var(--ink)}
+.platform-shell-sub{font-size:10.5px;color:var(--soft);font-weight:500;margin-top:1px}
+.platform-shell-current,.platform-shell-user{display:flex;align-items:center;gap:8px}
+.platform-shell-current-label,.platform-shell-user-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);font-weight:700}
+.platform-shell-current-hub,.platform-shell-user-name{font-size:12.5px;font-weight:650;color:var(--ink);padding:5px 11px;background:var(--bg);border-radius:999px}
+.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand-mark{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#efede8;color:var(--ink)}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-size:16px;font-weight:700;color:var(--ink)}
+.brand-sub{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:600;margin-top:2px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-bottom:9px}
+h1{font-size:30px;letter-spacing:-.045em;font-weight:650;line-height:1.02}
+.sub{font-size:14px;color:var(--muted);margin-top:11px;max-width:720px;line-height:1.55}
+.btn{font-size:12px;font-weight:650;border-radius:999px;padding:9px 14px;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hero{background:linear-gradient(135deg,#171717 0%,#3b3b3b 100%);padding:36px;border-radius:18px;margin-bottom:28px;color:#fff;box-shadow:0 16px 48px rgba(0,0,0,.16)}
+.hero-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.72);font-weight:700;margin-bottom:8px}
+.hero h2{font-size:30px;letter-spacing:-.035em;font-weight:650;line-height:1.1;margin-bottom:10px;max-width:720px}
+.hero p{font-size:14px;color:rgba(255,255,255,.84);max-width:620px;line-height:1.6}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ink)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.amber::before{background:var(--amber)}
+.stat-card.red::before{background:var(--red)}
+.stat-card.purple::before{background:var(--purple)}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--soft);font-weight:700}
+.stat-value{font-size:24px;font-weight:700;color:var(--ink)}
+.stat-desc{font-size:11.5px;color:var(--muted);line-height:1.4}
+.section-block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.03);margin:18px 0;overflow:hidden}
+.section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);background:#fbfaf7}
+.section-title h2{font-size:18px;letter-spacing:-.03em;font-weight:700}
+.section-title p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:680px}
+.section-body{padding:22px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.row-list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px 16px;background:#fbfaf7;border:1px solid var(--line);border-radius:10px}
+.row-title{font-size:13.5px;font-weight:650;color:var(--ink);margin-bottom:3px}
+.row-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.row-meta{font-size:11px;color:var(--soft);font-family:'DM Mono',monospace;text-align:right}
+.tag{display:inline-block;font-size:10.5px;font-weight:650;letter-spacing:.04em;padding:3px 9px;border-radius:999px;margin-right:6px}
+.tag.green{background:var(--green-soft);color:var(--green)}
+.tag.amber{background:var(--amber-soft);color:var(--amber)}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.purple{background:var(--purple-soft);color:var(--purple)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}
+.tag.grey{background:var(--bg);color:var(--soft)}
+.smallbtn{font-size:12px;font-weight:650;border-radius:999px;padding:8px 13px;background:var(--ink);color:#fff;border:0}
+.smallbtn.light{background:#fff;color:var(--muted);border:1px solid var(--line)}
+.admin-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;transition:.15s ease}
+.admin-card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.06)}
+.admin-card h3{font-size:15px;margin-bottom:5px}
+.admin-card p{font-size:12px;color:var(--muted);line-height:1.45;margin-bottom:14px}
+.admin-link{font-size:12px;font-weight:700;color:var(--ink)}
+@media(max-width:950px){.stats-grid{grid-template-columns:repeat(2,1fr)}.two-col,.three-col{grid-template-columns:1fr}}
+@media(max-width:650px){body{padding:16px}.platform-shell-bar{border-radius:14px}.top{flex-direction:column}.stats-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="platform-shell-bar">
+    <a class="platform-shell-back" href="home_logged_in.html">
+      <span class="platform-shell-mark">LB</span>
+      <span class="platform-shell-text">
+        <span class="platform-shell-name">The Lightbulb Platform</span>
+        <span class="platform-shell-sub">Back to platform home</span>
+      </span>
+    </a>
+    <div class="platform-shell-current">
+      <span class="platform-shell-current-label">Current area</span>
+      <span class="platform-shell-current-hub">Admin Console</span>
+    </div>
+    <div class="platform-shell-user">
+      <span class="platform-shell-user-label">Access</span>
+      <span class="platform-shell-user-name">Admin</span>
+    </div>
+  </div>
+
+  <div class="brand-row">
+    <div class="brand-mark">⚙</div>
+    <div class="brand-text">
+      <span class="brand-title">Admin Console</span>
+      <span class="brand-sub">Users, access and platform controls</span>
+    </div>
+  </div>
+
+  <div class="top">
+    <div>
+      <div class="kicker">Admin area</div>
+      <h1>Manage users, permissions and platform content.</h1>
+      <p class="sub">A prototype admin area for approving users, assigning access, reviewing submissions, and identifying editable areas across the platform.</p>
+    </div>
+    <a class="btn dark" href="home_logged_in.html">Back home</a>
+  </div>
+
+  <div class="hero">
+    <div class="hero-label">Admin Console</div>
+    <h2>Control access and manage platform content from one place.</h2>
+    <p>For the prototype, this is the central admin area. In the live version, edits would save to Supabase or Airtable rather than changing HTML files directly.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card red"><span class="stat-label">Pending users</span><span class="stat-value">3</span><span class="stat-desc">Awaiting approval</span></div>
+    <div class="stat-card amber"><span class="stat-label">Partner submissions</span><span class="stat-value">4</span><span class="stat-desc">Reports or documents to review</span></div>
+    <div class="stat-card purple"><span class="stat-label">Platform areas</span><span class="stat-value">5</span><span class="stat-desc">Including Admin Console</span></div>
+    <div class="stat-card green"><span class="stat-label">Status</span><span class="stat-value">Live</span><span class="stat-desc">Prototype deployment active</span></div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">
+      <div>
+        <h2>Access requests</h2>
+        <p>Approve new users and assign the correct platform area.</p>
+      </div>
+      <span class="tag red">3 pending</span>
+    </div>
+    <div class="section-body">
+      <div class="row-list">
+        <div class="row"><div><div class="row-title">Maya Thompson</div><div class="row-desc">West London Youth Collective. Requested Partner Hub access.</div><span class="tag red">Pending</span></div><button class="smallbtn">Approve</button></div>
+        <div class="row"><div><div class="row-title">Sarah Patel</div><div class="row-desc">Trustee. Requested Trustee Dashboard access.</div><span class="tag red">Pending</span></div><button class="smallbtn">Approve</button></div>
+        <div class="row"><div><div class="row-title">James Ali</div><div class="row-desc">Internal team. Requested Lightbulb Portfolio access.</div><span class="tag red">Pending</span></div><button class="smallbtn">Approve</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">
+      <div>
+        <h2>Editable areas</h2>
+        <p>These are the areas admins would eventually be able to update through forms or admin controls.</p>
+      </div>
+      <span class="tag grey">Prototype only</span>
+    </div>
+    <div class="section-body">
+      <div class="three-col">
+        <a class="admin-card" href="lightbulb_index.html?skipcheck">
+          <h3>Lightbulb Portfolio</h3>
+          <p>Dashboard stats, funding panel cards, reports, actions and timeline notes.</p>
+          <span class="admin-link">Open page →</span>
+        </a>
+        <a class="admin-card" href="greenlight_index.html?skipcheck">
+          <h3>Greenlight Portfolio</h3>
+          <p>Greenlight cards, reports, funding notes and portfolio labels.</p>
+          <span class="admin-link">Open page →</span>
+        </a>
+        <a class="admin-card" href="trustee_index.html?skipcheck">
+          <h3>Trustee Dashboard</h3>
+          <p>Governance summaries, funding decisions, meeting notes and reporting cards.</p>
+          <span class="admin-link">Open page →</span>
+        </a>
+        <a class="admin-card" href="partner_index.html">
+          <h3>Partner Hub</h3>
+          <p>Onboarding questions, reporting prompts, opportunities, events and resources.</p>
+          <span class="admin-link">Open page →</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="section-block">
+      <div class="section-title"><div><h2>Partner submissions</h2><p>Incoming reports, documents, updates and event RSVPs.</p></div></div>
+      <div class="section-body">
+        <div class="row-list">
+          <div class="row"><div><div class="row-title">Learning report submitted</div><div class="row-desc">West London Youth Collective submitted their learning report.</div><span class="tag blue">Report</span></div><div class="row-meta">Today</div></div>
+          <div class="row"><div><div class="row-title">Safeguarding policy uploaded</div><div class="row-desc">New partner uploaded required setup document.</div><span class="tag amber">Document</span></div><div class="row-meta">Yesterday</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><div><h2>Future admin tools</h2><p>Not live yet, but useful for the product roadmap.</p></div></div>
+      <div class="section-body">
+        <div class="row-list">
+          <div class="row"><div><div class="row-title">Edit events and opportunities</div><div class="row-desc">Create and update cards without touching code.</div></div><span class="tag green">Planned</span></div>
+          <div class="row"><div><div class="row-title">Audit trail</div><div class="row-desc">Record changes to users, documents and content.</div></div><span class="tag purple">Planned</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

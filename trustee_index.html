@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trustee Interface — The Lightbulb Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171717;--muted:#6f6f76;--soft:#9b9ba3;--bg:#f7f6f2;--panel:#fff;--line:rgba(0,0,0,.08);
+  --trustee:#7b68d9;--trustee-soft:#eeeafd;
+  --green:#3f9f7f;--green-soft:#e7f4ef;
+  --amber:#d99a35;--amber-soft:#fbf0df;
+  --red:#d8644a;--red-soft:#fbe8e1;
+  --end25:#3f9f7f;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:28px;-webkit-font-smoothing:antialiased}
+.app{max-width:1180px;margin:0 auto}
+
+/* ===== PLATFORM SHELL ===== */
+.platform-shell-bar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:11px 18px;background:#fff;border:1px solid var(--line);border-radius:999px;margin-bottom:22px;box-shadow:0 6px 20px rgba(0,0,0,.025);flex-wrap:wrap}
+.platform-shell-back{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);transition:.15s ease}
+.platform-shell-back:hover{transform:translateX(-2px)}
+.platform-shell-mark{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#d99a35 0%,#2BBE92 100%);color:#fff;font-weight:700;font-size:11px;flex-shrink:0}
+.platform-shell-text{display:flex;flex-direction:column;line-height:1.15}
+.platform-shell-name{font-size:12.5px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.platform-shell-sub{font-size:10.5px;color:var(--soft);font-weight:500;margin-top:1px}
+.platform-shell-back:hover .platform-shell-sub{color:var(--ink)}
+.platform-shell-current{display:flex;align-items:center;gap:8px}
+.platform-shell-current-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);font-weight:700}
+.platform-shell-current-hub{font-size:12.5px;font-weight:650;color:var(--ink);padding:5px 11px;background:var(--bg);border-radius:999px}
+.platform-shell-user{display:flex;align-items:center;gap:8px}
+.platform-shell-user-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);font-weight:700}
+.platform-shell-user-name{font-size:12.5px;font-weight:650;color:var(--ink);padding:5px 11px;background:var(--bg);border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+.platform-shell-user-name::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--end25);flex-shrink:0}
+.platform-shell-user-name.no-user{color:var(--soft);font-weight:500;font-style:italic}
+.platform-shell-user-name.no-user::before{background:var(--soft)}
+@media(max-width:768px){
+  .platform-shell-bar{flex-direction:column;align-items:flex-start;border-radius:14px;gap:12px}
+  .platform-shell-current,.platform-shell-user{width:100%;justify-content:space-between}
+}
+/* ===== /PLATFORM SHELL ===== */
+
+/* Brand row */
+.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand-mark{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--trustee-soft);color:var(--trustee)}
+.brand-mark svg{width:22px;height:22px}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.brand-sub{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:600;margin-top:2px}
+
+/* Header */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--trustee);font-weight:700;margin-bottom:9px}
+h1{font-size:30px;letter-spacing:-.045em;font-weight:650;line-height:1.02}
+.sub{font-size:14px;color:var(--muted);margin-top:11px;max-width:680px;line-height:1.55}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s ease}
+.btn{font-size:12px;font-weight:600;border-radius:999px;padding:9px 14px;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* Nav */
+.main-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:999px;width:fit-content;box-shadow:0 8px 24px rgba(0,0,0,.025)}
+.navbtn{font-size:12.5px;font-weight:600;border-radius:999px;padding:8px 16px;background:transparent;border:0;color:var(--muted)}
+.navbtn:hover{color:var(--ink)}
+.navbtn.active{background:var(--ink);color:#fff}
+
+/* Pages */
+.page{display:none}
+.page.active{display:block}
+
+/* Hero */
+.hero{background:linear-gradient(135deg, var(--trustee) 0%, #5a4ab8 100%);padding:36px;border-radius:18px;margin-bottom:28px;color:#fff;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(123,104,217,.18)}
+.hero::before{content:"";position:absolute;top:-40%;right:-15%;width:380px;height:380px;background:rgba(255,255,255,.08);border-radius:50%;z-index:0}
+.hero > *{position:relative;z-index:1}
+.hero-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:8px}
+.hero h2{font-size:30px;letter-spacing:-.035em;font-weight:650;line-height:1.1;margin-bottom:10px;max-width:680px}
+.hero p{font-size:14px;color:rgba(255,255,255,.85);max-width:560px;line-height:1.6}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;transition:.2s ease}
+.stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--trustee)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.amber::before{background:var(--amber)}
+.stat-card.red::before{background:var(--red)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.06)}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--soft);font-weight:700}
+.stat-value{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.stat-desc{font-size:11.5px;color:var(--muted);line-height:1.4}
+
+/* Section block */
+.section-block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.03);margin:18px 0;overflow:hidden}
+.section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);background:#fbfaf7}
+.section-title h2{font-size:18px;letter-spacing:-.03em;font-weight:700}
+.section-title p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.45;max-width:620px}
+.section-body{padding:22px}
+
+/* Two-column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+
+/* Generic list rows */
+.row-list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px 16px;background:#fbfaf7;border:1px solid var(--line);border-radius:10px;transition:.15s ease}
+.row:hover{background:#fff;border-color:rgba(0,0,0,.14)}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:13.5px;font-weight:650;color:var(--ink);margin-bottom:3px}
+.row-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.row-meta{font-size:11px;color:var(--soft);font-family:'DM Mono',monospace;flex-shrink:0;text-align:right;margin-left:10px}
+
+/* Tags */
+.tag{display:inline-block;font-size:10.5px;font-weight:650;letter-spacing:.04em;padding:3px 9px;border-radius:999px;margin-right:6px}
+.tag.green{background:var(--green-soft);color:var(--green)}
+.tag.amber{background:var(--amber-soft);color:var(--amber)}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.purple{background:var(--trustee-soft);color:var(--trustee)}
+.tag.grey{background:var(--bg);color:var(--soft)}
+
+/* Funding decision card */
+.decision-card{background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:16px;position:relative}
+.decision-card.approved{border-left:3px solid var(--green)}
+.decision-card.declined{border-left:3px solid var(--red)}
+.decision-card.deferred{border-left:3px solid var(--amber)}
+.decision-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px}
+.decision-org{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.decision-amount{font-size:13px;font-weight:650;color:var(--ink);font-family:'DM Mono',monospace}
+.decision-body{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.decision-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--soft);font-family:'DM Mono',monospace}
+
+/* Finance summary */
+.finance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.finance-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+.finance-card-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--soft);font-weight:700;margin-bottom:8px}
+.finance-card-value{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:4px;font-family:'DM Mono',monospace}
+.finance-card-delta{font-size:11.5px;color:var(--muted)}
+.finance-card-delta.up{color:var(--green)}
+.finance-card-delta.down{color:var(--red)}
+
+/* Reconciliation table */
+table.simple{width:100%;border-collapse:collapse;font-size:12.5px}
+table.simple th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#fbfaf7}
+table.simple td{padding:12px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top}
+table.simple tr:last-child td{border-bottom:0}
+table.simple tr:hover td{background:#fbfaf7}
+table.simple .num{font-family:'DM Mono',monospace;text-align:right}
+table.simple .pos{color:var(--green);font-weight:600}
+table.simple .neg{color:var(--red);font-weight:600}
+
+/* Governance task list */
+.gov-task{display:flex;align-items:center;gap:14px;padding:14px 16px;background:#fbfaf7;border:1px solid var(--line);border-radius:10px;transition:.15s ease}
+.gov-task:hover{background:#fff;border-color:rgba(0,0,0,.14)}
+.gov-check{width:18px;height:18px;border:2px solid var(--soft);border-radius:5px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:#fff}
+.gov-task.done .gov-check{background:var(--green);border-color:var(--green);color:#fff}
+.gov-task.done .gov-title{text-decoration:line-through;color:var(--soft)}
+.gov-check svg{width:12px;height:12px;display:none}
+.gov-task.done .gov-check svg{display:block}
+.gov-body{flex:1}
+.gov-title{font-size:13px;font-weight:650;color:var(--ink);margin-bottom:2px}
+.gov-meta{font-size:11px;color:var(--soft);font-family:'DM Mono',monospace}
+
+/* Meetings */
+.meeting-card{background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.meeting-card.upcoming{background:linear-gradient(135deg,#fffdf7 0%,#faf8f3 100%);border-color:rgba(217,154,53,.25)}
+.meeting-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px}
+.meeting-title{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.meeting-date{font-size:11.5px;color:var(--soft);font-family:'DM Mono',monospace;text-align:right;flex-shrink:0}
+.meeting-summary{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.meeting-actions{display:flex;gap:8px;flex-wrap:wrap}
+.meeting-link{font-size:11.5px;font-weight:650;color:var(--trustee);text-decoration:none;padding:5px 11px;background:var(--trustee-soft);border-radius:999px;transition:.15s ease}
+.meeting-link:hover{background:var(--trustee);color:#fff}
+.meeting-link.grey{color:var(--soft);background:var(--bg)}
+.meeting-link.grey:hover{background:var(--ink);color:#fff}
+
+/* Footer */
+.platform-footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--soft);font-family:'DM Mono',monospace}
+
+@media(max-width:1100px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .finance-grid{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  body{padding:18px}
+  .stats-grid{grid-template-columns:1fr}
+  h1{font-size:24px}
+  .hero h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== PLATFORM SHELL ===== -->
+  <div class="platform-shell-bar">
+    <a class="platform-shell-back" href="home_logged_in.html">
+      <span class="platform-shell-mark">L</span>
+      <span class="platform-shell-text">
+        <span class="platform-shell-name">The Lightbulb Platform</span>
+        <span class="platform-shell-sub">← Back to platform</span>
+      </span>
+    </a>
+    <div class="platform-shell-current">
+      <span class="platform-shell-current-label">Currently viewing</span>
+      <span class="platform-shell-current-hub">Trustee Interface</span>
+    </div>
+    <div class="platform-shell-user">
+      <span class="platform-shell-user-label">Logged in as</span>
+      <span class="platform-shell-user-name" id="platformShellUserName">—</span>
+    </div>
+  </div>
+  <!-- ===== /PLATFORM SHELL ===== -->
+
+  <!-- Brand row -->
+  <div class="brand-row">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L3 7v5c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-title">Trustee Interface</div>
+      <div class="brand-sub">Board-level oversight · Internal</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="top">
+    <div>
+      <div class="kicker">Trustee Interface</div>
+      <h1>A board-level view across funds, finances, governance and meetings.</h1>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="window.print()">Print / save PDF</button>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="main-nav">
+    <button class="navbtn active" onclick="showPage('dashboard-page',this)">Dashboard</button>
+    <button class="navbtn" onclick="showPage('decisions-page',this)">Funding Decisions</button>
+    <button class="navbtn" onclick="showPage('finances-page',this)">Finances</button>
+    <button class="navbtn" onclick="showPage('governance-page',this)">Governance</button>
+    <button class="navbtn" onclick="showPage('meetings-page',this)">Meetings</button>
+  </div>
+
+  <!-- =========================
+       DASHBOARD PAGE
+       ========================= -->
+  <div id="dashboard-page" class="page active">
+
+    <div class="hero">
+      <div class="hero-label">TRUSTEE OVERVIEW · MAY 2026</div>
+      <h2>Everything you need before the next board meeting.</h2>
+      <p>A consolidated picture of activity across Lightbulb Trust and Greenlight Project — financial position, decisions taken, governance status and upcoming dates. Updated weekly.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">TOTAL FUNDS UNDER MANAGEMENT</div>
+        <div class="stat-value">£3.2m</div>
+        <div class="stat-desc">Across Lightbulb Trust and Greenlight Project</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">DECISIONS THIS QUARTER</div>
+        <div class="stat-value">12</div>
+        <div class="stat-desc">8 approved, 2 deferred, 2 declined</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">GOVERNANCE TASKS</div>
+        <div class="stat-value">3 due</div>
+        <div class="stat-desc">Items requiring attention this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">NEXT BOARD MEETING</div>
+        <div class="stat-value">29 Jun</div>
+        <div class="stat-desc">2026 · Quarterly review</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="section-block">
+        <div class="section-title">
+          <div>
+            <h2>What needs your attention</h2>
+            <p>Items flagged for trustee review or decision in the coming weeks.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="row-list">
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">Becauze funding decision <span class="tag amber">For review</span></div>
+                <div class="row-desc">Lightbulb funding panel has requested trustee input on whether to approve £35,000 for employee salary support.</div>
+              </div>
+              <div class="row-meta">Due 20 Jun</div>
+            </div>
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">Annual report sign-off <span class="tag purple">Governance</span></div>
+                <div class="row-desc">2025/26 Trustees' Annual Report draft ready for board review ahead of Charity Commission submission.</div>
+              </div>
+              <div class="row-meta">Due 30 Jun</div>
+            </div>
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">Reserves policy review <span class="tag grey">Policy</span></div>
+                <div class="row-desc">Triennial review of the reserves policy is scheduled for the June board meeting.</div>
+              </div>
+              <div class="row-meta">29 Jun</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">
+          <div>
+            <h2>Recent activity</h2>
+            <p>The latest movements across both funds.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="row-list">
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">FFLY grant payment processed</div>
+                <div class="row-desc">£20,000 to Fit For Life Youth (Lightbulb).</div>
+              </div>
+              <div class="row-meta">9 May</div>
+            </div>
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">Q1 impact report received</div>
+                <div class="row-desc">WLAC Q1 update filed and reviewed by team.</div>
+              </div>
+              <div class="row-meta">2 May</div>
+            </div>
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">Bank reconciliation completed</div>
+                <div class="row-desc">April reconciliation signed off by Dillon.</div>
+              </div>
+              <div class="row-meta">30 Apr</div>
+            </div>
+            <div class="row">
+              <div class="row-main">
+                <div class="row-title">New panel scheduled</div>
+                <div class="row-desc">May/June funding panel agenda circulated.</div>
+              </div>
+              <div class="row-meta">22 Apr</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       FUNDING DECISIONS PAGE
+       ========================= -->
+  <div id="decisions-page" class="page">
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Key funding panel decisions</h2>
+          <p>Summary of recent decisions taken at funding panels across both funds. For trustee awareness and quarterly review.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="row-list">
+
+          <div class="decision-card approved">
+            <div class="decision-head">
+              <div class="decision-org">Fit For Life Youth <span class="tag green">Approved</span></div>
+              <div class="decision-amount">£20,000</div>
+            </div>
+            <div class="decision-body">First-year grant approved at May panel. One-year award with potential for follow-on subject to outcomes. Funds delivery of youth fitness programme across two boroughs.</div>
+            <div class="decision-foot">
+              <span>Lightbulb Trust · May 2026 panel</span>
+              <span>Approved unanimously</span>
+            </div>
+          </div>
+
+          <div class="decision-card deferred">
+            <div class="decision-head">
+              <div class="decision-org">Becauze <span class="tag amber">Deferred — Trustee input</span></div>
+              <div class="decision-amount">£35,000</div>
+            </div>
+            <div class="decision-body">Request relates to employee salary support. Panel deferred pending trustee discussion on fit with funding criteria and sustainability. Organisation has proposed split of the role between current employee and Carlos.</div>
+            <div class="decision-foot">
+              <span>Lightbulb Trust · May 2026 panel</span>
+              <span>Awaiting board input</span>
+            </div>
+          </div>
+
+          <div class="decision-card approved">
+            <div class="decision-head">
+              <div class="decision-org">Latimer Community Art Therapy <span class="tag green">Approved</span></div>
+              <div class="decision-amount">£30,000</div>
+            </div>
+            <div class="decision-body">Two-year grant for community art therapy programme. First-time funding with eligibility for up to three further years subject to first two-year outcomes.</div>
+            <div class="decision-foot">
+              <span>Lightbulb Trust · Apr 2026 panel</span>
+              <span>Approved</span>
+            </div>
+          </div>
+
+          <div class="decision-card declined">
+            <div class="decision-head">
+              <div class="decision-org">Doorstep Library <span class="tag red">Declined</span></div>
+              <div class="decision-amount">£25,000</div>
+            </div>
+            <div class="decision-body">Application declined at this stage — programme overlap with existing portfolio commitments. Team to maintain relationship and reconsider in 2027 funding cycle.</div>
+            <div class="decision-foot">
+              <span>Lightbulb Trust · Apr 2026 panel</span>
+              <span>Re-consider 2027</span>
+            </div>
+          </div>
+
+          <div class="decision-card approved">
+            <div class="decision-head">
+              <div class="decision-org">Nova Emergency Fund <span class="tag green">Approved</span></div>
+              <div class="decision-amount">£10,000</div>
+            </div>
+            <div class="decision-body">One-off emergency fund grant approved given urgency of need and clear alignment with criteria. Recommendation noted to develop a clearer emergency-funding framework for future requests.</div>
+            <div class="decision-foot">
+              <span>Greenlight Project · Apr 2026 panel</span>
+              <span>Approved</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       FINANCES PAGE
+       ========================= -->
+  <div id="finances-page" class="page">
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Financial position</h2>
+          <p>Current snapshot across both funds. Figures are illustrative for the prototype.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="finance-grid">
+          <div class="finance-card">
+            <div class="finance-card-label">LIGHTBULB TRUST · Total funds</div>
+            <div class="finance-card-value">£1,909,084</div>
+            <div class="finance-card-delta up">+ £42k vs Q1</div>
+          </div>
+          <div class="finance-card">
+            <div class="finance-card-label">GREENLIGHT PROJECT · Total funds</div>
+            <div class="finance-card-value">£1,287,420</div>
+            <div class="finance-card-delta up">+ £18k vs Q1</div>
+          </div>
+          <div class="finance-card">
+            <div class="finance-card-label">CONSOLIDATED · Reserves</div>
+            <div class="finance-card-value">£612,300</div>
+            <div class="finance-card-delta">Within policy range</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="section-block">
+        <div class="section-title">
+          <div>
+            <h2>Bank reconciliations</h2>
+            <p>Status of monthly reconciliations for the past quarter.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Fund</th>
+                <th>Status</th>
+                <th class="num">Variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>April 2026</td>
+                <td>Lightbulb</td>
+                <td><span class="tag green">Signed off</span></td>
+                <td class="num pos">£0.00</td>
+              </tr>
+              <tr>
+                <td>April 2026</td>
+                <td>Greenlight</td>
+                <td><span class="tag green">Signed off</span></td>
+                <td class="num pos">£0.00</td>
+              </tr>
+              <tr>
+                <td>May 2026</td>
+                <td>Lightbulb</td>
+                <td><span class="tag amber">In progress</span></td>
+                <td class="num">—</td>
+              </tr>
+              <tr>
+                <td>May 2026</td>
+                <td>Greenlight</td>
+                <td><span class="tag amber">In progress</span></td>
+                <td class="num">—</td>
+              </tr>
+              <tr>
+                <td>March 2026</td>
+                <td>Lightbulb</td>
+                <td><span class="tag green">Signed off</span></td>
+                <td class="num pos">£0.00</td>
+              </tr>
+              <tr>
+                <td>March 2026</td>
+                <td>Greenlight</td>
+                <td><span class="tag green">Signed off</span></td>
+                <td class="num neg">£12.50</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">
+          <div>
+            <h2>Budget vs actual (FY 2025/26)</h2>
+            <p>Year-to-date position against approved budget.</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th class="num">Budget</th>
+                <th class="num">Actual</th>
+                <th class="num">Variance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Grants</td>
+                <td class="num">£580,000</td>
+                <td class="num">£548,200</td>
+                <td class="num pos">£31,800</td>
+              </tr>
+              <tr>
+                <td>Investments</td>
+                <td class="num">£40,000</td>
+                <td class="num">£38,500</td>
+                <td class="num pos">£1,500</td>
+              </tr>
+              <tr>
+                <td>Operations</td>
+                <td class="num">£85,000</td>
+                <td class="num">£82,799</td>
+                <td class="num pos">£2,201</td>
+              </tr>
+              <tr>
+                <td>Governance</td>
+                <td class="num">£12,000</td>
+                <td class="num">£14,500</td>
+                <td class="num neg">−£2,500</td>
+              </tr>
+              <tr style="background:#fbfaf7">
+                <td style="font-weight:700">Total</td>
+                <td class="num" style="font-weight:700">£717,000</td>
+                <td class="num" style="font-weight:700">£683,999</td>
+                <td class="num pos" style="font-weight:700">£33,001</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       GOVERNANCE PAGE
+       ========================= -->
+  <div id="governance-page" class="page">
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Charity Commission obligations</h2>
+          <p>Tasks and submissions required to maintain registered charity status.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="row-list">
+
+          <div class="gov-task done">
+            <div class="gov-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+            <div class="gov-body">
+              <div class="gov-title">Annual Return 2024/25 submitted</div>
+              <div class="gov-meta">Submitted 14 Oct 2025 · Acknowledged 16 Oct 2025</div>
+            </div>
+          </div>
+
+          <div class="gov-task done">
+            <div class="gov-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+            <div class="gov-body">
+              <div class="gov-title">Trustees' Annual Report 2024/25 filed</div>
+              <div class="gov-meta">Filed 28 Oct 2025</div>
+            </div>
+          </div>
+
+          <div class="gov-task">
+            <div class="gov-check"></div>
+            <div class="gov-body">
+              <div class="gov-title">Annual Return 2025/26 — preparation <span class="tag amber">Due Oct 2026</span></div>
+              <div class="gov-meta">Draft in preparation · Salome leading</div>
+            </div>
+          </div>
+
+          <div class="gov-task">
+            <div class="gov-check"></div>
+            <div class="gov-body">
+              <div class="gov-title">Trustees' Annual Report 2025/26 — draft <span class="tag amber">Due Jun 2026</span></div>
+              <div class="gov-meta">For sign-off at June board meeting</div>
+            </div>
+          </div>
+
+          <div class="gov-task">
+            <div class="gov-check"></div>
+            <div class="gov-body">
+              <div class="gov-title">Update trustee details on register <span class="tag red">Overdue</span></div>
+              <div class="gov-meta">New trustee appointment to be notified to Charity Commission</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Policy reviews</h2>
+          <p>Internal policy review schedule.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="row-list">
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Reserves policy <span class="tag amber">Review due</span></div>
+              <div class="row-desc">Triennial review scheduled for June 2026 board meeting.</div>
+            </div>
+            <div class="row-meta">Jun 2026</div>
+          </div>
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Safeguarding policy <span class="tag green">Current</span></div>
+              <div class="row-desc">Last reviewed November 2025. Next review due November 2026.</div>
+            </div>
+            <div class="row-meta">Nov 2025</div>
+          </div>
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Investment policy <span class="tag green">Current</span></div>
+              <div class="row-desc">Last reviewed March 2026. Next review due March 2028.</div>
+            </div>
+            <div class="row-meta">Mar 2026</div>
+          </div>
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Conflict of interest policy <span class="tag green">Current</span></div>
+              <div class="row-desc">Last reviewed September 2025. Annual declarations on file.</div>
+            </div>
+            <div class="row-meta">Sep 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       MEETINGS PAGE
+       ========================= -->
+  <div id="meetings-page" class="page">
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Upcoming meetings</h2>
+          <p>Scheduled board and committee meetings over the next quarter.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="meeting-card upcoming">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Quarterly Trustee Meeting <span class="tag amber">Upcoming</span></div>
+            </div>
+            <div class="meeting-date">29 Jun 2026 · 9:00am</div>
+          </div>
+          <div class="meeting-summary">Quarterly review covering financial position, recent funding decisions, governance update, reserves policy review, and the Becauze funding decision deferred from the May panel.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link" href="#">Agenda</a>
+            <a class="meeting-link grey" href="#">Pre-read pack</a>
+            <a class="meeting-link grey" href="#">Add to calendar</a>
+          </div>
+        </div>
+
+        <div class="meeting-card upcoming">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Finance Sub-committee <span class="tag amber">Upcoming</span></div>
+            </div>
+            <div class="meeting-date">15 Jul 2026 · 2:00pm</div>
+          </div>
+          <div class="meeting-summary">Mid-year financial review and discussion of FY 2026/27 budget framework.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link grey" href="#">Agenda · TBC</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Past meetings</h2>
+          <p>Minutes and summaries from recent meetings.</p>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="meeting-card">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Quarterly Trustee Meeting</div>
+            </div>
+            <div class="meeting-date">27 Mar 2026</div>
+          </div>
+          <div class="meeting-summary">Approved 2024/25 Trustees' Annual Report. Reviewed Q4 performance across both funds. Approved investment policy update. Discussed Q1 funding pipeline and noted increasing demand on emergency fund requests.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link" href="#">Minutes</a>
+            <a class="meeting-link grey" href="#">Summary</a>
+          </div>
+        </div>
+
+        <div class="meeting-card">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Quarterly Trustee Meeting</div>
+            </div>
+            <div class="meeting-date">12 Dec 2025</div>
+          </div>
+          <div class="meeting-summary">Reviewed half-year accounts. Approved 2025/26 mid-year budget revisions. Discussed succession planning for chair role. Approved new safeguarding policy.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link" href="#">Minutes</a>
+            <a class="meeting-link grey" href="#">Summary</a>
+          </div>
+        </div>
+
+        <div class="meeting-card">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Finance Sub-committee</div>
+            </div>
+            <div class="meeting-date">8 Nov 2025</div>
+          </div>
+          <div class="meeting-summary">Reviewed Q2 reconciliations. Discussed reserves position and recommended formal review for June 2026 board.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link" href="#">Minutes</a>
+          </div>
+        </div>
+
+        <div class="meeting-card">
+          <div class="meeting-head">
+            <div>
+              <div class="meeting-title">Quarterly Trustee Meeting</div>
+            </div>
+            <div class="meeting-date">19 Sep 2025</div>
+          </div>
+          <div class="meeting-summary">Approved Q1 funding panel decisions. Reviewed annual return preparation. Welcomed new trustee.</div>
+          <div class="meeting-actions">
+            <a class="meeting-link" href="#">Minutes</a>
+            <a class="meeting-link grey" href="#">Summary</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="platform-footer">
+    <div>Trustee Interface · The Lightbulb Platform · Prototype</div>
+    <div>v0.1 · May 2026</div>
+  </div>
+
+</div>
+
+<script>
+// ===== PLATFORM SHELL ACCESS CHECK =====
+(function(){
+  const PLATFORM_STORAGE_KEY = 'lightbulb_platform_user';
+  const CURRENT_HUB = 'trustee';
+  const USER_ACCESS = {
+    'Dillon':   ['lightbulb','greenlight','trustee','partner'],
+    'Luisa':    ['lightbulb','greenlight','trustee','partner'],
+    'Catia':    ['lightbulb','greenlight','trustee','partner'],
+    'Ben':      ['lightbulb'],
+    'Salome':   ['lightbulb'],
+    'Ayve':     ['greenlight'],
+    'Adam':     ['greenlight'],
+    'Trustee':  ['trustee'],
+    'Partner':  ['partner']
+  };
+
+  const user = localStorage.getItem(PLATFORM_STORAGE_KEY) || '';
+  const userNameEl = document.getElementById('platformShellUserName');
+
+  if (!user){
+    if (userNameEl){
+      userNameEl.textContent = 'No user selected';
+      userNameEl.classList.add('no-user');
+    }
+    if (window.location.search.indexOf('skipcheck') === -1){
+      setTimeout(() => { window.location.href = 'home_logged_in.html'; }, 50);
+    }
+    return;
+  }
+
+  if (userNameEl){
+    userNameEl.textContent = user;
+    userNameEl.classList.remove('no-user');
+  }
+
+  const allowed = USER_ACCESS[user] || [];
+  if (!allowed.includes(CURRENT_HUB)){
+    if (window.location.search.indexOf('skipcheck') === -1){
+      document.body.innerHTML = '<div style="font-family:DM Sans,sans-serif;max-width:480px;margin:120px auto;padding:32px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.05);text-align:center">' +
+        '<div style="font-size:32px;margin-bottom:12px">🔒</div>' +
+        '<h2 style="font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em">Access not permitted</h2>' +
+        '<p style="font-size:13.5px;color:#6f6f76;line-height:1.5;margin-bottom:18px"><strong>' + user + '</strong> does not have permission to view this interface.</p>' +
+        '<a href="home_logged_in.html" style="display:inline-block;background:#171717;color:#fff;font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:999px;text-decoration:none">← Back to platform</a>' +
+        '</div>';
+    }
+  }
+})();
+// ===== /PLATFORM SHELL =====
+
+// ===== PAGE NAVIGATION =====
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(id);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.main-nav .navbtn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
