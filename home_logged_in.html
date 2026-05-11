@@ -127,22 +127,22 @@ h1{font-size:40px;letter-spacing:-.055em;font-weight:650;line-height:1.02;max-wi
   <section class="hero">
     <div class="welcome-card">
       <div class="welcome-content">
-        <div class="kicker">Welcome back</div>
-        <h1 id="welcomeTitle">Welcome back.</h1>
-        <p class="hero-sub" id="welcomeSub">Here are the areas you have access to, along with any updates or actions linked to your account.</p>
+        <div class="kicker">Your home</div>
+        <h1 id="welcomeTitle">Welcome back</h1>
+        <p class="hero-sub" id="welcomeSub">Your workspaces, updates and next steps for your account.</p>
         <div class="hero-pills" id="heroPills"></div>
       </div>
     </div>
 
     <div class="today-card">
       <h2>What needs attention</h2>
-      <p id="todayIntro">Priority items linked to your approved access.</p>
+      <p id="todayIntro">Next steps based on your access.</p>
       <div class="today-list" id="attentionList"></div>
     </div>
   </section>
 
   <div class="section-head">
-    <h2>Available areas</h2>
+    <h2>Your workspaces</h2>
     <span class="meta" id="accessMeta">Partner Hub</span>
   </div>
 
@@ -173,7 +173,7 @@ h1{font-size:40px;letter-spacing:-.055em;font-weight:650;line-height:1.02;max-wi
   
     <a class="workspace-card admin" data-role="admin" href="admin_index.html">
       <div class="card-header"><span class="card-mark">⚙</span><span class="card-status">Open</span></div>
-      <div class="card-body"><h3>Admin Console</h3><p>Approve users, review submissions and manage editable platform areas.</p></div>
+      <div class="card-body"><h3>Admin Console</h3><p>Approve users, review submissions and manage platform settings and content.</p></div>
       <div class="card-footer"><span class="users">Admin only</span><span class="arrow">Open →</span></div>
     </a>
 
@@ -214,8 +214,8 @@ const shortcutList = document.getElementById('shortcutList');
 
 const content = {
   partner: {
-    title: "Welcome back.",
-    sub: "Open your partner hub to check your grant relationship, share learning, manage setup documents and register for events.",
+    title: "Welcome back",
+    sub: "Your workspaces, updates and next steps for your account.",
     meta: "Partner Hub",
     pills: ["Partner Hub available", "1 report due", "2 events open"],
     attention: [
@@ -301,7 +301,7 @@ const content = {
       ["Event interest logged", "Fundraising seminar interest registered.", "Events", "purple", "This week"]
     ],
     shortcuts: [
-      ["Open Admin Console", "Approve users, review submissions and manage platform areas.", "admin_index.html"],
+      ["Open Admin Console", "Approve users, review submissions and manage platform settings and content.", "admin_index.html"],
       ["Open Lightbulb Portfolio", "Principal portfolio workspace.", "lightbulb_index.html?skipcheck"],
       ["Open Partner Hub", "Partner relationship and reporting workspace.", "partner_index.html"]
     ]
