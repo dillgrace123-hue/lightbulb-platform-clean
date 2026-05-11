@@ -210,5 +210,24 @@ h1{font-size:30px;letter-spacing:-.045em;font-weight:650;line-height:1.02}
   </div>
 
 </div>
+<script>
+(function(){
+  var list = document.querySelector('.section-block .section-body .row-list');
+  if (!list) return;
+  list.addEventListener('click', function(e) {
+    var btn = e.target.closest('button.smallbtn');
+    if (!btn || btn.disabled || btn.textContent.trim() !== 'Approve') return;
+    var row = btn.closest('.row');
+    var tag = row && row.querySelector('.tag.red');
+    btn.textContent = 'Approved';
+    btn.disabled = true;
+    if (tag) {
+      tag.textContent = 'Approved';
+      tag.classList.remove('red');
+      tag.classList.add('green');
+    }
+  });
+})();
+</script>
 </body>
 </html>
