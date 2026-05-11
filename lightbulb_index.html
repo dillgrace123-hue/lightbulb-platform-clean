@@ -974,7 +974,12 @@ const WHATSNEW_KEY = 'lbt_whats_new';
 
 function loadWhatsNew(){
   const saved = localStorage.getItem(WHATSNEW_KEY);
-  return saved ? JSON.parse(saved) : whatsNew;
+  if (!saved) return whatsNew;
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    return whatsNew;
+  }
 }
 
 function renderWhatsNew(){
@@ -1025,7 +1030,12 @@ function clearWhatsNew(){
 
 function loadDashboard(){
   const saved = localStorage.getItem(DASHBOARD_KEY);
-  return saved ? JSON.parse(saved) : dashboard;
+  if (!saved) return dashboard;
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    return dashboard;
+  }
 }
 
 let grants = loadGrants();
