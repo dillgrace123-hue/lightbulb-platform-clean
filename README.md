@@ -38,6 +38,13 @@ You can also use Netlify **drag-and-drop deploy** of the folder for a one-off pr
 | `lightbulbtrust_main_amination_optimised.jpeg` | Image asset used by the marketing/hero area.                    |
 
 
+## Prototype limitations
+
+- **Role access** is simulated (not enforced like production RBAC).
+- Some **internal hub links** use `?skipcheck` to bypass prototype-only access checks so pages open without a stored demo user.
+- This is **not** real authentication or security.
+- **Later:** proper user roles and access control should be implemented with **Supabase Auth** (or equivalent), not static HTML checks.
+
 ## What is not live yet
 
 - **Real sign-in** and **user accounts** (navigation is simulated with static links).
