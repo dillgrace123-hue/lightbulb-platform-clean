@@ -270,6 +270,321 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 .hover-v{font-size:12px;color:var(--muted);margin-top:2px}
 .hover-note{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;line-height:1.4;color:var(--muted)}
 
+/* Reporting Hub */
+.reports-shell{display:flex;flex-direction:column;gap:28px}
+
+.reports-hero{
+  background:
+    radial-gradient(circle at top right, rgba(232,201,122,.18), transparent 34%),
+    linear-gradient(135deg,#fff 0%,#fbf4e8 100%);
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:38px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:26px;
+  box-shadow:0 24px 64px rgba(0,0,0,.055);
+  position:relative;
+  overflow:hidden;
+}
+
+.section-kicker{
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--soft);
+  margin-bottom:10px;
+}
+
+.reports-hero h2{
+  font-size:40px;
+  font-weight:850;
+  letter-spacing:-.07em;
+  color:var(--ink);
+  margin:0 0 12px;
+  line-height:1;
+  max-width:760px;
+}
+
+.reports-hero p{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  max-width:740px;
+  margin:0;
+}
+
+.reports-notion-link{
+  font-size:12px;
+  font-weight:850;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fff;
+  padding:11px 16px;
+  white-space:nowrap;
+  text-decoration:none;
+  box-shadow:0 12px 26px rgba(0,0,0,.12);
+}
+
+.reports-toolbar{
+  display:grid;
+  grid-template-columns:1fr auto 210px;
+  gap:12px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:12px;
+  box-shadow:0 16px 42px rgba(0,0,0,.035);
+}
+
+.reports-toolbar input,.reports-toolbar select{
+  border:1px solid var(--line);
+  background:#fbfaf7;
+  border-radius:15px;
+  padding:13px 14px;
+  font-size:13px;
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  outline:none;
+}
+
+.reports-toolbar input:focus,.reports-toolbar select:focus{
+  border-color:rgba(63,111,142,.45);
+  box-shadow:0 0 0 4px rgba(63,111,142,.08);
+}
+
+.report-view-switch{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  background:#f4f0e8;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px;
+  white-space:nowrap;
+}
+
+.report-view-btn{
+  border:0;
+  background:transparent;
+  border-radius:999px;
+  padding:9px 12px;
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:800;
+  color:var(--muted);
+  cursor:pointer;
+}
+
+.report-view-btn.active{
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+.latest-reports-section{
+  background:
+    radial-gradient(circle at top left, rgba(91,138,166,.14), transparent 32%),
+    linear-gradient(135deg,#eef4f7 0%,#fbfaf7 100%);
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 22px 58px rgba(0,0,0,.045);
+}
+
+.report-library-section{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 16px 42px rgba(0,0,0,.032);
+}
+
+.section-head.compact{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin:0 0 20px;
+  padding-bottom:15px;
+  border-bottom:1px solid rgba(0,0,0,.07);
+}
+
+.section-head.compact h3{
+  font-size:28px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:-.065em;
+  line-height:1;
+}
+
+.section-head.compact span{
+  font-size:12px;
+  color:var(--soft);
+  font-weight:800;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:7px 11px;
+  white-space:nowrap;
+}
+
+.latest-reports-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.report-library-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px;
+}
+
+.report-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:19px;
+  box-shadow:0 12px 30px rgba(0,0,0,.035);
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  min-height:138px;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+
+.report-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 42px rgba(0,0,0,.06);
+}
+
+.latest-reports-section .report-card{
+  border-top:6px solid var(--blue);
+  min-height:175px;
+  box-shadow:0 18px 44px rgba(63,111,142,.11);
+}
+
+.report-library-section .report-card{
+  box-shadow:none;
+  background:#fbfaf7;
+  min-height:128px;
+}
+
+.report-library-section .report-card:hover{
+  box-shadow:0 12px 28px rgba(0,0,0,.045);
+}
+
+.report-card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+}
+
+.report-card h4{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:-.035em;
+  color:var(--ink);
+  margin:0;
+  line-height:1.25;
+}
+
+.latest-reports-section .report-card h4{
+  font-size:17px;
+}
+
+.report-date{
+  font-size:11px;
+  font-weight:850;
+  color:var(--blue);
+  white-space:nowrap;
+  padding:6px 8px;
+  border-radius:999px;
+  background:#e8eff4;
+  line-height:1;
+}
+
+.report-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.report-chip{
+  font-size:10.5px;
+  font-weight:850;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#f4f0e8;
+  color:var(--muted);
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+}
+
+.report-chip.lbt{background:#e8eff4;color:#3f6f8e}
+.report-chip.glt{background:#e6f0ec;color:#3f8d77}
+
+.report-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:auto;
+  padding-top:8px;
+}
+
+.report-action{
+  font-size:11px;
+  font-weight:850;
+  border-radius:999px;
+  padding:8px 11px;
+  background:var(--ink);
+  color:#fff;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  line-height:1;
+}
+
+.report-action.secondary{
+  background:#f4f0e8;
+  color:var(--ink);
+  text-decoration:none;
+}
+
+.report-action.disabled{
+  opacity:.58;
+  pointer-events:none;
+  background:#9c9c9c;
+  text-decoration:none;
+}
+
+.report-empty{
+  background:#fff;
+  border:1px dashed var(--line);
+  border-radius:16px;
+  padding:26px;
+  color:var(--soft);
+  font-size:13px;
+  text-align:center;
+  grid-column:1/-1;
+}
+
+@media(max-width:980px){
+  .reports-hero{flex-direction:column}
+  .reports-toolbar{grid-template-columns:1fr}
+  .report-view-switch{justify-content:center}
+  .latest-reports-grid,.report-library-grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:650px){
+  .latest-reports-grid,.report-library-grid{grid-template-columns:1fr}
+}
+
+
 /* Impact Hub */
 .simple-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
 .simple-table th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);text-align:left;background:#fbfaf7;padding:11px 12px;border-bottom:1px solid var(--line);font-weight:700}
@@ -534,7 +849,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
         </button>
         <button class="quick-nav-card" onclick="showPage('impact-page')">
           <span class="qn-icon">📨</span>
-          <span class="qn-label">Impact Hub</span>
+          <span class="qn-label">Reports</span>
           <span class="qn-desc">Reports and evidence links</span>
         </button>
         <button class="quick-nav-card" onclick="showPage('panel-page')">
@@ -544,7 +859,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
         </button>
         <button class="quick-nav-card" onclick="window.open('https://www.notion.so/Partner-Interactions-344a3446301880beb9c1ca6e36f59c8a','_blank')">
           <span class="qn-icon">📓</span>
-          <span class="qn-label">Partner Log</span>
+          <span class="qn-label">Partner Interactions</span>
           <span class="qn-desc">Calls and visits</span>
         </button>
         <button class="quick-nav-card" onclick="window.open('https://airtable.com/apptbaQtEuT07ybq7/pagykN4GWFeSTwsKu','_blank')">
@@ -643,41 +958,48 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 
   <!-- IMPACT / REPORTS PAGE -->
-  <!-- REPORTS PAGE (two tabs: Reports Hub + Partner Log) -->
   <div id="impact-page" class="page">
-    <div class="hub-page-container">
-      
-      <!-- What's New -->
-      <div class="whats-new-card" id="whatsNewCard">
-        <div class="whats-new-content">
-          <div>
-            <h3 id="whatsNewTitle">New report received</h3>
-            <p id="whatsNewDesc">WLAC have submitted their Q1 impact update with engagement numbers and staffing changes.</p>
-            <a class="whats-new-link" id="whatsNewLink" href="#" target="_blank" rel="noopener noreferrer">Open report ↗</a>
-          </div>
-          <div class="whats-new-actions">
-            <button class="whats-new-btn edit" onclick="openWhatsNewModal()">Edit</button>
-            <button class="whats-new-btn delete" onclick="clearWhatsNew()">Dismiss</button>
-          </div>
+    <div class="reports-shell">
+      <div class="reports-hero">
+        <div>
+          <div class="section-kicker">Reporting Hub</div>
+          <h2>Lightbulb reporting archive</h2>
+          <p>A searchable archive of partner reports, interim updates and impact documents. The default view shows Lightbulb reports, with Greenlight and all-record views available when needed.</p>
         </div>
       </div>
 
-      <!-- Reports Hub -->
-      <div class="hub-card">
-        <span class="hub-icon">📊</span>
-        <h2>Reporting Hub</h2>
-        <p>A living database of all partner reports, impact documents, and interim updates we've received. Organised by organisation and date, fully searchable and filterable.</p>
-        <a class="hub-button" href="https://noisy-prince-085.notion.site/ebd//357d7a76faaa80cdb4b9eb985cce61e5" target="_blank" rel="noopener noreferrer">Browse reports</a>
+      <div class="reports-toolbar">
+        <input id="reportSearch" type="search" placeholder="Search by organisation..." oninput="renderLiveReports()">
+        <div class="report-view-switch" aria-label="Report view">
+          <button class="report-view-btn active" type="button" data-report-fund="LBT" onclick="setReportFundView('LBT', this)">Lightbulb</button>
+          <button class="report-view-btn" type="button" data-report-fund="GLT" onclick="setReportFundView('GLT', this)">Greenlight</button>
+          <button class="report-view-btn" type="button" data-report-fund="all" onclick="setReportFundView('all', this)">All</button>
+        </div>
+        <select id="reportTypeFilter" onchange="renderLiveReports()">
+          <option value="all">All report types</option>
+        </select>
       </div>
+      <input id="reportFundFilter" type="hidden" value="LBT">
 
-      <!-- Partner Interactions Log -->
-      <div class="hub-card">
-        <span class="hub-icon">📓</span>
-        <h2>Partner Interactions</h2>
-        <p>A record of recent calls, site visits, and conversations with partners across the portfolio. Helps track relationship health and capture what we've learned.</p>
-        <a class="hub-button" href="https://noisy-prince-085.notion.site/ebd//357d7a76faaa807f91b1c8fe7f6a6b4b" target="_blank" rel="noopener noreferrer">View interactions</a>
-      </div>
+      <section class="latest-reports-section">
+        <div class="section-head compact">
+          <h3>Latest reports received</h3>
+          <span id="reportsCountMeta">Loading reports...</span>
+        </div>
+        <div class="latest-reports-grid" id="latestReportsGrid">
+          <div class="report-empty">Loading latest reports...</div>
+        </div>
+      </section>
 
+      <section class="report-library-section">
+        <div class="section-head compact">
+          <h3>Report library</h3>
+          <span id="reportsFilterMeta">Lightbulb reports</span>
+        </div>
+        <div class="report-library-grid" id="reportLibraryGrid">
+          <div class="report-empty">Loading report library...</div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -1539,6 +1861,157 @@ function showHover(e, id){
 function hideHover(){ document.getElementById('hoverCard').style.display = 'none'; }
 
 // =========================================
+// LIVE REPORTING HUB
+// =========================================
+let liveReports = [];
+let reportsLoaded = false;
+
+function cleanReportLink(value){
+  const link = String(value || '').trim();
+  if (!link || link.toLowerCase() === 'n/a') return '';
+  return link;
+}
+
+function reportFundLabel(fund){
+  if (fund === 'GLT') return 'Greenlight';
+  if (fund === 'LBT') return 'Lightbulb';
+  return fund || 'Unspecified';
+}
+
+function reportFundClass(fund){
+  if (fund === 'GLT') return 'glt';
+  if (fund === 'LBT') return 'lbt';
+  return '';
+}
+
+function formatReportDate(dateString){
+  if (!dateString) return 'No date';
+  try {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  } catch (error) {
+    return dateString;
+  }
+}
+
+function reportCardHtml(report){
+  const primaryLink = cleanReportLink(report.reportLink);
+  const additionalLink = cleanReportLink(report.additionalReports);
+
+  return `
+    <article class="report-card">
+      <div class="report-card-head">
+        <h4>${esc((report.organisation || 'Untitled organisation').trim())}</h4>
+        <span class="report-date">${formatReportDate(report.submissionDate)}</span>
+      </div>
+      <div class="report-meta">
+        <span class="report-chip ${reportFundClass(report.fund)}">${esc(reportFundLabel(report.fund))}</span>
+        <span class="report-chip">${esc(report.reportType || 'Report')}</span>
+      </div>
+      <div class="report-actions">
+        ${primaryLink ? `<a class="report-action" href="${esc(primaryLink)}" target="_blank" rel="noopener noreferrer">Open report ↗</a>` : `<span class="report-action disabled">No form link</span>`}
+        ${additionalLink ? `<a class="report-action secondary" href="${esc(additionalLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
+      </div>
+    </article>
+  `;
+}
+
+function setReportFundView(fund, button){
+  const hidden = document.getElementById('reportFundFilter');
+  if (hidden) hidden.value = fund;
+
+  document.querySelectorAll('.report-view-btn').forEach(btn => btn.classList.remove('active'));
+  if (button) button.classList.add('active');
+
+  renderLiveReports();
+}
+
+function getFilteredReports(){
+  const search = (document.getElementById('reportSearch')?.value || '').toLowerCase().trim();
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'LBT';
+  const typeFilter = document.getElementById('reportTypeFilter')?.value || 'all';
+
+  return liveReports.filter(report => {
+    const matchesSearch = !search || String(report.organisation || '').toLowerCase().includes(search);
+    const matchesFund = fundFilter === 'all' || report.fund === fundFilter;
+    const matchesType = typeFilter === 'all' || report.reportType === typeFilter;
+
+    return matchesSearch && matchesFund && matchesType;
+  });
+}
+
+function populateReportTypeFilter(){
+  const select = document.getElementById('reportTypeFilter');
+  if (!select) return;
+
+  const current = select.value || 'all';
+  const types = [...new Set(liveReports.map(report => report.reportType).filter(Boolean))].sort();
+
+  select.innerHTML = '<option value="all">All report types</option>' + types.map(type => (
+    `<option value="${esc(type)}">${esc(type)}</option>`
+  )).join('');
+
+  select.value = types.includes(current) ? current : 'all';
+}
+
+function renderLiveReports(){
+  const latestEl = document.getElementById('latestReportsGrid');
+  const libraryEl = document.getElementById('reportLibraryGrid');
+  const countMetaEl = document.getElementById('reportsCountMeta');
+  const filterMetaEl = document.getElementById('reportsFilterMeta');
+
+  if (!latestEl || !libraryEl) return;
+
+  const filtered = getFilteredReports();
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'LBT';
+  const fundLabel = fundFilter === 'all' ? 'All funds' : reportFundLabel(fundFilter);
+
+  const latest = filtered.slice(0, 3);
+
+  latestEl.innerHTML = latest.length
+    ? latest.map(reportCardHtml).join('')
+    : '<div class="report-empty">No latest reports match this view.</div>';
+
+  libraryEl.innerHTML = filtered.length
+    ? filtered.map(reportCardHtml).join('')
+    : '<div class="report-empty">No reports match this search or filter.</div>';
+
+  if (countMetaEl) {
+    countMetaEl.textContent = reportsLoaded ? `${filtered.length} reports shown` : 'Loading reports...';
+  }
+
+  if (filterMetaEl) {
+    filterMetaEl.textContent = `${fundLabel} · ${filtered.length} records`;
+  }
+}
+
+async function loadLiveReports(){
+  const latestEl = document.getElementById('latestReportsGrid');
+  const libraryEl = document.getElementById('reportLibraryGrid');
+
+  if (!latestEl || !libraryEl) return;
+
+  try {
+    const response = await fetch('/.netlify/functions/reports');
+    if (!response.ok) throw new Error('Reports function failed');
+
+    const data = await response.json();
+    liveReports = Array.isArray(data.reports) ? data.reports : [];
+    reportsLoaded = true;
+
+    populateReportTypeFilter();
+    renderLiveReports();
+  } catch (error) {
+    console.warn('Could not load live reports:', error);
+    latestEl.innerHTML = '<div class="report-empty">Could not load latest reports.</div>';
+    libraryEl.innerHTML = '<div class="report-empty">Could not load report library.</div>';
+  }
+}
+
+// =========================================
 // REPORTS / IMPACT HUB
 // =========================================
 let nextReportId = reports.length + 1;
@@ -2102,6 +2575,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPlatformContent();
   loadAttentionCards();
   loadFundingPanelCards();
+  loadLiveReports();
   renderWhatsNew();
   buildTimeline();
   loadTimelineItemsFromSupabase();
