@@ -1,6 +1,6 @@
 # The Lightbulb Platform
 
-This repository is a **static HTML/CSS platform prototype with live integrations**. It began as a clickable prototype, but now includes working Supabase Auth, Supabase-backed platform cards, Airtable-backed dashboard statistics, and Netlify Functions.
+This repository is a **static HTML/CSS platform prototype with live integrations**. It began as a clickable prototype, but now includes working Supabase Auth, Supabase-backed editable sections, Airtable-backed dashboard statistics, and Netlify Functions.
 
 There is still no formal frontend framework or build step. The current UI is plain HTML/CSS/JavaScript, with Netlify Functions used where server-side access to live data is needed.
 
@@ -43,7 +43,7 @@ You can also use Netlify **drag-and-drop deploy** of the folder for a one-off pr
 ## Current architecture notes
 
 - **Airtable** is currently the source for portfolio records and calculated Lightbulb dashboard metrics, including live grants, active funding, investments, grants ending soon, and average grant size.
-- **Supabase** is now used for authentication, role checks, and app-owned editable content. The first live Supabase-backed section is `What Needs Attention` on the Lightbulb page.
+- **Supabase** is now used for authentication, role checks, and app-owned editable content. Live Supabase-backed sections currently include `What Needs Attention`, `Timeline`, and `Funding Panel` on the Lightbulb page.
 - **Supabase RLS is enabled** for `platform_cards`. Public read access is allowed, while insert/update/delete is restricted to authenticated admin users.
 - **Netlify Functions** are used to safely read data from Airtable and Supabase without exposing private server-side credentials in frontend code.
 - **Static HTML remains the current UI layer**, but complex editable sections should increasingly be moved into Supabase rather than hardcoded in HTML.
@@ -61,6 +61,8 @@ You can also use Netlify **drag-and-drop deploy** of the folder for a one-off pr
 - **Supabase sign-in** from `index.html`.
 - **Supabase role-aware logged-in homepage** via `home_logged_in.html`.
 - **Supabase-backed What Needs Attention cards** on `lightbulb_index.html`, with admin add/edit/remove.
+- **Supabase-backed Timeline items** on `lightbulb_index.html`, with admin add/edit/remove.
+- **Supabase-backed Funding Panel cards** on `lightbulb_index.html`, with admin add/edit/remove.
 - **Airtable-backed Lightbulb dashboard metrics** via Netlify Functions.
 - **Platform Content-backed manual dashboard fields** via Airtable.
 
@@ -69,7 +71,6 @@ You can also use Netlify **drag-and-drop deploy** of the folder for a one-off pr
 - Full production role-based access across every page.
 - Proper user approval workflows.
 - Partner submissions and uploads.
-- Supabase-backed Timeline and Funding Panel editing.
 - Full Admin Console functionality.
 - Production-grade audit logs and deployment hardening.
 

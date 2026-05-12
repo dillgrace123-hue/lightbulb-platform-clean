@@ -614,12 +614,12 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
       <div class="section-title" style="border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px">
         <div>
           <h2>The active grant timeline</h2>
-          <p>Every live commitment Lightbulb has made, organised by the financial year in which it ends. Bars are coloured by ending year. Click any row to edit.</p>
+          <p>Every live commitment Lightbulb has made, organised by the financial year in which it ends. Bars are coloured by ending year. Admin users can click any row to edit.</p>
         </div>
         <div class="timeline-actions">
-          <button class="btn" onclick="openAddModal()">+ Add grant</button>
+          <button class="btn admin-only" onclick="openAddModal()">+ Add grant</button>
           <button class="btn" onclick="exportCSV()">Export CSV</button>
-          <button class="btn dark" onclick="downloadHTML()">Download editable HTML</button>
+          <button class="btn dark" onclick="window.print()">Print / save PDF</button>
         </div>
       </div>
     </div>
@@ -687,7 +687,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
       <div class="panel-board-head">
         <div>
           <h2>The next funding panel</h2>
-          <p>Applications under consideration, points worth surfacing in advance, and decisions taken. A working board for what's coming up — editable directly on the cards.</p>
+          <p>Applications under consideration, points worth surfacing in advance, and decisions taken. A working board for what's coming up, with admin edits saved to Supabase.</p>
         </div>
         <div class="panel-pill editable" contenteditable="true" data-save-key="funding-panel-date">May/June Panel</div>
       </div>
@@ -1301,7 +1301,11 @@ function buildAxis(){
 }
 
 let editingId = null;
-let nextId = Math.max(...grants.map(g => g.id)) + 1;
+let nextId = Math.max(...grants.map(g => Number(g.id) || 0)) + 1;
+
+function isAdminUser(){
+  return document.body.dataset.userRole === 'admin';
+}
 
 function persist(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grants));
@@ -1328,12 +1332,18 @@ function buildRow(g){
 }
 
 function buildPanel(g, open){
+  if (!isAdminUser()) return '';
   const id = String(g.id);
   const safeId = esc(id);
   return `<div class="panel ${open ? 'open' : ''}"><h3>${esc(g.name)}</h3><div class="edit-grid"><div class="field"><label>Organisation</label><input id="e-name-${safeId}" value="${esc(g.name)}"></div><div class="field"><label>Start</label><input id="e-start-${safeId}" type="date" value="${g.start}"></div><div class="field"><label>End</label><input id="e-end-${safeId}" type="date" value="${g.end}"></div><div class="field"><label>Amount</label><input id="e-amt-${safeId}" type="number" value="${g.amt}"></div><div class="field"><label>Years</label><input id="e-yrs-${safeId}" type="number" min="1" max="4" value="${g.yrs}"></div><div class="field"><label>FoF</label><select id="e-fof-${safeId}"><option ${g.fof==='Yes'?'selected':''}>Yes</option><option ${g.fof==='No'?'selected':''}>No</option></select></div><div class="field notes"><label>Notes</label><input id="e-note-${safeId}" value="${esc(g.note)}"></div></div><div class="panel-actions-row"><button class="smallbtn" onclick="saveEdit('${safeId}')">Save changes</button><button class="smallbtn light" onclick="cancelEdit()">Cancel</button><span class="hint">Changes now save to Supabase.</span><button class="smallbtn danger" onclick="deleteGrant('${safeId}')">Remove</button></div></div>`;
 }
 
-function toggleEdit(id){ editingId = editingId === id ? null : id; hideHover(); buildTimeline(); }
+function toggleEdit(id){
+  if (!isAdminUser()) return;
+  editingId = editingId === id ? null : id;
+  hideHover();
+  buildTimeline();
+}
 function cancelEdit(){ editingId = null; buildTimeline(); }
 async function saveEdit(id){
   const g = grants.find(x => String(x.id) === String(id));
