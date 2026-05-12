@@ -1501,6 +1501,48 @@ async function loadTotalActiveFunding() {
   }
 }
 
+async function loadPlatformContent() {
+  const fields = {
+    next_panel: document.getElementById('dash-nextPanel'),
+    budget_remaining: document.getElementById('dash-budgetRemaining'),
+    next_trustee_meeting: document.getElementById('dash-nextMeeting'),
+    outstanding_actions: document.getElementById('dash-outstandingActions')
+  };
+
+  const fallbackValues = {};
+
+  for (const [key, element] of Object.entries(fields)) {
+    if (element) {
+      fallbackValues[key] = element.textContent;
+      element.textContent = '...';
+    }
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/platform-content?page=Lightbulb&section=Dashboard');
+    if (!response.ok) throw new Error('Platform content function failed');
+
+    const data = await response.json();
+    const content = data.content || {};
+
+    for (const [key, element] of Object.entries(fields)) {
+      if (element && content[key] !== undefined) {
+        element.textContent = content[key];
+      } else if (element) {
+        element.textContent = fallbackValues[key];
+      }
+    }
+  } catch (error) {
+    for (const [key, element] of Object.entries(fields)) {
+      if (element) {
+        element.textContent = fallbackValues[key];
+      }
+    }
+
+    console.warn('Could not load platform content:', error);
+  }
+}
+
 async function loadInvestmentsCount() {
   const investmentsEl = document.getElementById('dash-investments');
 
@@ -1591,6 +1633,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadInvestmentsCount();
   loadGrantsEndingSoon();
   loadAverageGrantSize();
+  loadPlatformContent();
   renderWhatsNew();
   buildTimeline();
   setupEditables();
