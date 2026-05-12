@@ -1438,11 +1438,32 @@ function toast(m){
   tt = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
+
+// =========================================
+// LIVE DATA
+// =========================================
+async function loadLiveGrants() {
+  try {
+    const response = await fetch('/.netlify/functions/live-grants');
+    if (!response.ok) throw new Error('Live grants function failed');
+
+    const data = await response.json();
+    const liveGrantsEl = document.getElementById('dash-liveGrants');
+
+    if (liveGrantsEl && typeof data.liveGrants === 'number') {
+      liveGrantsEl.textContent = data.liveGrants;
+    }
+  } catch (error) {
+    console.warn('Could not load live grants count:', error);
+  }
+}
+
 // =========================================
 // INIT
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
+  loadLiveGrants();
   renderWhatsNew();
   buildTimeline();
   setupEditables();
