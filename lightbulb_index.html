@@ -1064,6 +1064,40 @@ function loadGrants(){
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(document.getElementById('grant-data').textContent); }
   catch(e) { return JSON.parse(document.getElementById('grant-data').textContent); }
 }
+
+function mapTimelineItemToGrant(item, index){
+  return {
+    id: item.id || index + 1,
+    name: item.organisation,
+    start: item.start_date,
+    end: item.end_date,
+    amt: Number(item.amount || 0),
+    fof: item.follow_on_eligible || 'No',
+    yrs: Number(item.funding_year || 1),
+    note: item.notes || '',
+    status: item.status || 'Active',
+    type: item.type || 'Standard grant',
+    sort_order: item.sort_order || index + 1
+  };
+}
+
+async function loadTimelineItemsFromSupabase(){
+  try {
+    const response = await fetch('/.netlify/functions/timeline-items?page=Lightbulb');
+    if (!response.ok) throw new Error('Timeline items function failed');
+
+    const data = await response.json();
+    const items = Array.isArray(data.items) ? data.items : [];
+
+    if (!items.length) return;
+
+    grants = items.map(mapTimelineItemToGrant);
+    document.getElementById('grant-data').textContent = JSON.stringify(grants, null, 2);
+    buildTimeline();
+  } catch (error) {
+    console.warn('Could not load Supabase timeline items:', error);
+  }
+}
 function loadReports(){
   try { return JSON.parse(localStorage.getItem(REPORTS_KEY)) || JSON.parse(document.getElementById('reports-data').textContent); }
   catch(e) { return JSON.parse(document.getElementById('reports-data').textContent); }
@@ -1731,6 +1765,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAttentionCards();
   renderWhatsNew();
   buildTimeline();
+  loadTimelineItemsFromSupabase();
   setupEditables();
   document.getElementById('addModal').addEventListener('click', e => {
     if (e.target.id === 'addModal') closeAddModal();
