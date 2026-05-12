@@ -1601,8 +1601,11 @@ function saveDashboard(){
 // =========================================
 function visibleGrants(){
   return grants.filter(g => {
-    const d = pd(g.end);
-    if (d < TODAY || d > END) return false;
+    const start = pd(g.start);
+    const end = pd(g.end);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
+    if (end < TODAY || end > END) return false;
     if (activeFilter === 'fof') return g.fof === 'Yes';
     if (activeFilter === 'not') return g.fof === 'No';
     return true;
