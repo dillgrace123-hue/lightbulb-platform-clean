@@ -1476,6 +1476,36 @@ function toggleAverageGrantNote() {
   if (note) note.classList.toggle('show');
 }
 
+async function loadTotalActiveFunding() {
+  const totalFundingEl = document.getElementById('dash-totalFunding');
+
+  if (!totalFundingEl) return;
+
+  const fallbackValue = totalFundingEl.textContent;
+  totalFundingEl.textContent = '...';
+
+  try {
+    const response = await fetch('/.netlify/functions/total-active-funding');
+    if (!response.ok) throw new Error('Total active funding function failed');
+
+    const data = await response.json();
+
+    if (typeof data.totalActiveFunding === 'number') {
+      totalFundingEl.textContent = data.totalActiveFunding.toLocaleString('en-GB', {
+        style: 'currency',
+        currency: 'GBP',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    } else {
+      totalFundingEl.textContent = fallbackValue;
+    }
+  } catch (error) {
+    totalFundingEl.textContent = fallbackValue;
+    console.warn('Could not load total active funding:', error);
+  }
+}
+
 async function loadGrantsEndingSoon() {
   const grantsEndingSoonEl = document.getElementById('dash-grantsEndingSoon');
 
@@ -1536,6 +1566,7 @@ async function loadAverageGrantSize() {
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
+  loadTotalActiveFunding();
   loadLiveGrants();
   loadGrantsEndingSoon();
   loadAverageGrantSize();
