@@ -1506,6 +1506,31 @@ async function loadTotalActiveFunding() {
   }
 }
 
+async function loadInvestmentsCount() {
+  const investmentsEl = document.getElementById('dash-investments');
+
+  if (!investmentsEl) return;
+
+  const fallbackValue = investmentsEl.textContent;
+  investmentsEl.textContent = '...';
+
+  try {
+    const response = await fetch('/.netlify/functions/investments-count');
+    if (!response.ok) throw new Error('Investments count function failed');
+
+    const data = await response.json();
+
+    if (typeof data.investments === 'number') {
+      investmentsEl.textContent = data.investments;
+    } else {
+      investmentsEl.textContent = fallbackValue;
+    }
+  } catch (error) {
+    investmentsEl.textContent = fallbackValue;
+    console.warn('Could not load investments count:', error);
+  }
+}
+
 async function loadGrantsEndingSoon() {
   const grantsEndingSoonEl = document.getElementById('dash-grantsEndingSoon');
 
@@ -1568,6 +1593,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
   loadTotalActiveFunding();
   loadLiveGrants();
+  loadInvestmentsCount();
   loadGrantsEndingSoon();
   loadAverageGrantSize();
   renderWhatsNew();
