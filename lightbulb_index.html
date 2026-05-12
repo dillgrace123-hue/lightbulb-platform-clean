@@ -827,6 +827,40 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 </div>
 
+<!-- Funding panel card modal -->
+<div class="modal-bg" id="fundingPanelCardModal">
+  <div class="modal">
+    <h2 id="fundingPanelCardModalTitle">Funding panel card</h2>
+    <input id="funding-panel-card-id" type="hidden">
+    <input id="funding-panel-column-key" type="hidden">
+    <div class="modal-grid">
+      <div class="modal-full field"><label>Title</label><input id="funding-panel-title"></div>
+      <div class="modal-full field"><label>Description</label><textarea id="funding-panel-desc" style="font-family:'DM Sans',sans-serif;min-height:90px;resize:vertical"></textarea></div>
+      <div class="field"><label>Tag / type</label><input id="funding-panel-type" placeholder="Follow-up, Emergency fund, Payment processing"></div>
+      <div class="field"><label>Status</label><select id="funding-panel-status"><option>Open</option><option>In Progress</option><option>Waiting</option><option>Complete</option></select></div>
+      <div class="field"><label>Priority</label><select id="funding-panel-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="field"><label>Owner</label><input id="funding-panel-owner" placeholder="Dillon"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="smallbtn light" onclick="closeFundingPanelCardModal()">Cancel</button>
+      <button class="smallbtn" onclick="saveFundingPanelCard()">Save card</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove funding panel confirmation modal -->
+<div class="modal-bg" id="removeFundingPanelModal">
+  <div class="modal" style="max-width:460px">
+    <h2>Remove funding panel card?</h2>
+    <p id="remove-funding-panel-title" style="font-size:14px;color:var(--muted);line-height:1.5;margin:8px 0 18px"></p>
+    <input id="remove-funding-panel-id" type="hidden">
+    <div class="modal-actions">
+      <button class="smallbtn light" onclick="closeRemoveFundingPanelModal()">Cancel</button>
+      <button class="smallbtn danger" onclick="confirmRemoveFundingPanelCard()">Remove card</button>
+    </div>
+  </div>
+</div>
+
 <!-- Remove action confirmation modal -->
 <div class="modal-bg" id="removeActionModal">
   <div class="modal" style="max-width:460px">
@@ -1571,32 +1605,153 @@ function setupEditables(){
   });
 }
 
-function addPanelCard(btn, tagColor){
-  const column = btn.parentElement;
-  const cards = column.querySelector('.panel-cards');
-  const id = 'card-' + Date.now();
-  const card = document.createElement('div');
-  card.className = 'panel-card';
-  card.innerHTML = `
-    <button class="panel-delete" onclick="deletePanelCard(this)">Delete</button>
-    <h4 class="editable" contenteditable="true" data-save-key="${id}-title">New item</h4>
-    <p class="editable" contenteditable="true" data-save-key="${id}-body">Add details, context or notes.</p>
-    <span class="panel-tag ${tagColor || ''} editable" contenteditable="true" data-save-key="${id}-tag">Tag</span>
-  `;
-  cards.appendChild(card);
-  setupEditables();
-  toast('Card added');
+function setFundingPanelField(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.value = value || '';
 }
 
-function deletePanelCard(btn){
-  if (!confirm('Remove this card?')) return;
-  const card = btn.parentElement;
-  // Clean up storage
-  card.querySelectorAll('[data-save-key]').forEach(el => {
-    localStorage.removeItem(MANUAL_PREFIX + el.dataset.saveKey);
-  });
-  card.remove();
-  toast('Card removed');
+function getFundingPanelField(id) {
+  return document.getElementById(id)?.value.trim() || '';
+}
+
+function addPanelCard(btn, tagColor){
+  const column = btn.closest('.panel-column');
+  const columnKey = column?.dataset.column || 'points_to_consider';
+
+  document.getElementById('fundingPanelCardModalTitle').textContent = 'Add funding panel card';
+  setFundingPanelField('funding-panel-card-id', '');
+  setFundingPanelField('funding-panel-column-key', columnKey);
+  setFundingPanelField('funding-panel-title', '');
+  setFundingPanelField('funding-panel-desc', '');
+  setFundingPanelField('funding-panel-type', 'New item');
+  setFundingPanelField('funding-panel-status', 'Open');
+  setFundingPanelField('funding-panel-priority', 'Medium');
+  setFundingPanelField('funding-panel-owner', 'Dillon');
+
+  document.getElementById('fundingPanelCardModal').classList.add('open');
+}
+
+function editFundingPanelCard(cardId){
+  const card = window.currentFundingPanelCards?.[cardId];
+
+  if (!card) {
+    alert('Could not find this funding panel card.');
+    return;
+  }
+
+  document.getElementById('fundingPanelCardModalTitle').textContent = 'Edit funding panel card';
+  setFundingPanelField('funding-panel-card-id', card.id);
+  setFundingPanelField('funding-panel-column-key', card.column_key);
+  setFundingPanelField('funding-panel-title', card.title);
+  setFundingPanelField('funding-panel-desc', card.description);
+  setFundingPanelField('funding-panel-type', card.type);
+  setFundingPanelField('funding-panel-status', card.status || 'Open');
+  setFundingPanelField('funding-panel-priority', card.priority || 'Medium');
+  setFundingPanelField('funding-panel-owner', card.owner);
+
+  document.getElementById('fundingPanelCardModal').classList.add('open');
+}
+
+function closeFundingPanelCardModal(){
+  document.getElementById('fundingPanelCardModal').classList.remove('open');
+}
+
+async function saveFundingPanelCard(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet. Please refresh and try again.');
+    return;
+  }
+
+  const cardId = getFundingPanelField('funding-panel-card-id');
+  const columnKey = getFundingPanelField('funding-panel-column-key') || 'points_to_consider';
+
+  const payload = {
+    title: getFundingPanelField('funding-panel-title') || 'Untitled card',
+    description: getFundingPanelField('funding-panel-desc'),
+    type: getFundingPanelField('funding-panel-type') || 'Open',
+    status: getFundingPanelField('funding-panel-status') || 'Open',
+    priority: getFundingPanelField('funding-panel-priority') || 'Medium',
+    owner: getFundingPanelField('funding-panel-owner'),
+    column_key: columnKey,
+    updated_at: new Date().toISOString()
+  };
+
+  let result;
+
+  if (cardId) {
+    result = await window.supabaseClient
+      .from('platform_cards')
+      .update(payload)
+      .eq('id', cardId);
+  } else {
+    const existingCards = Object.values(window.currentFundingPanelCards || {})
+      .filter(card => card.column_key === columnKey);
+
+    result = await window.supabaseClient
+      .from('platform_cards')
+      .insert({
+        ...payload,
+        page: 'Lightbulb',
+        section: 'funding_panel',
+        sort_order: existingCards.length + 1
+      });
+  }
+
+  if (result.error) {
+    alert('Could not save funding panel card: ' + result.error.message);
+    return;
+  }
+
+  closeFundingPanelCardModal();
+  await loadFundingPanelCards();
+  toast('Funding panel card saved');
+}
+
+function deletePanelCard(cardId){
+  const card = window.currentFundingPanelCards?.[cardId];
+
+  if (!card) {
+    alert('Could not find this funding panel card.');
+    return;
+  }
+
+  document.getElementById('remove-funding-panel-id').value = cardId;
+  document.getElementById('remove-funding-panel-title').textContent = card.title || 'Untitled card';
+  document.getElementById('removeFundingPanelModal').classList.add('open');
+}
+
+function closeRemoveFundingPanelModal(){
+  document.getElementById('removeFundingPanelModal').classList.remove('open');
+  document.getElementById('remove-funding-panel-id').value = '';
+  document.getElementById('remove-funding-panel-title').textContent = '';
+}
+
+async function confirmRemoveFundingPanelCard(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet. Please refresh and try again.');
+    return;
+  }
+
+  const cardId = document.getElementById('remove-funding-panel-id').value;
+
+  if (!cardId) {
+    alert('Could not find this funding panel card.');
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from('platform_cards')
+    .delete()
+    .eq('id', cardId);
+
+  if (error) {
+    alert('Could not remove funding panel card: ' + error.message);
+    return;
+  }
+
+  closeRemoveFundingPanelModal();
+  await loadFundingPanelCards();
+  toast('Funding panel card removed');
 }
 
 // =========================================
@@ -1686,10 +1841,14 @@ function panelTagClass(columnKey) {
 
 function renderPanelCard(card) {
   const tagClass = panelTagClass(card.column_key);
+  const safeId = esc(card.id);
 
   return `
-    <div class="panel-card" data-card-id="${esc(card.id)}">
-      <button class="panel-delete admin-only" onclick="deletePanelCard(this)">Delete</button>
+    <div class="panel-card" data-card-id="${safeId}">
+      <div class="attention-actions admin-only" style="justify-content:flex-end;margin-bottom:8px">
+        <button class="attention-edit-btn" type="button" onclick="editFundingPanelCard('${safeId}')">Edit</button>
+        <button class="attention-delete-btn" type="button" onclick="deletePanelCard('${safeId}')">Remove</button>
+      </div>
       <h4>${esc(card.title || 'Untitled card')}</h4>
       <p>${esc(card.description || '')}</p>
       <span class="panel-tag ${tagClass}">${esc(card.type || card.status || 'Open')}</span>
@@ -1704,6 +1863,11 @@ async function loadFundingPanelCards() {
 
     const data = await response.json();
     const cards = Array.isArray(data.cards) ? data.cards : [];
+
+    window.currentFundingPanelCards = {};
+    cards.forEach(card => {
+      if (card.id) window.currentFundingPanelCards[card.id] = card;
+    });
 
     const columns = ['points_to_consider', 'applications', 'decisions'];
 
