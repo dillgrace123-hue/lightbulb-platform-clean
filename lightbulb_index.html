@@ -429,9 +429,9 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
     <div class="dashboard-header">
       <div>
         <h1>Executive Brief</h1>
-        <p id="dashboard-lastupdate">Manual weekly update. Edit and download to redeploy.</p>
+        <p id="dashboard-lastupdate">Loading latest dashboard data...</p>
       </div>
-      <button class="btn" onclick="openDashboardModal()" style="margin-top:0">Edit this week</button>
+      <button class="btn" disabled style="margin-top:0;opacity:.55;cursor:not-allowed" title="Admin editing will be added in the next platform phase">Admin editing coming soon</button>
     </div>
 
     <!-- Main funding position -->
@@ -1107,7 +1107,16 @@ function renderDashboard(){
     if (els.nextMeeting) els.nextMeeting.textContent = dashboard.nextMeeting;
     if (els.outstandingApprovals) els.outstandingApprovals.textContent = dashboard.outstandingApprovals;
     if (els.attentionItems) els.attentionItems.innerHTML = dashboard.attentionItems.map(i => `<li>${esc(i)}</li>`).join('');
-    if (els.lastupdate) els.lastupdate.textContent = 'Last updated ' + dashboard.lastUpdate + '.';
+    if (els.lastupdate) {
+      const now = new Date();
+      els.lastupdate.textContent = 'Last automatic update: ' + now.toLocaleString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
   } catch(e) {
     console.error('renderDashboard error:', e);
   }
