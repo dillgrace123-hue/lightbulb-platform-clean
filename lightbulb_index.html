@@ -807,6 +807,26 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 </div>
 
+<!-- Action card modal -->
+<div class="modal-bg" id="actionCardModal">
+  <div class="modal">
+    <h2 id="actionCardModalTitle">Action card</h2>
+    <input id="action-card-id" type="hidden">
+    <div class="modal-grid">
+      <div class="modal-full field"><label>Title</label><input id="action-title"></div>
+      <div class="modal-full field"><label>Description</label><textarea id="action-desc" style="font-family:'DM Sans',sans-serif;min-height:80px;resize:vertical"></textarea></div>
+      <div class="field"><label>Type</label><input id="action-type" placeholder="Payment, Decision, Follow-up"></div>
+      <div class="field"><label>Status</label><select id="action-status"><option>Open</option><option>In Progress</option><option>Waiting</option><option>Complete</option></select></div>
+      <div class="field"><label>Priority</label><select id="action-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="field"><label>Owner</label><input id="action-owner" placeholder="Dillon"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="smallbtn light" onclick="closeActionCardModal()">Cancel</button>
+      <button class="smallbtn" onclick="saveActionCard()">Save action</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add grant modal -->
 <div class="modal-bg" id="addModal">
   <div class="modal">
@@ -1513,6 +1533,13 @@ async function loadAttentionCards() {
     const data = await response.json();
     const cards = Array.isArray(data.cards) ? data.cards : [];
 
+    const outstandingActionsEl = document.getElementById('dash-outstandingApprovals');
+
+    if (outstandingActionsEl) {
+      const outstandingCount = cards.filter(card => card.status !== 'Complete').length;
+      outstandingActionsEl.textContent = outstandingCount;
+    }
+
     if (!cards.length) {
       listEl.innerHTML = '<li>No current action cards.</li>';
       return;
@@ -1560,8 +1587,7 @@ async function loadPlatformContent() {
   const fields = {
     next_panel: document.getElementById('dash-nextPanel'),
     budget_remaining: document.getElementById('dash-budgetRemaining'),
-    next_trustee_meeting: document.getElementById('dash-nextMeeting'),
-    outstanding_actions: document.getElementById('dash-outstandingApprovals')
+    next_trustee_meeting: document.getElementById('dash-nextMeeting')
   };
 
   const fallbackValues = {};
@@ -1754,43 +1780,91 @@ document.addEventListener('DOMContentLoaded', () => {
     userNameEl.textContent = profile.role || 'Signed in';
   }
 
-  window.addAttentionCard = async function() {
-    const title = prompt('New action title:');
-    if (title === null) return;
+  function setActionField(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.value = value || '';
+  }
 
-    const description = prompt('New action description:', '');
-    if (description === null) return;
+  function getActionField(id) {
+    return document.getElementById(id)?.value.trim() || '';
+  }
 
-    const type = prompt('Type:', 'Action');
-    if (type === null) return;
+  window.addAttentionCard = function() {
+    document.getElementById('actionCardModalTitle').textContent = 'Add action';
+    setActionField('action-card-id', '');
+    setActionField('action-title', '');
+    setActionField('action-desc', '');
+    setActionField('action-type', 'Action');
+    setActionField('action-status', 'Open');
+    setActionField('action-priority', 'Medium');
+    setActionField('action-owner', 'Dillon');
 
-    const priority = prompt('Priority:', 'Medium');
-    if (priority === null) return;
+    document.getElementById('actionCardModal').classList.add('open');
+  };
 
-    const owner = prompt('Owner:', 'Dillon');
-    if (owner === null) return;
+  window.editAttentionCard = function(cardId) {
+    const card = window.currentAttentionCards?.[cardId];
 
-    const nextSortOrder = Object.values(window.currentAttentionCards || {}).length + 1;
-
-    const { error } = await supabase
-      .from('platform_cards')
-      .insert({
-        page: 'Lightbulb',
-        section: 'what_needs_attention',
-        title: title.trim() || 'Untitled action',
-        description: description.trim(),
-        type: type.trim() || 'Action',
-        status: 'Open',
-        priority: priority.trim() || 'Medium',
-        owner: owner.trim(),
-        sort_order: nextSortOrder
-      });
-
-    if (error) {
-      alert('Could not add card: ' + error.message);
+    if (!card) {
+      alert('Could not find this card.');
       return;
     }
 
+    document.getElementById('actionCardModalTitle').textContent = 'Edit action';
+    setActionField('action-card-id', card.id);
+    setActionField('action-title', card.title);
+    setActionField('action-desc', card.description);
+    setActionField('action-type', card.type);
+    setActionField('action-status', card.status || 'Open');
+    setActionField('action-priority', card.priority || 'Medium');
+    setActionField('action-owner', card.owner);
+
+    document.getElementById('actionCardModal').classList.add('open');
+  };
+
+  window.closeActionCardModal = function() {
+    document.getElementById('actionCardModal').classList.remove('open');
+  };
+
+  window.saveActionCard = async function() {
+    const cardId = getActionField('action-card-id');
+
+    const payload = {
+      title: getActionField('action-title') || 'Untitled action',
+      description: getActionField('action-desc'),
+      type: getActionField('action-type') || 'Action',
+      status: getActionField('action-status') || 'Open',
+      priority: getActionField('action-priority') || 'Medium',
+      owner: getActionField('action-owner'),
+      updated_at: new Date().toISOString()
+    };
+
+    let result;
+
+    if (cardId) {
+      result = await supabase
+        .from('platform_cards')
+        .update(payload)
+        .eq('id', cardId);
+    } else {
+      const nextSortOrder = Object.values(window.currentAttentionCards || {}).length + 1;
+
+      result = await supabase
+        .from('platform_cards')
+        .insert({
+          ...payload,
+          page: 'Lightbulb',
+          section: 'what_needs_attention',
+          sort_order: nextSortOrder
+        });
+    }
+
+    if (result.error) {
+      alert('Could not save action: ' + result.error.message);
+      return;
+    }
+
+    window.closeActionCardModal();
     await window.loadAttentionCards();
   };
 
@@ -1813,37 +1887,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (error) {
       alert('Could not remove card: ' + error.message);
-      return;
-    }
-
-    await window.loadAttentionCards();
-  };
-
-  window.editAttentionCard = async function(cardId) {
-    const card = window.currentAttentionCards?.[cardId];
-
-    if (!card) {
-      alert('Could not find this card.');
-      return;
-    }
-
-    const newTitle = prompt('Edit action title:', card.title || '');
-    if (newTitle === null) return;
-
-    const newDescription = prompt('Edit action description:', card.description || '');
-    if (newDescription === null) return;
-
-    const { error } = await supabase
-      .from('platform_cards')
-      .update({
-        title: newTitle.trim() || card.title,
-        description: newDescription.trim(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', cardId);
-
-    if (error) {
-      alert('Could not save card: ' + error.message);
       return;
     }
 
