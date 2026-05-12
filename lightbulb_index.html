@@ -1476,6 +1476,31 @@ function toggleAverageGrantNote() {
   if (note) note.classList.toggle('show');
 }
 
+async function loadGrantsEndingSoon() {
+  const grantsEndingSoonEl = document.getElementById('dash-grantsEndingSoon');
+
+  if (!grantsEndingSoonEl) return;
+
+  const fallbackValue = grantsEndingSoonEl.textContent;
+  grantsEndingSoonEl.textContent = '...';
+
+  try {
+    const response = await fetch('/.netlify/functions/grants-ending-soon');
+    if (!response.ok) throw new Error('Grants ending soon function failed');
+
+    const data = await response.json();
+
+    if (typeof data.grantsEndingSoon === 'number') {
+      grantsEndingSoonEl.textContent = data.grantsEndingSoon;
+    } else {
+      grantsEndingSoonEl.textContent = fallbackValue;
+    }
+  } catch (error) {
+    grantsEndingSoonEl.textContent = fallbackValue;
+    console.warn('Could not load grants ending soon:', error);
+  }
+}
+
 async function loadAverageGrantSize() {
   const averageGrantSizeEl = document.getElementById('dash-avgGrantSize');
 
@@ -1512,6 +1537,7 @@ async function loadAverageGrantSize() {
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
   loadLiveGrants();
+  loadGrantsEndingSoon();
   loadAverageGrantSize();
   renderWhatsNew();
   buildTimeline();
