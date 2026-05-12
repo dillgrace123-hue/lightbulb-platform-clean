@@ -860,6 +860,19 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 </div>
 
+<!-- Remove timeline item confirmation modal -->
+<div class="modal-bg" id="removeTimelineModal">
+  <div class="modal" style="max-width:460px">
+    <h2>Remove timeline item?</h2>
+    <p id="remove-timeline-title" style="font-size:14px;color:var(--muted);line-height:1.5;margin:8px 0 18px"></p>
+    <input id="remove-timeline-id" type="hidden">
+    <div class="modal-actions">
+      <button class="smallbtn light" onclick="closeRemoveTimelineModal()">Cancel</button>
+      <button class="smallbtn danger" onclick="confirmRemoveTimelineItem()">Remove item</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add report modal -->
 <div class="modal-bg" id="addReportModal">
   <div class="modal">
@@ -1265,13 +1278,15 @@ function buildRow(g){
   const l = pct(pd(g.start) < START ? START : pd(g.start));
   const r = pct(pd(g.end));
   const w = Math.max(r - l, 1.3);
-  const open = editingId === g.id;
-  return `<div class="row" onmousemove="showHover(event,${g.id})" onmouseleave="hideHover()">
-    <div class="name" onclick="toggleEdit(${g.id})" style="cursor:pointer" title="${esc(g.note)}">${esc(g.name)}<span class="badge ${g.fof === 'Yes' ? '' : 'no'}">${g.fof === 'Yes' ? 'FoF' : 'No'}</span></div>
-    <div class="amt" onclick="toggleEdit(${g.id})" style="cursor:pointer">${fmtAmt(g.amt)}</div>
+  const id = String(g.id);
+  const safeId = esc(id);
+  const open = editingId === id;
+  return `<div class="row" onmousemove="showHover(event,'${safeId}')" onmouseleave="hideHover()">
+    <div class="name" onclick="toggleEdit('${safeId}')" style="cursor:pointer" title="${esc(g.note)}">${esc(g.name)}<span class="badge ${g.fof === 'Yes' ? '' : 'no'}">${g.fof === 'Yes' ? 'FoF' : 'No'}</span></div>
+    <div class="amt" onclick="toggleEdit('${safeId}')" style="cursor:pointer">${fmtAmt(g.amt)}</div>
     <div class="track">
       <div class="today" style="left:${pct(TODAY)}%"></div>
-      <div class="bar ${endClass(g)}" onclick="toggleEdit(${g.id})" style="left:${l}%;width:${w}%;cursor:pointer">
+      <div class="bar ${endClass(g)}" onclick="toggleEdit('${safeId}')" style="left:${l}%;width:${w}%;cursor:pointer">
         <span class="end-label">Ends ${shortDate(g.end)}</span>
       </div>
     </div>
@@ -1279,34 +1294,101 @@ function buildRow(g){
 }
 
 function buildPanel(g, open){
-  return `<div class="panel ${open ? 'open' : ''}"><h3>${esc(g.name)}</h3><div class="edit-grid"><div class="field"><label>Organisation</label><input id="e-name-${g.id}" value="${esc(g.name)}"></div><div class="field"><label>Start</label><input id="e-start-${g.id}" type="date" value="${g.start}"></div><div class="field"><label>End</label><input id="e-end-${g.id}" type="date" value="${g.end}"></div><div class="field"><label>Amount</label><input id="e-amt-${g.id}" type="number" value="${g.amt}"></div><div class="field"><label>Years</label><input id="e-yrs-${g.id}" type="number" min="1" max="4" value="${g.yrs}"></div><div class="field"><label>FoF</label><select id="e-fof-${g.id}"><option ${g.fof==='Yes'?'selected':''}>Yes</option><option ${g.fof==='No'?'selected':''}>No</option></select></div><div class="field notes"><label>Notes</label><input id="e-note-${g.id}" value="${esc(g.note)}"></div></div><div class="panel-actions-row"><button class="smallbtn" onclick="saveEdit(${g.id})">Save changes</button><button class="smallbtn light" onclick="cancelEdit()">Cancel</button><span class="hint">Click "Download editable HTML" to save changes for redeployment.</span><button class="smallbtn danger" onclick="deleteGrant(${g.id})">Remove</button></div></div>`;
+  const id = String(g.id);
+  const safeId = esc(id);
+  return `<div class="panel ${open ? 'open' : ''}"><h3>${esc(g.name)}</h3><div class="edit-grid"><div class="field"><label>Organisation</label><input id="e-name-${safeId}" value="${esc(g.name)}"></div><div class="field"><label>Start</label><input id="e-start-${safeId}" type="date" value="${g.start}"></div><div class="field"><label>End</label><input id="e-end-${safeId}" type="date" value="${g.end}"></div><div class="field"><label>Amount</label><input id="e-amt-${safeId}" type="number" value="${g.amt}"></div><div class="field"><label>Years</label><input id="e-yrs-${safeId}" type="number" min="1" max="4" value="${g.yrs}"></div><div class="field"><label>FoF</label><select id="e-fof-${safeId}"><option ${g.fof==='Yes'?'selected':''}>Yes</option><option ${g.fof==='No'?'selected':''}>No</option></select></div><div class="field notes"><label>Notes</label><input id="e-note-${safeId}" value="${esc(g.note)}"></div></div><div class="panel-actions-row"><button class="smallbtn" onclick="saveEdit('${safeId}')">Save changes</button><button class="smallbtn light" onclick="cancelEdit()">Cancel</button><span class="hint">Changes now save to Supabase.</span><button class="smallbtn danger" onclick="deleteGrant('${safeId}')">Remove</button></div></div>`;
 }
 
 function toggleEdit(id){ editingId = editingId === id ? null : id; hideHover(); buildTimeline(); }
 function cancelEdit(){ editingId = null; buildTimeline(); }
-function saveEdit(id){
-  const g = grants.find(x => x.id === id);
+async function saveEdit(id){
+  const g = grants.find(x => String(x.id) === String(id));
+  if (!g) {
+    alert('Could not find this timeline item.');
+    return;
+  }
+
   ['name','start','end','amt','yrs','fof','note'].forEach(k => {
     const el = document.getElementById(`e-${k}-${id}`);
     if (el) g[k] = (k === 'amt' || k === 'yrs') ? Number(el.value) : el.value;
   });
+
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet. Please refresh and try again.');
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from('timeline_items')
+    .update({
+      organisation: g.name,
+      start_date: g.start,
+      end_date: g.end,
+      amount: g.amt,
+      funding_year: String(g.yrs || ''),
+      follow_on_eligible: g.fof,
+      notes: g.note,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id);
+
+  if (error) {
+    alert('Could not save timeline item: ' + error.message);
+    return;
+  }
+
   editingId = null;
-  persist();
-  buildTimeline();
-  toast('Saved');
+  await loadTimelineItemsFromSupabase();
+  toast('Saved to Supabase');
 }
+
 function deleteGrant(id){
-  if (!confirm('Remove this grant?')) return;
-  grants = grants.filter(g => g.id !== id);
+  const g = grants.find(x => String(x.id) === String(id));
+
+  document.getElementById('remove-timeline-id').value = id;
+  document.getElementById('remove-timeline-title').textContent = g?.name || 'Untitled item';
+  document.getElementById('removeTimelineModal').classList.add('open');
+}
+
+function closeRemoveTimelineModal(){
+  document.getElementById('removeTimelineModal').classList.remove('open');
+  document.getElementById('remove-timeline-id').value = '';
+  document.getElementById('remove-timeline-title').textContent = '';
+}
+
+async function confirmRemoveTimelineItem(){
+  const id = document.getElementById('remove-timeline-id').value;
+
+  if (!id) {
+    alert('Could not find this timeline item.');
+    return;
+  }
+
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet. Please refresh and try again.');
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from('timeline_items')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert('Could not remove timeline item: ' + error.message);
+    return;
+  }
+
   editingId = null;
-  persist();
-  buildTimeline();
-  toast('Removed');
+  closeRemoveTimelineModal();
+  await loadTimelineItemsFromSupabase();
+  toast('Removed from Supabase');
 }
 
 function openAddModal(){ document.getElementById('addModal').classList.add('open'); }
 function closeAddModal(){ document.getElementById('addModal').classList.remove('open'); }
-function saveNewGrant(){
+
+async function saveNewGrant(){
   const name = document.getElementById('m-name').value.trim();
   const start = document.getElementById('m-start').value;
   const end = document.getElementById('m-end').value;
@@ -1314,13 +1396,44 @@ function saveNewGrant(){
   const yrs = Number(document.getElementById('m-yrs').value) || 1;
   const fof = document.getElementById('m-fof').value;
   const note = document.getElementById('m-note').value.trim();
-  if (!name || !start || !end || !amt){ alert('Please add name, dates and amount.'); return; }
-  grants.push({id: nextId++, name, start, end, amt, fof, yrs, note});
-  persist();
+
+  if (!name || !start || !end || !amt){
+    alert('Please add name, dates and amount.');
+    return;
+  }
+
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet. Please refresh and try again.');
+    return;
+  }
+
+  const nextSortOrder = grants.length + 1;
+
+  const { error } = await window.supabaseClient
+    .from('timeline_items')
+    .insert({
+      page: 'Lightbulb',
+      organisation: name,
+      amount: amt,
+      start_date: start,
+      end_date: end,
+      funding_year: String(yrs),
+      follow_on_eligible: fof,
+      type: 'Standard grant',
+      status: 'Active',
+      notes: note,
+      sort_order: nextSortOrder
+    });
+
+  if (error) {
+    alert('Could not add timeline item: ' + error.message);
+    return;
+  }
+
   closeAddModal();
-  buildTimeline();
-  ['m-name','m-start','m-end','m-amt','m-note'].forEach(id => document.getElementById(id).value = '');
-  toast('Grant added');
+  ['m-name','m-start','m-end','m-amt','m-note'].forEach(fieldId => document.getElementById(fieldId).value = '');
+  await loadTimelineItemsFromSupabase();
+  toast('Timeline item added to Supabase');
 }
 
 function exportCSV(){
@@ -1789,6 +1902,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
   const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
   const supabase = createClient(supabaseUrl, supabaseKey);
+  window.supabaseClient = supabase;
 
   async function loadAdminSession() {
     const userNameEl = document.getElementById('platformShellUserName');
