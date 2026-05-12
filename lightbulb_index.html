@@ -153,6 +153,8 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .stat-info{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:5px;border-radius:50%;background:rgba(63,111,142,.12);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer;padding:0}
 .stat-note{display:none;margin-top:6px;font-size:11px;color:var(--muted);line-height:1.4}
 .stat-note.show{display:block}
+.data-source-note{font-size:12px;color:var(--muted);line-height:1.5;background:#f7fafb;border:1px solid rgba(91,138,166,.18);border-radius:12px;padding:12px 14px;margin:-14px 0 28px}
+.data-source-note strong{color:var(--ink);font-weight:700}
 .attention-block{background:linear-gradient(135deg, #fffdf7 0%, #faf8f3 100%);border:1px solid rgba(217,154,53,.25);border-radius:16px;padding:24px;margin-bottom:32px}
 .attention-block h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 14px}
 .attention-block ul{margin:0;padding-left:0;list-style:none}
@@ -485,6 +487,10 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
         <div class="stat-value" id="dash-outstandingApprovals">2</div>
         <div class="stat-desc">Priority follow-ups currently open</div>
       </div>
+    </div>
+
+    <div class="data-source-note">
+      <strong>Data source:</strong> live portfolio metrics are pulled from the main Airtable base. Planning fields are maintained through Platform Content.
     </div>
 
     <!-- What needs attention -->
@@ -1506,7 +1512,7 @@ async function loadPlatformContent() {
     next_panel: document.getElementById('dash-nextPanel'),
     budget_remaining: document.getElementById('dash-budgetRemaining'),
     next_trustee_meeting: document.getElementById('dash-nextMeeting'),
-    outstanding_actions: document.getElementById('dash-outstandingActions')
+    outstanding_actions: document.getElementById('dash-outstandingApprovals')
   };
 
   const fallbackValues = {};
