@@ -82,3 +82,14 @@ You can also use Netlify **drag-and-drop deploy** of the folder for a one-off pr
 4. **Hardening** — tests, accessibility, performance, security review, and staged rollout.
 
 Questions or changes to this doc belong in `README.md` only; the HTML files stay as the visual prototype.
+## Current build checkpoint
+
+The Lightbulb Portfolio now includes a live Airtable-backed Reporting Hub.
+
+Reports are loaded from the `Reporting` Airtable table through `netlify/functions/reports.js`.
+
+The Reporting Hub defaults to Lightbulb reports, with optional Greenlight and All views. It includes search, report type filtering, latest reports, and a full report library.
+
+Timeline, Funding Panel, and What Needs Attention are Supabase-backed editable sections for admin users.
+
+Partner Interactions remains linked out to Notion from the main dashboard for now.
