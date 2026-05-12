@@ -1381,10 +1381,13 @@ function loadWhatsNew(){
 function renderWhatsNew(){
   whatsNew = loadWhatsNew();
   const card = document.getElementById('whatsNewCard');
+  if (!card) return;
+
   if (!whatsNew.title || !whatsNew.desc) {
     card.style.display = 'none';
     return;
   }
+
   card.style.display = 'flex';
   document.getElementById('whatsNewTitle').textContent = whatsNew.title;
   document.getElementById('whatsNewDesc').textContent = whatsNew.desc;
@@ -1607,6 +1610,15 @@ function visibleGrants(){
 }
 
 function buildTimeline(){
+  const wrap = document.getElementById('timeline');
+  if (!wrap) return;
+
+  grants = grants.filter(g => {
+    const startOk = g.start && !Number.isNaN(new Date(g.start).getTime());
+    const endOk = g.end && !Number.isNaN(new Date(g.end).getTime());
+    return startOk && endOk;
+  });
+
   const vis = visibleGrants();
   let html = buildAxis();
   [0,1,2].forEach(i => {
