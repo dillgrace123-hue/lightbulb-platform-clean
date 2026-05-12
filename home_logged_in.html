@@ -342,7 +342,8 @@ function updateRole(role){
 }
 
 roleSelect.addEventListener('change', e => updateRole(e.target.value));
-updateRole(roleSelect.value);
+roleSelect.value = 'admin';
+updateRole('admin');
 </script>
 </body>
 </html>

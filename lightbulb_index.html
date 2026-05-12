@@ -878,53 +878,11 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 
 // ===== PLATFORM SHELL ACCESS CHECK & USER DISPLAY =====
 (function(){
-  const PLATFORM_STORAGE_KEY = 'lightbulb_platform_user';
-  const CURRENT_HUB = 'lightbulb';
-  const USER_ACCESS = {
-    'Dillon':   ['lightbulb','greenlight','trustee','partner'],
-    'Luisa':    ['lightbulb','greenlight','trustee','partner'],
-    'Catia':    ['lightbulb','greenlight','trustee','partner'],
-    'Ben':      ['lightbulb'],
-    'Salome':   ['lightbulb'],
-    'Ayve':     ['greenlight'],
-    'Adam':     ['greenlight'],
-    'Trustee':  ['trustee'],
-    'Partner':  ['partner']
-  };
-
-  const user = localStorage.getItem(PLATFORM_STORAGE_KEY) || '';
   const userNameEl = document.getElementById('platformShellUserName');
 
-  if (!user){
-    if (userNameEl){
-      userNameEl.textContent = 'No user selected';
-      userNameEl.classList.add('no-user');
-    }
-    // No user — send to platform home so they can select one
-    // Use a small delay so users see the page briefly before redirect, in case of direct nav
-    if (window.location.search.indexOf('skipcheck') === -1){
-      setTimeout(() => { window.location.href = 'home_logged_in.html'; }, 50);
-    }
-    return;
-  }
-
   if (userNameEl){
-    userNameEl.textContent = user;
+    userNameEl.textContent = 'Checking access...';
     userNameEl.classList.remove('no-user');
-  }
-
-  // Access check
-  const allowed = USER_ACCESS[user] || [];
-  if (!allowed.includes(CURRENT_HUB)){
-    if (window.location.search.indexOf('skipcheck') === -1){
-      // Replace page content with an access-denied message rather than an alert popup
-      document.body.innerHTML = '<div style="font-family:DM Sans,sans-serif;max-width:480px;margin:120px auto;padding:32px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.05);text-align:center">' +
-        '<div style="font-size:32px;margin-bottom:12px">🔒</div>' +
-        '<h2 style="font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em">Access not permitted</h2>' +
-        '<p style="font-size:13.5px;color:#6f6f76;line-height:1.5;margin-bottom:18px"><strong>' + user + '</strong> does not have permission to view this interface.</p>' +
-        '<a href="home_logged_in.html" style="display:inline-block;background:#171717;color:#fff;font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:999px;text-decoration:none">← Back to platform</a>' +
-        '</div>';
-    }
   }
 })();
 // ===== /PLATFORM SHELL =====
@@ -1718,6 +1676,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'whatsNewModal') closeWhatsNewModal();
   });
 });
+</script>
+
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
+  const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  async function loadAdminSession() {
+    const userNameEl = document.getElementById('platformShellUserName');
+
+    if (!userNameEl) return;
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const user = sessionData.session?.user;
+
+    if (!user) {
+      userNameEl.textContent = 'Read-only view';
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('role,email')
+      .eq('id', user.id)
+      .single();
+
+    if (error || !profile) {
+      userNameEl.textContent = user.email || 'Signed in';
+      return;
+    }
+
+    if (profile.role === 'admin') {
+      userNameEl.textContent = 'Admin';
+      document.body.dataset.userRole = 'admin';
+      return;
+    }
+
+    userNameEl.textContent = profile.role || 'Signed in';
+  }
+
+  loadAdminSession();
 </script>
 
 </body>
