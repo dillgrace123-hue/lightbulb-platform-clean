@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Lightbulb Platform</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8f7;
+      color: #1f2a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 18px 48px rgba(0,0,0,.08);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    p {
+      color: #6b7b83;
+      line-height: 1.5;
+      margin: 0 0 22px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 14px 0 6px;
+      color: #52646c;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 13px;
+      border: 1px solid #d7e0e3;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 999px;
+      background: #3f6f8e;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #52646c;
+    }
+
+    .error {
+      color: #a33a2b;
+    }
+
+    .success {
+      color: #2d7a63;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Admin Login</h1>
+    <p>Sign in to test Supabase admin access for the Lightbulb platform.</p>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+
+      <button id="loginButton" type="submit">Sign in</button>
+    </form>
+
+    <div id="message" class="message"></div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
+    const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById('loginForm');
+    const button = document.getElementById('loginButton');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      button.disabled = true;
+      button.textContent = 'Signing in...';
+      message.className = 'message';
+      message.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        message.className = 'message error';
+        message.textContent = error.message;
+        button.disabled = false;
+        button.textContent = 'Sign in';
+        return;
+      }
+
+      const userId = data.user?.id;
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role,email')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) {
+        message.className = 'message error';
+        message.textContent = 'Signed in, but could not load profile role.';
+        button.disabled = false;
+        button.textContent = 'Sign in';
+        return;
+      }
+
+      if (profile.role !== 'admin') {
+        message.className = 'message error';
+        message.textContent = 'Signed in, but this account is not an admin.';
+        button.disabled = false;
+        button.textContent = 'Sign in';
+        return;
+      }
+
+      message.className = 'message success';
+      message.textContent = 'Signed in as admin. Supabase Auth is working.';
+      button.textContent = 'Signed in';
+    });
+  </script>
+</body>
+</html>
