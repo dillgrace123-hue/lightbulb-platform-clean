@@ -827,6 +827,19 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 </div>
 
+<!-- Remove action confirmation modal -->
+<div class="modal-bg" id="removeActionModal">
+  <div class="modal" style="max-width:460px">
+    <h2>Remove action?</h2>
+    <p id="remove-action-title" style="font-size:14px;color:var(--muted);line-height:1.5;margin:8px 0 18px"></p>
+    <input id="remove-action-id" type="hidden">
+    <div class="modal-actions">
+      <button class="smallbtn light" onclick="closeRemoveActionModal()">Cancel</button>
+      <button class="smallbtn danger" onclick="confirmRemoveAction()">Remove action</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add grant modal -->
 <div class="modal-bg" id="addModal">
   <div class="modal">
@@ -1868,7 +1881,7 @@ document.addEventListener('DOMContentLoaded', () => {
     await window.loadAttentionCards();
   };
 
-  window.deleteAttentionCard = async function(cardId) {
+  window.deleteAttentionCard = function(cardId) {
     const card = window.currentAttentionCards?.[cardId];
 
     if (!card) {
@@ -1876,9 +1889,24 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const confirmed = confirm('Remove this action?\n\n' + (card.title || 'Untitled action'));
+    document.getElementById('remove-action-id').value = cardId;
+    document.getElementById('remove-action-title').textContent = card.title || 'Untitled action';
+    document.getElementById('removeActionModal').classList.add('open');
+  };
 
-    if (!confirmed) return;
+  window.closeRemoveActionModal = function() {
+    document.getElementById('removeActionModal').classList.remove('open');
+    document.getElementById('remove-action-id').value = '';
+    document.getElementById('remove-action-title').textContent = '';
+  };
+
+  window.confirmRemoveAction = async function() {
+    const cardId = document.getElementById('remove-action-id').value;
+
+    if (!cardId) {
+      alert('Could not find this card.');
+      return;
+    }
 
     const { error } = await supabase
       .from('platform_cards')
@@ -1890,6 +1918,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    window.closeRemoveActionModal();
     await window.loadAttentionCards();
   };
 
