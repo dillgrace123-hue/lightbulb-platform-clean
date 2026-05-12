@@ -163,7 +163,10 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .attention-block li::before{content:"◆";position:absolute;left:0;color:var(--focus);font-size:8px}
 .attention-card{background:#fff;border:1px solid rgba(217,154,53,.22);border-radius:12px;padding:14px 16px!important;margin-bottom:12px!important;box-shadow:0 8px 22px rgba(0,0,0,.04)}
 .attention-card::before{display:none}
-.attention-card-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.attention-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.attention-card-title{font-size:13.5px;font-weight:700;color:var(--ink)}
+.attention-edit-btn{font-size:11px;font-weight:700;border-radius:999px;background:rgba(63,111,142,.1);color:var(--ink);padding:5px 9px;cursor:pointer;white-space:nowrap}
+.attention-edit-btn:hover{background:rgba(63,111,142,.18)}
 .attention-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .attention-meta{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);background:rgba(91,138,166,.1);border-radius:999px;padding:4px 7px}
 .attention-card-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
@@ -1482,6 +1485,9 @@ async function loadTotalActiveFunding() {
   }
 }
 
+window.currentAttentionCards = {};
+window.loadAttentionCards = loadAttentionCards;
+
 async function loadAttentionCards() {
   const listEl = document.getElementById('dash-attentionItems');
 
@@ -1502,6 +1508,13 @@ async function loadAttentionCards() {
       return;
     }
 
+    window.currentAttentionCards = {};
+    cards.forEach(card => {
+      if (card.id) window.currentAttentionCards[card.id] = card;
+    });
+
+    const isAdmin = document.body.dataset.userRole === 'admin';
+
     listEl.innerHTML = cards.map(card => {
       const meta = [card.type, card.status, card.priority, card.owner]
         .filter(Boolean)
@@ -1512,9 +1525,16 @@ async function loadAttentionCards() {
         ? `<div class="attention-card-desc">${esc(card.description)}</div>`
         : '';
 
+      const adminActions = isAdmin && card.id
+        ? `<button class="attention-edit-btn" type="button" onclick="window.editAttentionCard('${esc(card.id)}')">Edit</button>`
+        : '';
+
       return `
         <li class="attention-card">
-          <div class="attention-card-title">${esc(card.title || 'Untitled action')}</div>
+          <div class="attention-card-head">
+            <div class="attention-card-title">${esc(card.title || 'Untitled action')}</div>
+            ${adminActions}
+          </div>
           <div class="attention-card-meta">${meta}</div>
           ${description}
         </li>
@@ -1713,11 +1733,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (profile.role === 'admin') {
       userNameEl.textContent = 'Admin';
       document.body.dataset.userRole = 'admin';
+
+      if (typeof window.loadAttentionCards === 'function') {
+        window.loadAttentionCards();
+      }
+
       return;
     }
 
     userNameEl.textContent = profile.role || 'Signed in';
   }
+
+  window.editAttentionCard = async function(cardId) {
+    const card = window.currentAttentionCards?.[cardId];
+
+    if (!card) {
+      alert('Could not find this card.');
+      return;
+    }
+
+    const newTitle = prompt('Edit action title:', card.title || '');
+    if (newTitle === null) return;
+
+    const newDescription = prompt('Edit action description:', card.description || '');
+    if (newDescription === null) return;
+
+    const { error } = await supabase
+      .from('platform_cards')
+      .update({
+        title: newTitle.trim() || card.title,
+        description: newDescription.trim(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', cardId);
+
+    if (error) {
+      alert('Could not save card: ' + error.message);
+      return;
+    }
+
+    await window.loadAttentionCards();
+  };
 
   loadAdminSession();
 </script>
