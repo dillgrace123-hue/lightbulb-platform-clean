@@ -384,6 +384,14 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
 
+.reports-source-note{
+  margin-top:-12px;
+  font-size:12px;
+  color:var(--soft);
+  font-weight:650;
+  padding-left:4px;
+}
+
 .latest-reports-section{
   background:
     radial-gradient(circle at top left, rgba(91,138,166,.14), transparent 32%),
@@ -980,6 +988,8 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
         </select>
       </div>
       <input id="reportFundFilter" type="hidden" value="LBT">
+
+      <div class="reports-source-note">Reports are pulled live from Airtable.</div>
 
       <section class="latest-reports-section">
         <div class="section-head compact">
@@ -1913,7 +1923,7 @@ function reportCardHtml(report){
       </div>
       <div class="report-actions">
         ${primaryLink ? `<a class="report-action" href="${esc(primaryLink)}" target="_blank" rel="noopener noreferrer">Open report ↗</a>` : `<span class="report-action disabled">No form link</span>`}
-        ${additionalLink ? `<a class="report-action secondary" href="${esc(additionalLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
+        ${additionalLink ? `<a class="report-action secondary" href="${esc(additionalLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : ''}
       </div>
     </article>
   `;
