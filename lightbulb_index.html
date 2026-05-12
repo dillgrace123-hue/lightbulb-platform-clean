@@ -1443,17 +1443,26 @@ function toast(m){
 // LIVE DATA
 // =========================================
 async function loadLiveGrants() {
+  const liveGrantsEl = document.getElementById('dash-liveGrants');
+
+  if (!liveGrantsEl) return;
+
+  const fallbackValue = liveGrantsEl.textContent;
+  liveGrantsEl.textContent = '...';
+
   try {
     const response = await fetch('/.netlify/functions/live-grants');
     if (!response.ok) throw new Error('Live grants function failed');
 
     const data = await response.json();
-    const liveGrantsEl = document.getElementById('dash-liveGrants');
 
-    if (liveGrantsEl && typeof data.liveGrants === 'number') {
+    if (typeof data.liveGrants === 'number') {
       liveGrantsEl.textContent = data.liveGrants;
+    } else {
+      liveGrantsEl.textContent = fallbackValue;
     }
   } catch (error) {
+    liveGrantsEl.textContent = fallbackValue;
     console.warn('Could not load live grants count:', error);
   }
 }
