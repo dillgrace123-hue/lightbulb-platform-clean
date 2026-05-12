@@ -158,6 +158,10 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .attention-block{background:linear-gradient(135deg, #fffdf7 0%, #faf8f3 100%);border:1px solid rgba(217,154,53,.25);border-radius:16px;padding:24px;margin-bottom:32px}
 .attention-block h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 8px}
 .attention-intro{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.attention-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.attention-head h3{margin:0}
+.admin-only{display:none}
+body[data-user-role="admin"] .admin-only{display:inline-flex}
 .attention-block ul{margin:0;padding-left:0;list-style:none}
 .attention-block li{font-size:13px;color:var(--ink);margin-bottom:10px;padding-left:24px;position:relative;line-height:1.5}
 .attention-block li::before{content:"◆";position:absolute;left:0;color:var(--focus);font-size:8px}
@@ -167,6 +171,9 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .attention-card-title{font-size:13.5px;font-weight:700;color:var(--ink)}
 .attention-edit-btn{font-size:11px;font-weight:700;border-radius:999px;background:rgba(63,111,142,.1);color:var(--ink);padding:5px 9px;cursor:pointer;white-space:nowrap}
 .attention-edit-btn:hover{background:rgba(63,111,142,.18)}
+.attention-actions{display:flex;gap:6px;align-items:center}
+.attention-delete-btn{font-size:11px;font-weight:700;border-radius:999px;background:rgba(163,58,43,.08);color:#a33a2b;padding:5px 9px;cursor:pointer;white-space:nowrap}
+.attention-delete-btn:hover{background:rgba(163,58,43,.14)}
 .attention-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .attention-meta{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);background:rgba(91,138,166,.1);border-radius:999px;padding:4px 7px}
 .attention-card-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
@@ -505,7 +512,10 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 
     <!-- What needs attention -->
     <div class="attention-block">
-      <h3>What needs attention</h3>
+      <div class="attention-head">
+        <h3>What needs attention</h3>
+        <button class="attention-edit-btn admin-only" type="button" onclick="window.addAttentionCard()">+ Add action</button>
+      </div>
       <p class="attention-intro">Current operational snapshot. This will become an editable action board in the next platform phase.</p>
       <ul id="dash-attentionItems">
         <li>Payment to be made for FFLY and LCAT grants.</li>
@@ -1526,7 +1536,7 @@ async function loadAttentionCards() {
         : '';
 
       const adminActions = isAdmin && card.id
-        ? `<button class="attention-edit-btn" type="button" onclick="window.editAttentionCard('${esc(card.id)}')">Edit</button>`
+        ? `<div class="attention-actions"><button class="attention-edit-btn" type="button" onclick="window.editAttentionCard('${esc(card.id)}')">Edit</button><button class="attention-delete-btn" type="button" onclick="window.deleteAttentionCard('${esc(card.id)}')">Remove</button></div>`
         : '';
 
       return `
@@ -1743,6 +1753,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userNameEl.textContent = profile.role || 'Signed in';
   }
+
+  window.addAttentionCard = async function() {
+    const title = prompt('New action title:');
+    if (title === null) return;
+
+    const description = prompt('New action description:', '');
+    if (description === null) return;
+
+    const type = prompt('Type:', 'Action');
+    if (type === null) return;
+
+    const priority = prompt('Priority:', 'Medium');
+    if (priority === null) return;
+
+    const owner = prompt('Owner:', 'Dillon');
+    if (owner === null) return;
+
+    const nextSortOrder = Object.values(window.currentAttentionCards || {}).length + 1;
+
+    const { error } = await supabase
+      .from('platform_cards')
+      .insert({
+        page: 'Lightbulb',
+        section: 'what_needs_attention',
+        title: title.trim() || 'Untitled action',
+        description: description.trim(),
+        type: type.trim() || 'Action',
+        status: 'Open',
+        priority: priority.trim() || 'Medium',
+        owner: owner.trim(),
+        sort_order: nextSortOrder
+      });
+
+    if (error) {
+      alert('Could not add card: ' + error.message);
+      return;
+    }
+
+    await window.loadAttentionCards();
+  };
+
+  window.deleteAttentionCard = async function(cardId) {
+    const card = window.currentAttentionCards?.[cardId];
+
+    if (!card) {
+      alert('Could not find this card.');
+      return;
+    }
+
+    const confirmed = confirm('Remove this action?\n\n' + (card.title || 'Untitled action'));
+
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('platform_cards')
+      .delete()
+      .eq('id', cardId);
+
+    if (error) {
+      alert('Could not remove card: ' + error.message);
+      return;
+    }
+
+    await window.loadAttentionCards();
+  };
 
   window.editAttentionCard = async function(cardId) {
     const card = window.currentAttentionCards?.[cardId];
