@@ -1,490 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lightbulb Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#171717;--muted:#6f6f76;--soft:#9b9ba3;--bg:#f7f6f2;--panel:#fff;--line:rgba(0,0,0,.08);
-  --lightbulb:#d99a35;--lightbulb-soft:#fbf0df;
-  --greenlight:#2BBE92;--greenlight-soft:#e2f6ee;
-  --trustee:#7b68d9;--trustee-soft:#eeeafd;
-  --partner:#d8644a;--partner-soft:#fbe8e1;
-  --blue:#5B8AA6;--blue-soft:#e8eff4;
-  --radius:16px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font-family:'DM Sans',sans-serif}
-button{border:0;cursor:pointer;transition:.15s ease}
-a{text-decoration:none;color:inherit}
-.app{max-width:1160px;margin:0 auto;padding:28px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>The Lightbulb Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#171717;
+      --muted:#6f6f76;
+      --soft:#8c8c92;
+      --line:#e8e2d8;
+      --paper:#f8f5ef;
+      --card:#fffdf8;
+      --focus:#d99a35;
+      --blue:#3f6f8e;
+      --green:#6fae9c;
+      --shadow:0 18px 45px rgba(0,0,0,.08);
+    }
 
-/* Top bar */
-.platform-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 22px;background:#fff;border:1px solid var(--line);border-radius:999px;margin-bottom:28px;box-shadow:0 8px 24px rgba(0,0,0,.025);flex-wrap:wrap}
-.platform-bar-left{display:flex;align-items:center;gap:12px}
-.platform-mark{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--lightbulb) 0%,var(--greenlight) 100%);color:#fff;font-weight:700;font-size:13px;letter-spacing:-.02em}
-.platform-name{font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
-.platform-name span{color:var(--soft);font-weight:500}
-.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn{font-size:12px;font-weight:650;border-radius:999px;padding:9px 14px;background:#fff;border:1px solid var(--line);color:var(--ink);display:inline-flex;align-items:center;gap:6px}
-.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
-.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
-.btn.partner{background:var(--partner);color:#fff;border-color:var(--partner)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'DM Sans',sans-serif;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(217,154,53,.18), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(111,174,156,.18), transparent 34%),
+        linear-gradient(135deg,#faf7f0 0%,#f3eee5 100%);
+      color:var(--ink);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
 
-/* Pages and nav */
-.page{display:none}
-.page.active{display:block}
-.main-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:999px;width:fit-content;box-shadow:0 8px 24px rgba(0,0,0,.025)}
-.navbtn{font-size:12.5px;font-weight:600;border-radius:999px;padding:8px 16px;background:transparent;color:var(--muted)}
-.navbtn:hover{color:var(--ink)}
-.navbtn.active{background:var(--ink);color:#fff}
+    button,input{font-family:'DM Sans',sans-serif}
 
-/* Hero */
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-bottom:28px}
-.hero-card{background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);border:1px solid var(--line);border-radius:24px;padding:42px;box-shadow:0 18px 48px rgba(0,0,0,.045);position:relative;overflow:hidden;min-height:440px}
-.hero-card::before{content:"";position:absolute;right:-105px;top:-70px;width:390px;height:250px;background:url('lightbulbtrust_main_amination_optimised.jpeg') center/cover no-repeat;opacity:.34;border-radius:28px;filter:saturate(.9)}
-.hero-content{position:relative;z-index:1;max-width:680px}
-.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--lightbulb);font-weight:700;margin-bottom:12px}
-h1{font-size:42px;letter-spacing:-.055em;font-weight:650;line-height:1.02;margin-bottom:14px}
-h1 .accent{color:var(--greenlight)}
-.hero-sub{font-size:15.5px;color:var(--muted);max-width:640px;line-height:1.6}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
-.trust-note{font-size:12px;color:var(--soft);line-height:1.45;margin-top:18px;max-width:520px}
+    .shell{
+      width:min(1040px,100%);
+      min-height:620px;
+      display:grid;
+      grid-template-columns:1fr 420px;
+      background:rgba(255,255,255,.62);
+      border:1px solid rgba(232,226,216,.9);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter:blur(10px);
+    }
 
-/* Sign in card */
-.signin-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 18px 48px rgba(0,0,0,.045)}
-.signin-card h2{font-size:24px;letter-spacing:-.03em;margin-bottom:7px}
-.signin-card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:18px}
-.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.form-field label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}
-.form-field input,.form-field select,.form-field textarea{border:1px solid var(--line);border-radius:10px;background:#fbfaf7;padding:11px 12px;font-size:13px;color:var(--ink);outline:none}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:rgba(216,100,74,.35);box-shadow:0 0 0 3px rgba(216,100,74,.08);background:#fff}
-.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.helper{font-size:11.5px;color:var(--soft);line-height:1.4;margin-top:12px}
+    .left{
+      padding:34px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:40px;
+    }
 
-/* Cards */
-.section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;margin-top:8px}
-.section-head h2{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);font-weight:700}
-.section-head .meta{font-size:12px;color:var(--soft);font-family:'DM Mono',monospace}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
 
-.audience-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
-.audience-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.03);position:relative;overflow:hidden;min-height:190px}
-.audience-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent)}
-.audience-card.partner{--accent:var(--partner);--accent-soft:var(--partner-soft)}
-.audience-card.lightbulb{--accent:var(--lightbulb);--accent-soft:var(--lightbulb-soft)}
-.audience-card.greenlight{--accent:var(--greenlight);--accent-soft:var(--greenlight-soft)}
-.audience-card.trustee{--accent:var(--trustee);--accent-soft:var(--trustee-soft)}
-.card-mark{width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);margin-bottom:13px}
-.card-mark svg{width:23px;height:23px}
-.audience-card h3{font-size:17px;letter-spacing:-.02em;font-weight:700;line-height:1.16;margin-bottom:6px}
-.audience-card p{font-size:12.5px;color:var(--muted);line-height:1.45}
+    .mark{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,var(--focus),#eac36f);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      font-size:14px;
+      color:white;
+      box-shadow:0 10px 24px rgba(217,154,53,.24);
+    }
 
-/* How it works */
-.process-panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 12px 38px rgba(0,0,0,.035);margin-bottom:28px}
-.process-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
-.process-head h2{font-size:20px;letter-spacing:-.03em;margin-bottom:5px}
-.process-head p{font-size:13px;color:var(--muted);line-height:1.5;max-width:650px}
-.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.process-step{background:#fbfaf7;border:1px solid var(--line);border-radius:14px;padding:15px}
-.process-step .num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-bottom:10px;background:var(--partner-soft);color:var(--partner)}
-.process-step:nth-child(2) .num{background:var(--lightbulb-soft);color:var(--lightbulb)}
-.process-step:nth-child(3) .num{background:var(--blue-soft);color:var(--blue)}
-.process-step:nth-child(4) .num{background:var(--greenlight-soft);color:var(--greenlight)}
-.process-step strong{font-size:13px;display:block;margin-bottom:4px}
-.process-step span{font-size:11.5px;color:var(--muted);line-height:1.38}
+    .brand-text{
+      font-size:14px;
+      font-weight:750;
+      letter-spacing:-.02em;
+    }
 
-/* Access page */
-.access-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:stretch;margin-bottom:28px}
-.access-visual{background:linear-gradient(135deg,var(--partner) 0%,#b94f39 100%);border-radius:24px;padding:34px;color:#fff;position:relative;overflow:hidden;min-height:520px;box-shadow:0 18px 48px rgba(216,100,74,.14)}
-.access-visual::before{content:"";position:absolute;inset:auto -120px -110px auto;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.12)}
-.access-visual h1{font-size:36px;margin-bottom:13px;position:relative;z-index:1}
-.access-visual p{font-size:14px;line-height:1.6;color:rgba(255,255,255,.86);max-width:460px;position:relative;z-index:1}
-.access-steps{position:relative;z-index:1;margin-top:28px;display:flex;flex-direction:column;gap:12px}
-.access-step{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:14px}
-.access-step strong{font-size:13.5px;display:block;margin-bottom:3px}
-.access-step span{font-size:12px;color:rgba(255,255,255,.8);line-height:1.4}
-.access-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:32px;box-shadow:0 18px 48px rgba(0,0,0,.045)}
-.access-card h2{font-size:24px;letter-spacing:-.03em;margin-bottom:7px}
-.access-card p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:18px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-field.full{grid-column:1/-1}
-.access-confirmation{display:none;background:var(--greenlight-soft);border:1px solid rgba(43,190,146,.25);color:#245f4d;border-radius:12px;padding:13px 14px;font-size:13px;line-height:1.45;margin-top:14px}
-.access-confirmation.visible{display:block}
-.access-confirmation strong{display:block;margin-bottom:3px}
+    .brand-text span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+      margin-top:2px;
+    }
 
-/* Demo links */
-.demo-panel{background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);border:1px solid var(--line);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;box-shadow:0 10px 30px rgba(0,0,0,.03);margin-bottom:28px}
-.demo-text h3{font-size:14px;font-weight:650;margin-bottom:4px}
-.demo-text p{font-size:13px;color:var(--muted);line-height:1.5;max-width:680px}
-.demo-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .hero{
+      max-width:540px;
+    }
 
-/* Responsive */
-@media(max-width:1040px){
-  .hero-grid,.access-layout{grid-template-columns:1fr}
-  .audience-grid,.process-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:650px){
-  .app{padding:16px}
-  .platform-bar{border-radius:14px;align-items:flex-start}
-  .main-nav{border-radius:14px}
-  .audience-grid,.process-grid,.form-grid{grid-template-columns:1fr}
-  .signin-card,.hero-card,.access-card,.access-visual{border-radius:18px}
-  h1,.access-visual h1{font-size:31px}
-  .demo-panel{flex-direction:column;align-items:flex-start}
-  .demo-links{justify-content:flex-start}
-}
-</style>
+    .eyebrow{
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--blue);
+      margin-bottom:16px;
+    }
+
+    h1{
+      font-size:54px;
+      line-height:.96;
+      letter-spacing:-.06em;
+      font-weight:750;
+      margin-bottom:20px;
+    }
+
+    .hero p{
+      font-size:16px;
+      line-height:1.65;
+      color:var(--muted);
+      max-width:470px;
+    }
+
+    .footer-note{
+      font-size:12px;
+      color:var(--soft);
+      line-height:1.5;
+      max-width:520px;
+    }
+
+    .login-side{
+      background:#fffdf8;
+      border-left:1px solid var(--line);
+      padding:34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .login-card{
+      width:100%;
+      background:#fff;
+      border:1px solid rgba(232,226,216,.95);
+      border-radius:22px;
+      padding:28px;
+      box-shadow:0 12px 34px rgba(0,0,0,.055);
+    }
+
+    .login-card h2{
+      font-size:24px;
+      letter-spacing:-.04em;
+      margin-bottom:8px;
+    }
+
+    .login-card p{
+      font-size:13.5px;
+      line-height:1.55;
+      color:var(--muted);
+      margin-bottom:22px;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      font-weight:750;
+      color:var(--muted);
+      margin-bottom:7px;
+    }
+
+    input{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fbfaf7;
+      border-radius:14px;
+      padding:12px 13px;
+      font-size:14px;
+      color:var(--ink);
+      outline:none;
+    }
+
+    input:focus{
+      border-color:rgba(63,111,142,.55);
+      box-shadow:0 0 0 4px rgba(63,111,142,.08);
+      background:white;
+    }
+
+    .btn{
+      width:100%;
+      border:0;
+      border-radius:999px;
+      background:var(--ink);
+      color:white;
+      padding:12px 18px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.15s ease;
+      margin-top:6px;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 22px rgba(0,0,0,.12);
+    }
+
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .secondary-row{
+      margin-top:18px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      font-size:12.5px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .link-btn{
+      border:0;
+      background:transparent;
+      color:var(--blue);
+      font-size:12.5px;
+      font-weight:800;
+      cursor:pointer;
+      padding:0;
+    }
+
+    .helper{
+      min-height:18px;
+      margin-top:12px;
+      font-size:12px;
+      line-height:1.45;
+      color:var(--muted);
+    }
+
+    .helper.error{color:#b94b35}
+    .helper.success{color:#4a8f76}
+
+    .modal-bg{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.28);
+      z-index:10;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .modal-bg.open{display:flex}
+
+    .modal{
+      width:min(420px,100%);
+      background:#fff;
+      border-radius:22px;
+      border:1px solid var(--line);
+      box-shadow:0 22px 60px rgba(0,0,0,.18);
+      padding:26px;
+    }
+
+    .modal h2{
+      font-size:22px;
+      letter-spacing:-.04em;
+      margin-bottom:8px;
+    }
+
+    .modal p{
+      font-size:13.5px;
+      color:var(--muted);
+      line-height:1.55;
+      margin-bottom:18px;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:18px;
+    }
+
+    .smallbtn{
+      border:0;
+      border-radius:999px;
+      padding:10px 15px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      background:var(--ink);
+      color:white;
+    }
+
+    .smallbtn.light{
+      background:#f4f0e8;
+      color:var(--ink);
+    }
+
+    @media(max-width:860px){
+      body{padding:16px;align-items:flex-start}
+      .shell{grid-template-columns:1fr;min-height:auto}
+      .login-side{border-left:0;border-top:1px solid var(--line)}
+      h1{font-size:42px}
+      .left{padding:26px}
+      .login-side{padding:26px}
+    }
+  </style>
 </head>
-
 <body>
-<div class="app">
+  <main class="shell">
+    <section class="left">
+      <div class="brand">
+        <div class="mark">LB</div>
+        <div class="brand-text">
+          The Lightbulb Platform
+          <span>Internal portfolio workspace</span>
+        </div>
+      </div>
 
-  <div class="platform-bar">
-    <div class="platform-bar-left">
-      <span class="platform-mark">LB</span>
-      <div class="platform-name">The Lightbulb Platform <span>/ access</span></div>
-    </div>
+      <div class="hero">
+        <div class="eyebrow">Secure access</div>
+        <h1>Portfolio information, reporting and decisions in one place.</h1>
+        <p>A focused internal workspace for Lightbulb portfolio activity, reports, timeline visibility, funding panel preparation and current operational actions.</p>
+      </div>
 
-    <div class="top-actions">
-      <button class="btn" data-page="access">Request access</button>
-      <a class="btn dark" href="home_logged_in.html">Sign in</a>
+      <div class="footer-note">
+        Access is role-based. Only approved users can view internal workspaces and admin editing tools.
+      </div>
+    </section>
+
+    <section class="login-side">
+      <div class="login-card">
+        <h2>Sign in</h2>
+        <p>Use your approved account to continue to the Lightbulb Platform.</p>
+
+        <form id="signinForm">
+          <div class="field">
+            <label for="signin-email">Email</label>
+            <input id="signin-email" type="email" autocomplete="email" required>
+          </div>
+
+          <div class="field">
+            <label for="signin-password">Password</label>
+            <input id="signin-password" type="password" autocomplete="current-password" required>
+          </div>
+
+          <button class="btn" id="signinBtn" type="submit">Sign in</button>
+          <div class="helper" id="signinHelper"></div>
+        </form>
+
+        <div class="secondary-row">
+          <span>Need an account?</span>
+          <button class="link-btn" type="button" id="requestAccessBtn">Request access</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-bg" id="requestAccessModal">
+    <div class="modal">
+      <h2>Request access</h2>
+      <p>For now, access requests are handled by the Lightbulb team. Later this will connect to the Admin Console approval flow.</p>
+
+      <div class="field">
+        <label for="request-email">Your email</label>
+        <input id="request-email" type="email" placeholder="name@example.com">
+      </div>
+
+      <div class="modal-actions">
+        <button class="smallbtn light" type="button" id="closeRequestModal">Cancel</button>
+        <button class="smallbtn" type="button" id="submitRequestAccess">Submit request</button>
+      </div>
+
+      <div class="helper" id="requestHelper"></div>
     </div>
   </div>
 
-  <nav class="main-nav">
-    <button class="navbtn active" data-page="home">Sign in</button>
-    <button class="navbtn" data-page="access">Request access</button>
-  </nav>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-  <section id="home" class="page active">
-    <div class="hero-grid">
-      <div class="hero-card">
-        <div class="hero-content">
-          <div class="kicker">The Lightbulb Platform</div>
-          <h1>Sign in to access your Lightbulb workspace.</h1>
-          <p class="hero-sub">A secure space for partners, trustees and team members to access the right information, documents, reporting and updates.</p>
+    const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
+    const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-          <div class="hero-actions">
-            <a class="btn dark" href="home_logged_in.html">Sign in</a>
-            <button class="btn partner" data-page="access">Request access</button>
-          </div>
+    const signinForm = document.getElementById('signinForm');
+    const signinBtn = document.getElementById('signinBtn');
+    const signinHelper = document.getElementById('signinHelper');
 
-          <p class="trust-note">Access is approved by the Lightbulb team. New users should request access and wait for confirmation before signing in.</p>
-        </div>
-      </div>
+    const requestAccessBtn = document.getElementById('requestAccessBtn');
+    const requestAccessModal = document.getElementById('requestAccessModal');
+    const closeRequestModal = document.getElementById('closeRequestModal');
+    const submitRequestAccess = document.getElementById('submitRequestAccess');
+    const requestHelper = document.getElementById('requestHelper');
+    const requestEmail = document.getElementById('request-email');
 
-      <div class="signin-card">
-        <h2>Sign in</h2>
-        <p>Use your approved account to continue.</p>
+    signinForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-        <div class="form-field">
-          <label for="signin-email">Email</label>
-          <input id="signin-email" type="email" autocomplete="email" value="">
-        </div>
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
 
-        <div class="form-field">
-          <label for="signin-password">Password</label>
-          <input id="signin-password" type="password" autocomplete="current-password" value="">
-        </div>
+      signinBtn.disabled = true;
+      signinBtn.textContent = 'Signing in...';
+      signinHelper.textContent = '';
+      signinHelper.className = 'helper';
 
-        <div class="form-actions">
-          <button class="btn dark" id="signinBtn" type="button">Sign in</button>
-          <button class="btn partner" data-page="access" type="button">Request access</button>
-        </div>
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-        <p class="helper" id="signin-message">Sign in with your approved platform account.</p>
-      </div>
-    </div>
+      if (error) {
+        signinHelper.textContent = error.message || 'Could not sign in. Please check your details.';
+        signinHelper.className = 'helper error';
+        signinBtn.disabled = false;
+        signinBtn.textContent = 'Sign in';
+        return;
+      }
 
-    <div class="section-head">
-      <h2>Who uses the platform</h2>
-      <span class="meta">Access by approval</span>
-    </div>
-
-    <div class="audience-grid">
-      <div class="audience-card partner">
-        <span class="card-mark">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M8 12a4 4 0 1 1 8 0v6H8v-6Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </span>
-        <h3>Partners</h3>
-        <p>Access grant setup, reporting, events, opportunities and relationship updates.</p>
-      </div>
-
-      <div class="audience-card trustee">
-        <span class="card-mark">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M5 21V8l7-4 7 4v13" stroke="currentColor" stroke-width="1.8"/><path d="M8 21v-7h8v7" stroke="currentColor" stroke-width="1.8"/></svg>
-        </span>
-        <h3>Trustees</h3>
-        <p>Access high-level portfolio information, key decisions and governance updates.</p>
-      </div>
-
-      <div class="audience-card lightbulb">
-        <span class="card-mark">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 0 0-3 11.2V17h6v-2.8A6 6 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.8"/><path d="M9 20h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </span>
-        <h3>Lightbulb team</h3>
-        <p>Manage portfolio information, reports, actions, partner records and panels.</p>
-      </div>
-
-      <div class="audience-card greenlight">
-        <span class="card-mark">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 13c5-8 11-8 16-2-5 8-11 8-16 2Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8"/></svg>
-        </span>
-        <h3>Greenlight</h3>
-        <p>Access Greenlight-specific portfolio and reporting information.</p>
-      </div>
-    </div>
-
-    <div class="process-panel">
-      <div class="process-head">
-        <div>
-          <h2>Getting access</h2>
-          <p>New users request access first. Once approved, they can sign in and will only see the areas relevant to them.</p>
-        </div>
-      </div>
-
-      <div class="process-grid">
-        <div class="process-step">
-          <div class="num">1</div>
-          <strong>Request access</strong>
-          <span>Submit your name, organisation and reason for access.</span>
-        </div>
-        <div class="process-step">
-          <div class="num">2</div>
-          <strong>Team approval</strong>
-          <span>The Lightbulb team checks the request and assigns the right access.</span>
-        </div>
-        <div class="process-step">
-          <div class="num">3</div>
-          <strong>Sign in</strong>
-          <span>Once approved, sign in with your account.</span>
-        </div>
-        <div class="process-step">
-          <div class="num">4</div>
-          <strong>Access your area</strong>
-          <span>Open your partner hub, trustee dashboard or internal workspace.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="demo-panel">
-      <div class="demo-text">
-        <h3>Prototype preview links</h3>
-        <p>For demo purposes only, these links open the current prototype workspaces directly.</p>
-      </div>
-      <div class="demo-links">
-        <a class="btn" href="lightbulb_index.html?skipcheck">Lightbulb</a>
-        <a class="btn" href="greenlight_index.html?skipcheck">Greenlight</a>
-        <a class="btn" href="trustee_index.html?skipcheck">Trustees</a>
-        <a class="btn" href="partner_index.html">Partner</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="access" class="page">
-    <div class="access-layout">
-      <div class="access-visual">
-        <div class="kicker" style="color:rgba(255,255,255,.8)">Request access</div>
-        <h1>New to the platform?</h1>
-        <p>Request access and the Lightbulb team will approve the right workspace for you.</p>
-
-        <div class="access-steps">
-          <div class="access-step">
-            <strong>Partners</strong>
-            <span>Grant setup, reporting, events, opportunities and relationship updates.</span>
-          </div>
-          <div class="access-step">
-            <strong>Trustees</strong>
-            <span>High-level portfolio and governance information.</span>
-          </div>
-          <div class="access-step">
-            <strong>Team and principals</strong>
-            <span>Portfolio dashboards, funding panels, reports and actions.</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="access-card">
-        <h2>Request access</h2>
-        <p>Complete this form and the team will review your request.</p>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label>First name</label>
-            <input value="">
-          </div>
-
-          <div class="form-field">
-            <label>Last name</label>
-            <input value="">
-          </div>
-
-          <div class="form-field full">
-            <label>Email</label>
-            <input value="">
-          </div>
-
-          <div class="form-field full">
-            <label>Organisation</label>
-            <input value="">
-          </div>
-
-          <div class="form-field">
-            <label>Requested access</label>
-            <select>
-              <option>Partner Hub</option>
-              <option>Trustee Dashboard</option>
-              <option>Lightbulb Team Workspace</option>
-              <option>Greenlight Workspace</option>
-            </select>
-          </div>
-
-          <div class="form-field">
-            <label>Relationship</label>
-            <select>
-              <option>Current funded partner</option>
-              <option>Trustee</option>
-              <option>Internal team member</option>
-              <option>Principal / decision-maker</option>
-              <option>Other</option>
-            </select>
-          </div>
-
-          <div class="form-field full">
-            <label>Message</label>
-            <textarea rows="4" placeholder="Briefly explain why you need access."></textarea>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button class="btn partner" id="requestAccessBtn">Submit request</button>
-          <button class="btn" data-page="home">Back to sign in</button>
-        </div>
-
-        <div id="accessConfirmation" class="access-confirmation">
-          <strong>Request submitted</strong>
-          In the live platform, this would notify the team and place the user into an approval queue.
-        </div>
-
-        <p class="helper">Prototype only. No information is stored.</p>
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<script>
-const buttons = document.querySelectorAll('[data-page]');
-const navButtons = document.querySelectorAll('.navbtn');
-const pages = document.querySelectorAll('.page');
-
-function showPage(pageId){
-  pages.forEach(page => page.classList.remove('active'));
-  navButtons.forEach(btn => btn.classList.remove('active'));
-
-  const page = document.getElementById(pageId);
-  if(page) page.classList.add('active');
-
-  navButtons.forEach(btn => {
-    if(btn.dataset.page === pageId) btn.classList.add('active');
-  });
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const pageId = btn.dataset.page;
-    if(pageId) showPage(pageId);
-  });
-});
-
-const requestBtn = document.getElementById('requestAccessBtn');
-const confirmation = document.getElementById('accessConfirmation');
-
-if(requestBtn && confirmation){
-  requestBtn.addEventListener('click', () => {
-    confirmation.classList.add('visible');
-    requestBtn.textContent = 'Request submitted';
-    requestBtn.disabled = true;
-  });
-}
-</script>
-
-<script type="module">
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-  const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
-  const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  const signinBtn = document.getElementById('signinBtn');
-  const signinMessage = document.getElementById('signin-message');
-
-  async function handleSignIn() {
-    const email = document.getElementById('signin-email')?.value.trim();
-    const password = document.getElementById('signin-password')?.value;
-
-    if (!email || !password) {
-      signinMessage.textContent = 'Please enter your email and password.';
-      signinMessage.style.color = '#a33a2b';
-      return;
-    }
-
-    signinBtn.disabled = true;
-    signinBtn.textContent = 'Signing in...';
-    signinMessage.textContent = 'Checking your account...';
-    signinMessage.style.color = '';
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+      window.location.href = 'home_logged_in.html';
     });
 
-    if (error) {
-      signinMessage.textContent = error.message;
-      signinMessage.style.color = '#a33a2b';
-      signinBtn.disabled = false;
-      signinBtn.textContent = 'Sign in';
-      return;
-    }
+    requestAccessBtn.addEventListener('click', () => {
+      requestAccessModal.classList.add('open');
+      requestHelper.textContent = '';
+      requestHelper.className = 'helper';
+      requestEmail.focus();
+    });
 
-    const userId = data.user?.id;
+    closeRequestModal.addEventListener('click', () => {
+      requestAccessModal.classList.remove('open');
+    });
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role,email')
-      .eq('id', userId)
-      .single();
+    requestAccessModal.addEventListener('click', (event) => {
+      if (event.target.id === 'requestAccessModal') {
+        requestAccessModal.classList.remove('open');
+      }
+    });
 
-    if (profileError || !profile) {
-      signinMessage.textContent = 'Signed in, but your platform profile could not be found.';
-      signinMessage.style.color = '#a33a2b';
-      signinBtn.disabled = false;
-      signinBtn.textContent = 'Sign in';
-      return;
-    }
+    submitRequestAccess.addEventListener('click', () => {
+      const email = requestEmail.value.trim();
 
-    if (profile.role === 'admin') {
-      signinMessage.textContent = 'Signed in. Opening your workspace...';
-      signinMessage.style.color = '#2d7a63';
-      window.location.href = 'home_logged_in.html';
-      return;
-    }
+      if (!email) {
+        requestHelper.textContent = 'Please enter your email address.';
+        requestHelper.className = 'helper error';
+        return;
+      }
 
-    signinMessage.textContent = 'Signed in, but this role is not routed yet.';
-    signinMessage.style.color = '#a33a2b';
-    signinBtn.disabled = false;
-    signinBtn.textContent = 'Sign in';
-  }
-
-  if (signinBtn) {
-    signinBtn.addEventListener('click', handleSignIn);
-  }
-</script>
-
+      requestHelper.textContent = 'Request noted. The Admin Console approval flow will be connected later.';
+      requestHelper.className = 'helper success';
+      submitRequestAccess.textContent = 'Request submitted';
+      submitRequestAccess.disabled = true;
+    });
+  </script>
 </body>
 </html>
