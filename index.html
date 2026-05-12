@@ -181,21 +181,21 @@ h1 .accent{color:var(--greenlight)}
         <p>Use your approved account to continue.</p>
 
         <div class="form-field">
-          <label>Email</label>
-          <input value="">
+          <label for="signin-email">Email</label>
+          <input id="signin-email" type="email" autocomplete="email" value="">
         </div>
 
         <div class="form-field">
-          <label>Password</label>
-          <input type="password" value="">
+          <label for="signin-password">Password</label>
+          <input id="signin-password" type="password" autocomplete="current-password" value="">
         </div>
 
         <div class="form-actions">
-          <a class="btn dark" href="home_logged_in.html">Sign in</a>
-          <button class="btn partner" data-page="access">Request access</button>
+          <button class="btn dark" id="signinBtn" type="button">Sign in</button>
+          <button class="btn partner" data-page="access" type="button">Request access</button>
         </div>
 
-        <p class="helper">Prototype only. The sign-in form is not connected yet.</p>
+        <p class="helper" id="signin-message">Sign in with your approved platform account.</p>
       </div>
     </div>
 
@@ -413,5 +413,78 @@ if(requestBtn && confirmation){
   });
 }
 </script>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const supabaseUrl = 'https://hmiifiblwzqfqmjzvjfd.supabase.co';
+  const supabaseKey = 'sb_publishable_llRK3G0y0NBObeHLJXGrbA_5ftmETsO';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const signinBtn = document.getElementById('signinBtn');
+  const signinMessage = document.getElementById('signin-message');
+
+  async function handleSignIn() {
+    const email = document.getElementById('signin-email')?.value.trim();
+    const password = document.getElementById('signin-password')?.value;
+
+    if (!email || !password) {
+      signinMessage.textContent = 'Please enter your email and password.';
+      signinMessage.style.color = '#a33a2b';
+      return;
+    }
+
+    signinBtn.disabled = true;
+    signinBtn.textContent = 'Signing in...';
+    signinMessage.textContent = 'Checking your account...';
+    signinMessage.style.color = '';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      signinMessage.textContent = error.message;
+      signinMessage.style.color = '#a33a2b';
+      signinBtn.disabled = false;
+      signinBtn.textContent = 'Sign in';
+      return;
+    }
+
+    const userId = data.user?.id;
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role,email')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !profile) {
+      signinMessage.textContent = 'Signed in, but your platform profile could not be found.';
+      signinMessage.style.color = '#a33a2b';
+      signinBtn.disabled = false;
+      signinBtn.textContent = 'Sign in';
+      return;
+    }
+
+    if (profile.role === 'admin') {
+      signinMessage.textContent = 'Signed in. Opening your workspace...';
+      signinMessage.style.color = '#2d7a63';
+      window.location.href = 'home_logged_in.html';
+      return;
+    }
+
+    signinMessage.textContent = 'Signed in, but this role is not routed yet.';
+    signinMessage.style.color = '#a33a2b';
+    signinBtn.disabled = false;
+    signinBtn.textContent = 'Sign in';
+  }
+
+  if (signinBtn) {
+    signinBtn.addEventListener('click', handleSignIn);
+  }
+</script>
+
 </body>
 </html>
