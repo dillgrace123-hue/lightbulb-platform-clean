@@ -156,7 +156,8 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .data-source-note{font-size:12px;color:var(--muted);line-height:1.5;background:#f7fafb;border:1px solid rgba(91,138,166,.18);border-radius:12px;padding:12px 14px;margin:-14px 0 28px}
 .data-source-note strong{color:var(--ink);font-weight:700}
 .attention-block{background:linear-gradient(135deg, #fffdf7 0%, #faf8f3 100%);border:1px solid rgba(217,154,53,.25);border-radius:16px;padding:24px;margin-bottom:32px}
-.attention-block h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 14px}
+.attention-block h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin:0 0 8px}
+.attention-intro{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 14px}
 .attention-block ul{margin:0;padding-left:0;list-style:none}
 .attention-block li{font-size:13px;color:var(--ink);margin-bottom:10px;padding-left:24px;position:relative;line-height:1.5}
 .attention-block li::before{content:"◆";position:absolute;left:0;color:var(--focus);font-size:8px}
@@ -496,6 +497,7 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
     <!-- What needs attention -->
     <div class="attention-block">
       <h3>What needs attention</h3>
+      <p class="attention-intro">Current operational snapshot. This will become an editable action board in the next platform phase.</p>
       <ul id="dash-attentionItems">
         <li>Payment to be made for FFLY and LCAT grants.</li>
         <li>Decision to be made on Becauze: whether to fund. They have proposed a split of the role between the current employee and Carlos.</li>
