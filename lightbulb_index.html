@@ -161,6 +161,12 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .attention-block ul{margin:0;padding-left:0;list-style:none}
 .attention-block li{font-size:13px;color:var(--ink);margin-bottom:10px;padding-left:24px;position:relative;line-height:1.5}
 .attention-block li::before{content:"◆";position:absolute;left:0;color:var(--focus);font-size:8px}
+.attention-card{background:#fff;border:1px solid rgba(217,154,53,.22);border-radius:12px;padding:14px 16px!important;margin-bottom:12px!important;box-shadow:0 8px 22px rgba(0,0,0,.04)}
+.attention-card::before{display:none}
+.attention-card-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.attention-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.attention-meta{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);background:rgba(91,138,166,.1);border-radius:999px;padding:4px 7px}
+.attention-card-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
 .quick-nav-section{margin-bottom:32px}
 .quick-nav-section h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin-bottom:14px}
 .quick-nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
@@ -1518,6 +1524,50 @@ async function loadTotalActiveFunding() {
   }
 }
 
+async function loadAttentionCards() {
+  const listEl = document.getElementById('dash-attentionItems');
+
+  if (!listEl) return;
+
+  const fallbackHtml = listEl.innerHTML;
+  listEl.innerHTML = '<li>Loading current action cards...</li>';
+
+  try {
+    const response = await fetch('/.netlify/functions/platform-cards?page=Lightbulb&section=what_needs_attention');
+    if (!response.ok) throw new Error('Platform cards function failed');
+
+    const data = await response.json();
+    const cards = Array.isArray(data.cards) ? data.cards : [];
+
+    if (!cards.length) {
+      listEl.innerHTML = '<li>No current action cards.</li>';
+      return;
+    }
+
+    listEl.innerHTML = cards.map(card => {
+      const meta = [card.type, card.status, card.priority, card.owner]
+        .filter(Boolean)
+        .map(value => `<span class="attention-meta">${esc(value)}</span>`)
+        .join('');
+
+      const description = card.description
+        ? `<div class="attention-card-desc">${esc(card.description)}</div>`
+        : '';
+
+      return `
+        <li class="attention-card">
+          <div class="attention-card-title">${esc(card.title || 'Untitled action')}</div>
+          <div class="attention-card-meta">${meta}</div>
+          ${description}
+        </li>
+      `;
+    }).join('');
+  } catch (error) {
+    listEl.innerHTML = fallbackHtml;
+    console.warn('Could not load attention cards:', error);
+  }
+}
+
 async function loadPlatformContent() {
   const fields = {
     next_panel: document.getElementById('dash-nextPanel'),
@@ -1651,6 +1701,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadGrantsEndingSoon();
   loadAverageGrantSize();
   loadPlatformContent();
+  loadAttentionCards();
   renderWhatsNew();
   buildTimeline();
   setupEditables();
