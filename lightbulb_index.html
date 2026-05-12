@@ -695,12 +695,12 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
       <div class="panel-board-body">
         <div class="panel-kanban">
 
-          <div class="panel-column" data-column="to-consider">
+          <div class="panel-column" data-column="points_to_consider">
             <div class="panel-column-head">
               <h3 class="editable" contenteditable="true" data-save-key="panel-col-1-title">Points to consider</h3>
               <span>Context / risks</span>
             </div>
-            <div class="panel-cards">
+            <div class="panel-cards" id="panel-cards-points_to_consider">
               <div class="panel-card">
                 <button class="panel-delete" onclick="deletePanelCard(this)">Delete</button>
                 <h4 class="editable" contenteditable="true" data-save-key="panel-card-doorstep-title">Doorstep Library</h4>
@@ -722,7 +722,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
               <h3 class="editable" contenteditable="true" data-save-key="panel-col-2-title">Applications / proposals</h3>
               <span>Items for review</span>
             </div>
-            <div class="panel-cards">
+            <div class="panel-cards" id="panel-cards-applications">
               <div class="panel-card">
                 <button class="panel-delete" onclick="deletePanelCard(this)">Delete</button>
                 <h4 class="editable" contenteditable="true" data-save-key="panel-card-solidarity-title">Solidarity Sports</h4>
@@ -750,7 +750,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
               <h3 class="editable" contenteditable="true" data-save-key="panel-col-3-title">Decisions / next steps</h3>
               <span>Actions after review</span>
             </div>
-            <div class="panel-cards">
+            <div class="panel-cards" id="panel-cards-decisions">
               <div class="panel-card">
                 <button class="panel-delete" onclick="deletePanelCard(this)">Delete</button>
                 <h4 class="editable" contenteditable="true" data-save-key="panel-card-lcat-payment-title">Salome to process payment for LCAT & Youth Action Alliance</h4>
@@ -1678,6 +1678,57 @@ async function loadTotalActiveFunding() {
 window.currentAttentionCards = {};
 window.loadAttentionCards = loadAttentionCards;
 
+function panelTagClass(columnKey) {
+  if (columnKey === 'applications') return 'purple';
+  if (columnKey === 'decisions') return 'green';
+  return 'orange';
+}
+
+function renderPanelCard(card) {
+  const tagClass = panelTagClass(card.column_key);
+
+  return `
+    <div class="panel-card" data-card-id="${esc(card.id)}">
+      <button class="panel-delete admin-only" onclick="deletePanelCard(this)">Delete</button>
+      <h4>${esc(card.title || 'Untitled card')}</h4>
+      <p>${esc(card.description || '')}</p>
+      <span class="panel-tag ${tagClass}">${esc(card.type || card.status || 'Open')}</span>
+    </div>
+  `;
+}
+
+async function loadFundingPanelCards() {
+  try {
+    const response = await fetch('/.netlify/functions/platform-cards?page=Lightbulb&section=funding_panel');
+    if (!response.ok) throw new Error('Funding panel cards function failed');
+
+    const data = await response.json();
+    const cards = Array.isArray(data.cards) ? data.cards : [];
+
+    const columns = ['points_to_consider', 'applications', 'decisions'];
+
+    columns.forEach(columnKey => {
+      const container = document.getElementById(`panel-cards-${columnKey}`);
+      if (!container) return;
+
+      const columnCards = cards
+        .filter(card => card.column_key === columnKey)
+        .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+      if (!columnCards.length) {
+        container.innerHTML = '<div class="panel-card"><p>No cards yet.</p></div>';
+        return;
+      }
+
+      container.innerHTML = columnCards.map(renderPanelCard).join('');
+    });
+
+    setupEditables();
+  } catch (error) {
+    console.warn('Could not load funding panel cards:', error);
+  }
+}
+
 async function loadAttentionCards() {
   const listEl = document.getElementById('dash-attentionItems');
 
@@ -1876,6 +1927,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAverageGrantSize();
   loadPlatformContent();
   loadAttentionCards();
+  loadFundingPanelCards();
   renderWhatsNew();
   buildTimeline();
   loadTimelineItemsFromSupabase();

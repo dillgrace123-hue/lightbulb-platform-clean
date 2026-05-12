@@ -21,7 +21,7 @@ exports.handler = async function (event) {
 
   url.searchParams.set("page", `eq.${page}`);
   url.searchParams.set("section", `eq.${section}`);
-  url.searchParams.set("select", "id,page,section,title,description,type,status,priority,owner,due_date,sort_order,created_at,updated_at");
+  url.searchParams.set("select", "id,page,section,column_key,title,description,type,status,priority,owner,due_date,sort_order,created_at,updated_at");
   url.searchParams.set("order", "sort_order.asc");
 
   try {
