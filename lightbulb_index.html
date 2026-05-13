@@ -4038,6 +4038,10 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
         window.loadAttentionCards();
       }
 
+      if (typeof loadInvestmentNews === 'function') {
+        loadInvestmentNews();
+      }
+
       return;
     }
 
