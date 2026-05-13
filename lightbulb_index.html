@@ -194,6 +194,262 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 /* Timeline action buttons */
 .timeline-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
+/* Investments page */
+.investments-shell{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.investments-hero{
+  background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:28px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  box-shadow:0 18px 46px rgba(0,0,0,.035);
+}
+
+.investments-hero h2{
+  font-size:34px;
+  font-weight:850;
+  letter-spacing:-.055em;
+  margin:0 0 8px;
+  color:var(--ink);
+  line-height:1;
+}
+
+.investments-hero p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+  max-width:720px;
+}
+
+.investments-hero-meta{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.investments-hero-meta span{
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#3f6f8e;
+  background:#e8eff4;
+  border-radius:999px;
+  padding:8px 10px;
+  white-space:nowrap;
+}
+
+.investment-overview-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.investment-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 12px 32px rgba(0,0,0,.03);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.investment-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.investment-card h3{
+  font-size:18px;
+  font-weight:850;
+  letter-spacing:-.035em;
+  margin:0 0 4px;
+  color:var(--ink);
+}
+
+.investment-card-head p{
+  margin:0;
+  font-size:12.5px;
+  color:var(--muted);
+}
+
+.investment-status{
+  font-size:10.5px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  border-radius:999px;
+  padding:6px 8px;
+  background:#e6f0ec;
+  color:#3f8d77;
+  white-space:nowrap;
+}
+
+.investment-field-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.investment-field-grid div{
+  background:#fbfaf7;
+  border:1px solid rgba(0,0,0,.055);
+  border-radius:13px;
+  padding:11px;
+}
+
+.investment-field-grid span{
+  display:block;
+  font-size:9.8px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--soft);
+  margin-bottom:4px;
+}
+
+.investment-field-grid strong{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.25;
+}
+
+.investment-note{
+  border-top:1px solid var(--line);
+  padding-top:12px;
+}
+
+.investment-note strong{
+  display:block;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--soft);
+  margin-bottom:5px;
+}
+
+.investment-note p{
+  margin:0;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+.investment-news-section{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 14px 36px rgba(0,0,0,.028);
+}
+
+.investment-news-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.investment-news-head h3{
+  font-size:24px;
+  font-weight:850;
+  letter-spacing:-.045em;
+  margin:0 0 6px;
+  color:var(--ink);
+}
+
+.investment-news-head p{
+  margin:0;
+  font-size:13px;
+  line-height:1.5;
+  color:var(--muted);
+  max-width:680px;
+}
+
+.investment-news-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.investment-news-card{
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+}
+
+.investment-news-type{
+  display:inline-flex;
+  font-size:10.5px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#9f6b22;
+  background:#fff3df;
+  border-radius:999px;
+  padding:5px 8px;
+  margin-bottom:12px;
+}
+
+.investment-news-card h4{
+  font-size:16px;
+  font-weight:850;
+  letter-spacing:-.035em;
+  margin:0 0 8px;
+  color:var(--ink);
+}
+
+.investment-news-card p{
+  margin:0 0 12px;
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+.investment-news-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  font-size:11.5px;
+  color:var(--soft);
+}
+
+@media(max-width:900px){
+  .investment-overview-grid,
+  .investment-news-grid{
+    grid-template-columns:1fr;
+  }
+
+  .investment-field-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .investments-hero,
+  .investment-news-head{
+    flex-direction:column;
+  }
+}
+
+
 /* Portfolio page */
 .portfolio-shell{
   display:flex;
@@ -501,7 +757,7 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   box-shadow:0 14px 36px rgba(0,0,0,.028);
 }
 .quick-nav-section h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--soft);margin-bottom:14px}
-.quick-nav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.quick-nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .quick-nav-card{
   background:#fbfaf7;
   border:1px solid var(--line);
@@ -1142,8 +1398,9 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
   <!-- Nav -->
   <div class="main-nav">
     <button class="navbtn active" onclick="showPage('home-page',this)">Home</button>
-    <button class="navbtn" onclick="showPage('portfolio-page',this)">Grants</button>
     <button class="navbtn" onclick="showPage('timeline-page',this)">Timeline</button>
+    <button class="navbtn" onclick="showPage('portfolio-page',this)">Grants</button>
+    <button class="navbtn" onclick="showPage('investments-page',this)">Investments</button>
     <button class="navbtn" onclick="showPage('impact-page',this)">Reports</button>
     <button class="navbtn" onclick="showPage('panel-page',this)">Funding Panel</button>
   </div>
@@ -1245,6 +1502,14 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
           <span class="qn-label">Timeline</span>
           <span class="qn-desc">Grant periods, end dates and follow-on context.</span>
         </button>
+        <button class="quick-nav-card" onclick="showPage('portfolio-page')">
+          <span class="qn-label">Grants</span>
+          <span class="qn-desc">Searchable grant portfolio and funding details.</span>
+        </button>
+        <button class="quick-nav-card" onclick="showPage('investments-page')">
+          <span class="qn-label">Investments</span>
+          <span class="qn-desc">Investment updates, decisions and news releases.</span>
+        </button>
         <button class="quick-nav-card" onclick="showPage('impact-page')">
           <span class="qn-label">Reports</span>
           <span class="qn-desc">Live report archive, document links and reporting filters.</span>
@@ -1333,6 +1598,110 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       </div>
 
       <div class="portfolio-list" id="portfolioList"></div>
+    </div>
+  </div>
+
+  <!-- INVESTMENTS PAGE -->
+  <div id="investments-page" class="page">
+    <div class="investments-shell">
+      <div class="investments-hero">
+        <div>
+          <div class="section-kicker">Investments</div>
+          <h2>Lightbulb Investments</h2>
+          <p>A view-only overview of active investments, latest updates, key decisions and recent news or releases.</p>
+        </div>
+        <div class="investments-hero-meta">
+          <span>Active portfolio</span>
+          <span>News ready</span>
+        </div>
+      </div>
+
+      <div class="investment-overview-grid">
+        <article class="investment-card">
+          <div class="investment-card-head">
+            <div>
+              <h3>Example Investment One</h3>
+              <p>Early stage · Lightbulb</p>
+            </div>
+            <span class="investment-status">Active</span>
+          </div>
+
+          <div class="investment-field-grid">
+            <div><span>Investment</span><strong>£10,000</strong></div>
+            <div><span>Stage</span><strong>Early stage</strong></div>
+            <div><span>Contact</span><strong>Founder contact</strong></div>
+          </div>
+
+          <div class="investment-note">
+            <strong>Latest update</strong>
+            <p>Preparing for next growth phase, with progress to be reviewed against user and revenue milestones.</p>
+          </div>
+
+          <div class="investment-note">
+            <strong>Key decision</strong>
+            <p>Monitor next raise and assess whether further support is strategically useful.</p>
+          </div>
+        </article>
+
+        <article class="investment-card">
+          <div class="investment-card-head">
+            <div>
+              <h3>Example Investment Two</h3>
+              <p>Bridge round · Lightbulb</p>
+            </div>
+            <span class="investment-status">Active</span>
+          </div>
+
+          <div class="investment-field-grid">
+            <div><span>Investment</span><strong>£30,000</strong></div>
+            <div><span>Stage</span><strong>Bridge round</strong></div>
+            <div><span>Contact</span><strong>Founder contact</strong></div>
+          </div>
+
+          <div class="investment-note">
+            <strong>Latest update</strong>
+            <p>Follow-on opportunity under review, with founder updates and next milestones to be tracked.</p>
+          </div>
+
+          <div class="investment-note">
+            <strong>Key decision</strong>
+            <p>Decision needed on participation, timing and strategic fit.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="investment-news-section">
+        <div class="investment-news-head">
+          <div>
+            <div class="section-kicker">Investment news</div>
+            <h3>News, releases and coverage</h3>
+            <p>Press releases, company updates, media coverage and notable milestones relating to Lightbulb investments.</p>
+          </div>
+          <button class="attention-edit-btn admin-only" type="button">+ Add news</button>
+        </div>
+
+        <div class="investment-news-grid">
+          <article class="investment-news-card">
+            <span class="investment-news-type">Company update</span>
+            <h4>Example investment announces new growth milestone</h4>
+            <p>Short summary of the release or coverage. This will later link to the full article, press release or source record.</p>
+            <div class="investment-news-meta">
+              <span>Example Investment One</span>
+              <span>Pending source link</span>
+            </div>
+          </article>
+
+          <article class="investment-news-card">
+            <span class="investment-news-type">Media coverage</span>
+            <h4>Founder profile or sector coverage appears online</h4>
+            <p>Useful coverage can be logged here so Ben and Salome have one place to review investment-related news.</p>
+            <div class="investment-news-meta">
+              <span>Example Investment Two</span>
+              <span>Pending source link</span>
+            </div>
+          </article>
+        </div>
+      </div>
     </div>
   </div>
 
