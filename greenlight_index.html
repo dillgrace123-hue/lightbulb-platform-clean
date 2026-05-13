@@ -2067,7 +2067,8 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
     <div class="toolbar">
       <div class="filters">
         <span class="filter-label">Show</span>
-        <button class="pill active" onclick="setFilter('all',this)">All</button>
+        <button class="pill active" onclick="setFilter('active',this)">Active</button>
+        <button class="pill" onclick="setFilter('recent',this)">Recently completed</button>
         <button class="pill" onclick="setFilter('fof',this)">Follow-on eligible</button>
         <button class="pill" onclick="setFilter('not',this)">Not eligible</button>
       </div>
@@ -2498,7 +2499,7 @@ function loadDashboard(){
 
 let grants = loadGrants();
 dashboard = loadDashboard();
-let activeFilter = 'all';
+let activeFilter = 'active';
 
 function loadGrants(){
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(document.getElementById('grant-data').textContent); }
@@ -3236,15 +3237,24 @@ function saveDashboard(){
 // TIMELINE
 // =========================================
 function visibleGrants(){
+  const recentCutoff = new Date(TODAY);
+  recentCutoff.setMonth(recentCutoff.getMonth() - 3);
+
   return grants.filter(g => {
     const start = pd(g.start);
     const end = pd(g.end);
 
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
-    if (end < TODAY || end > END) return false;
-    if (activeFilter === 'fof') return g.fof === 'Yes';
-    if (activeFilter === 'not') return g.fof === 'No';
-    return true;
+    if (end > END) return false;
+
+    const isActive = end >= TODAY;
+    const isRecentlyCompleted = end < TODAY && end >= recentCutoff;
+
+    if (activeFilter === 'recent') return isRecentlyCompleted;
+    if (activeFilter === 'fof') return isActive && g.fof === 'Yes';
+    if (activeFilter === 'not') return isActive && g.fof === 'No';
+
+    return isActive;
   }).sort((a,b) => pd(a.end) - pd(b.end));
 }
 
