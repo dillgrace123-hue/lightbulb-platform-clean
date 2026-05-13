@@ -2583,6 +2583,12 @@ table.simple .neg{color:var(--red);font-weight:600}
        ========================= -->
   <div id="governance-page" class="page">
 
+    <div class="trustee-section-hero">
+      <div class="trustee-section-kicker">Governance</div>
+      <h3>Trustee governance, compliance and policy actions in one place.</h3>
+      <p>Track board actions, policy reviews, compliance follow-ups and key governance deadlines. This is a static trustee-ready view for now, with admin editing and Supabase sync to follow later.</p>
+    </div>
+
     <div class="section-block">
       <div class="section-title">
         <div>
@@ -2590,47 +2596,48 @@ table.simple .neg{color:var(--red);font-weight:600}
           <p>Tasks and submissions required to maintain registered charity status.</p>
         </div>
       </div>
+
       <div class="section-body">
         <div class="row-list">
 
-          <div class="gov-task done">
-            <div class="gov-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-            <div class="gov-body">
-              <div class="gov-title">Annual Return 2024/25 submitted</div>
-              <div class="gov-meta">Submitted 14 Oct 2025 · Acknowledged 16 Oct 2025</div>
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Annual Return 2024/25 submitted <span class="tag green">Complete</span></div>
+              <div class="dashboard-feed-desc">Submitted and acknowledged by the Charity Commission.</div>
             </div>
+            <div class="dashboard-feed-meta">Submitted 14 Oct 2025</div>
           </div>
 
-          <div class="gov-task done">
-            <div class="gov-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-            <div class="gov-body">
-              <div class="gov-title">Trustees' Annual Report 2024/25 filed</div>
-              <div class="gov-meta">Filed 28 Oct 2025</div>
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Trustees’ Annual Report 2024/25 filed <span class="tag green">Complete</span></div>
+              <div class="dashboard-feed-desc">Filed as part of the previous year-end governance cycle.</div>
             </div>
+            <div class="dashboard-feed-meta">Filed 28 Oct 2025</div>
           </div>
 
-          <div class="gov-task">
-            <div class="gov-check"></div>
-            <div class="gov-body">
-              <div class="gov-title">Annual Return 2025/26 — preparation <span class="tag amber">Due Oct 2026</span></div>
-              <div class="gov-meta">Draft in preparation · Salome leading</div>
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Annual Return 2025/26 preparation <span class="tag amber">Due Oct 2026</span></div>
+              <div class="dashboard-feed-desc">Draft in preparation. Salome currently leading the submission process.</div>
             </div>
+            <div class="dashboard-feed-meta">Due Oct 2026</div>
           </div>
 
-          <div class="gov-task">
-            <div class="gov-check"></div>
-            <div class="gov-body">
-              <div class="gov-title">Trustees' Annual Report 2025/26 — draft <span class="tag amber">Due Jun 2026</span></div>
-              <div class="gov-meta">For sign-off at June board meeting</div>
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Trustees’ Annual Report 2025/26 draft <span class="tag amber">Due Jun 2026</span></div>
+              <div class="dashboard-feed-desc">For review and sign-off at the June trustee meeting.</div>
             </div>
+            <div class="dashboard-feed-meta">Due Jun 2026</div>
           </div>
 
-          <div class="gov-task">
-            <div class="gov-check"></div>
-            <div class="gov-body">
-              <div class="gov-title">Update trustee details on register <span class="tag red">Overdue</span></div>
-              <div class="gov-meta">New trustee appointment to be notified to Charity Commission</div>
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Update trustee details on register <span class="tag red">Overdue</span></div>
+              <div class="dashboard-feed-desc">New trustee appointment to be notified to the Charity Commission.</div>
             </div>
+            <div class="dashboard-feed-meta">Needs action</div>
           </div>
 
         </div>
@@ -2644,36 +2651,42 @@ table.simple .neg{color:var(--red);font-weight:600}
           <p>Internal policy review schedule.</p>
         </div>
       </div>
+
       <div class="section-body">
         <div class="row-list">
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Reserves policy <span class="tag amber">Review due</span></div>
-              <div class="row-desc">Triennial review scheduled for June 2026 board meeting.</div>
+
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Reserves policy <span class="tag amber">Review due</span></div>
+              <div class="dashboard-feed-desc">Triennial review scheduled for the June 2026 board meeting.</div>
             </div>
-            <div class="row-meta">Jun 2026</div>
+            <div class="dashboard-feed-meta">Jun 2026</div>
           </div>
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Safeguarding policy <span class="tag green">Current</span></div>
-              <div class="row-desc">Last reviewed November 2025. Next review due November 2026.</div>
+
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Safeguarding policy <span class="tag green">Current</span></div>
+              <div class="dashboard-feed-desc">Last reviewed November 2025. Next review due November 2026.</div>
             </div>
-            <div class="row-meta">Nov 2025</div>
+            <div class="dashboard-feed-meta">Nov 2026</div>
           </div>
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Investment policy <span class="tag green">Current</span></div>
-              <div class="row-desc">Last reviewed March 2026. Next review due March 2028.</div>
+
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Investment policy <span class="tag green">Current</span></div>
+              <div class="dashboard-feed-desc">Last reviewed March 2026. Next review due March 2028.</div>
             </div>
-            <div class="row-meta">Mar 2026</div>
+            <div class="dashboard-feed-meta">Mar 2028</div>
           </div>
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Conflict of interest policy <span class="tag green">Current</span></div>
-              <div class="row-desc">Last reviewed September 2025. Annual declarations on file.</div>
+
+          <div class="dashboard-feed-card">
+            <div class="dashboard-feed-main">
+              <div class="dashboard-feed-title">Conflict of interest policy <span class="tag green">Current</span></div>
+              <div class="dashboard-feed-desc">Last reviewed September 2025. Annual declarations on file.</div>
             </div>
-            <div class="row-meta">Sep 2025</div>
+            <div class="dashboard-feed-meta">Sep 2025</div>
           </div>
+
         </div>
       </div>
     </div>
@@ -2798,6 +2811,79 @@ table.simple .neg{color:var(--red);font-weight:600}
     <div>v0.1 · May 2026</div>
   </div>
 
+
+<!-- Trustee governance item modal -->
+<div class="modal-bg" id="trusteeGovernanceModal">
+  <div class="modal">
+    <h2 id="trusteeGovernanceModalTitle">Governance item</h2>
+    <input id="trustee-governance-id" type="hidden">
+
+    <div class="modal-grid">
+      <div class="modal-full field">
+        <label>Title</label>
+        <input id="trustee-governance-title" placeholder="Annual report sign-off">
+      </div>
+
+      <div class="modal-full field">
+        <label>Description</label>
+        <textarea id="trustee-governance-description" style="font-family:'DM Sans',sans-serif;min-height:90px;resize:vertical"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Category</label>
+        <input id="trustee-governance-category" placeholder="Governance, Policy, Finance">
+      </div>
+
+      <div class="field">
+        <label>Status</label>
+        <select id="trustee-governance-status">
+          <option>Open</option>
+          <option>Waiting</option>
+          <option>Complete</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Due / timing text</label>
+        <input id="trustee-governance-due-text" placeholder="Due 30 Jun, July 2026, Ongoing">
+      </div>
+
+      <div class="field">
+        <label>Owner</label>
+        <input id="trustee-governance-owner" placeholder="Dillon">
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <select id="trustee-governance-priority">
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="smallbtn light" type="button" onclick="closeTrusteeGovernanceModal()">Cancel</button>
+      <button class="smallbtn" type="button" onclick="saveTrusteeGovernanceItem()">Save governance item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trustee governance delete modal -->
+<div class="modal-bg" id="trusteeGovernanceDeleteModal">
+  <div class="modal">
+    <h2>Delete governance item</h2>
+    <input id="trustee-governance-delete-id" type="hidden">
+    <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:8px 0 18px">
+      This will remove the item from the trustee governance view.
+    </p>
+    <div class="modal-actions">
+      <button class="smallbtn light" type="button" onclick="closeTrusteeGovernanceDeleteModal()">Cancel</button>
+      <button class="smallbtn" type="button" onclick="confirmDeleteTrusteeGovernanceItem()">Delete</button>
+    </div>
+  </div>
+</div>
 
 <!-- Trustee funding decision modal -->
 <div class="modal-bg" id="trusteeDecisionModal">
@@ -4529,6 +4615,288 @@ async function confirmDeleteTrusteeRecentActivity(){
   closeTrusteeRecentActivityDeleteModal();
   await loadTrusteeRecentActivity();
 }
+
+
+// ===== TRUSTEE GOVERNANCE ITEMS =====
+let trusteeGovernanceItems = [];
+window.currentTrusteeGovernanceItems = {};
+
+function setTrusteeGovernanceField(id, value){
+  const el = document.getElementById(id);
+  if (el) el.value = value || '';
+}
+
+function getTrusteeGovernanceField(id){
+  return document.getElementById(id)?.value?.trim() || '';
+}
+
+function governanceStatusClass(status){
+  const value = String(status || '').toLowerCase();
+
+  if (value === 'complete') return 'approved';
+  if (value === 'waiting') return 'deferred';
+
+  return 'pending';
+}
+
+function governanceTagClass(status){
+  const value = String(status || '').toLowerCase();
+
+  if (value === 'complete') return 'green';
+  if (value === 'waiting') return 'amber';
+
+  return 'purple';
+}
+
+function governanceItemMatchesFilters(item){
+  const search = (document.getElementById('governanceSearch')?.value || '').toLowerCase().trim();
+  const status = document.getElementById('governanceStatusFilter')?.value || 'all';
+  const category = document.getElementById('governanceCategoryFilter')?.value || 'all';
+
+  const haystack = Object.values(item).join(' ').toLowerCase();
+
+  if (search && !haystack.includes(search)) return false;
+  if (status !== 'all' && item.status !== status) return false;
+  if (category !== 'all' && item.category !== category) return false;
+
+  return true;
+}
+
+function populateGovernanceCategoryFilter(){
+  const select = document.getElementById('governanceCategoryFilter');
+  if (!select) return;
+
+  const current = select.value || 'all';
+  const categories = [...new Set(trusteeGovernanceItems.map(item => item.category).filter(Boolean))].sort();
+
+  select.innerHTML = '<option value="all">All categories</option>' + categories.map(category => (
+    `<option value="${esc(category)}">${esc(category)}</option>`
+  )).join('');
+
+  select.value = categories.includes(current) ? current : 'all';
+}
+
+function renderTrusteeGovernanceCard(item){
+  const safeId = esc(item.id);
+  const isAdmin = document.body.dataset.userRole === 'admin';
+  const statusClass = governanceStatusClass(item.status);
+  const tagClass = governanceTagClass(item.status);
+
+  const actions = isAdmin ? `
+    <div class="dashboard-feed-actions">
+      <button type="button" onclick="editTrusteeGovernanceItem('${safeId}')">Edit</button>
+      <button class="delete" type="button" onclick="deleteTrusteeGovernanceItem('${safeId}')">Delete</button>
+    </div>
+  ` : '';
+
+  const footerParts = [
+    item.category,
+    item.owner ? `Owner: ${item.owner}` : ''
+  ].filter(Boolean).join(' · ');
+
+  return `
+    <div class="decision-card ${statusClass}">
+      <div class="decision-head">
+        <div class="decision-org">
+          ${esc(item.title || 'Untitled governance item')}
+          <span class="tag ${tagClass}">${esc(item.status || 'Open')}</span>
+        </div>
+        <div class="decision-amount">${esc(item.priority || 'Medium')}</div>
+      </div>
+
+      ${item.description ? `<div class="decision-body">${esc(item.description)}</div>` : ''}
+
+      <div class="decision-foot">
+        <span>${esc(footerParts || 'Governance item')}</span>
+        <span>${esc(item.due_text || '')}</span>
+      </div>
+
+      ${actions}
+    </div>
+  `;
+}
+
+function renderTrusteeGovernanceItems(){
+  const list = document.getElementById('trusteeGovernanceList');
+  if (!list) return;
+
+  const activeItems = trusteeGovernanceItems
+    .filter(item => item.is_active !== false)
+    .filter(governanceItemMatchesFilters)
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+  window.currentTrusteeGovernanceItems = {};
+  trusteeGovernanceItems.forEach(item => {
+    if (item.id) window.currentTrusteeGovernanceItems[item.id] = item;
+  });
+
+  if (!activeItems.length) {
+    list.innerHTML = '<div class="portfolio-empty">No governance items match this view.</div>';
+    return;
+  }
+
+  list.innerHTML = activeItems.map(renderTrusteeGovernanceCard).join('');
+}
+
+async function loadTrusteeGovernanceItems(){
+  const list = document.getElementById('trusteeGovernanceList');
+
+  if (list) {
+    list.innerHTML = '<div class="portfolio-empty">Loading governance items from Supabase...</div>';
+  }
+
+  if (!window.supabaseClient) {
+    window.addEventListener('supabase-ready', loadTrusteeGovernanceItems, { once: true });
+    return;
+  }
+
+  try {
+    const { data, error } = await window.supabaseClient
+      .from('trustee_governance_items')
+      .select('id,title,description,category,status,due_text,owner,priority,flag_for_attention,sort_order,is_active,created_at,updated_at')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+
+    trusteeGovernanceItems = Array.isArray(data) ? data : [];
+
+    populateGovernanceCategoryFilter();
+    renderTrusteeGovernanceItems();
+  } catch (error) {
+    console.warn('Could not load trustee governance items:', error);
+    if (list) list.innerHTML = '<div class="portfolio-empty">Could not load governance items.</div>';
+  }
+}
+
+function openTrusteeGovernanceModal(item = null){
+  document.getElementById('trusteeGovernanceModalTitle').textContent = item ? 'Edit governance item' : 'Add governance item';
+
+  setTrusteeGovernanceField('trustee-governance-id', item?.id || '');
+  setTrusteeGovernanceField('trustee-governance-title', item?.title || '');
+  setTrusteeGovernanceField('trustee-governance-description', item?.description || '');
+  setTrusteeGovernanceField('trustee-governance-category', item?.category || '');
+  setTrusteeGovernanceField('trustee-governance-status', item?.status || 'Open');
+  setTrusteeGovernanceField('trustee-governance-due-text', item?.due_text || '');
+  setTrusteeGovernanceField('trustee-governance-owner', item?.owner || '');
+  setTrusteeGovernanceField('trustee-governance-priority', item?.priority || 'Medium');
+
+  document.getElementById('trusteeGovernanceModal').classList.add('open');
+}
+
+function closeTrusteeGovernanceModal(){
+  document.getElementById('trusteeGovernanceModal').classList.remove('open');
+}
+
+function editTrusteeGovernanceItem(id){
+  const item = window.currentTrusteeGovernanceItems?.[id];
+
+  if (!item) {
+    alert('Could not find this governance item.');
+    return;
+  }
+
+  openTrusteeGovernanceModal(item);
+}
+
+async function saveTrusteeGovernanceItem(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet.');
+    return;
+  }
+
+  const id = getTrusteeGovernanceField('trustee-governance-id');
+
+  const payload = {
+    title: getTrusteeGovernanceField('trustee-governance-title'),
+    description: getTrusteeGovernanceField('trustee-governance-description'),
+    category: getTrusteeGovernanceField('trustee-governance-category'),
+    status: getTrusteeGovernanceField('trustee-governance-status'),
+    due_text: getTrusteeGovernanceField('trustee-governance-due-text'),
+    owner: getTrusteeGovernanceField('trustee-governance-owner'),
+    priority: getTrusteeGovernanceField('trustee-governance-priority'),
+    is_active: true,
+    updated_at: new Date().toISOString()
+  };
+
+  if (!payload.title) {
+    alert('Please add a title.');
+    return;
+  }
+
+  let result;
+
+  if (id) {
+    result = await window.supabaseClient
+      .from('trustee_governance_items')
+      .update(payload)
+      .eq('id', id);
+  } else {
+    const nextSortOrder = trusteeGovernanceItems.length + 1;
+
+    result = await window.supabaseClient
+      .from('trustee_governance_items')
+      .insert({
+        ...payload,
+        sort_order: nextSortOrder
+      });
+  }
+
+  if (result.error) {
+    alert('Could not save governance item: ' + result.error.message);
+    return;
+  }
+
+  closeTrusteeGovernanceModal();
+  await loadTrusteeGovernanceItems();
+  await loadTrusteeDashboardSummary();
+}
+
+function deleteTrusteeGovernanceItem(id){
+  const item = window.currentTrusteeGovernanceItems?.[id];
+
+  if (!item) {
+    alert('Could not find this governance item.');
+    return;
+  }
+
+  setTrusteeGovernanceField('trustee-governance-delete-id', id);
+  document.getElementById('trusteeGovernanceDeleteModal').classList.add('open');
+}
+
+function closeTrusteeGovernanceDeleteModal(){
+  document.getElementById('trusteeGovernanceDeleteModal').classList.remove('open');
+  setTrusteeGovernanceField('trustee-governance-delete-id', '');
+}
+
+async function confirmDeleteTrusteeGovernanceItem(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet.');
+    return;
+  }
+
+  const id = getTrusteeGovernanceField('trustee-governance-delete-id');
+
+  if (!id) {
+    alert('Could not find this governance item.');
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from('trustee_governance_items')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert('Could not delete governance item: ' + error.message);
+    return;
+  }
+
+  closeTrusteeGovernanceDeleteModal();
+  await loadTrusteeGovernanceItems();
+  await loadTrusteeDashboardSummary();
+}
+
 
 // ===== PAGE NAVIGATION =====
 function showPage(id, btn, updateHash = true){
