@@ -2138,17 +2138,17 @@ table.simple .neg{color:var(--red);font-weight:600}
       <div class="stat-card green">
         <div class="stat-label">DECISIONS THIS QUARTER</div>
         <div class="stat-value" id="trustee-decisionsQuarter">Loading...</div>
-        <div class="stat-desc" id="trustee-decisionsQuarterMeta">Pulled from funding decisions</div>
+        <div class="stat-desc" id="trustee-decisionsQuarterMeta">From funding decisions</div>
       </div>
       <div class="stat-card amber">
         <div class="stat-label">GOVERNANCE TASKS</div>
         <div class="stat-value" id="trustee-governanceTasks">Loading...</div>
-        <div class="stat-desc" id="trustee-governanceTasksMeta">Pulled from platform content</div>
+        <div class="stat-desc" id="trustee-governanceTasksMeta">From platform records</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">NEXT BOARD MEETING</div>
         <div class="stat-value" id="trustee-nextBoardMeeting">Loading...</div>
-        <div class="stat-desc" id="trustee-nextBoardMeetingMeta">Pulled from platform content</div>
+        <div class="stat-desc" id="trustee-nextBoardMeetingMeta">From platform records</div>
       </div>
     </div>
 
@@ -2198,8 +2198,8 @@ table.simple .neg{color:var(--red);font-weight:600}
       <div class="section-body">
         <div class="trustee-section-hero">
           <div class="trustee-section-kicker">Grant Portfolio</div>
-          <h3>Live grant records across Lightbulb and Greenlight in one trustee-ready view.</h3>
-          <p>Use this view to scan active and completed grants, compare fund activity, and quickly find organisation-level records pulled from Airtable.</p>
+          <h3>Grant records across Lightbulb and Greenlight in one trustee-ready view.</h3>
+          <p>Use this view to scan active and completed grants, compare fund activity, and quickly find organisation-level records.</p>
         </div>
 
         <div class="trustee-view-tabs" aria-label="Portfolio fund view">
@@ -2245,7 +2245,7 @@ table.simple .neg{color:var(--red);font-weight:600}
         <div class="trustee-section-hero">
           <div class="trustee-section-kicker">Reporting Archive</div>
           <h3>Partner reports, reflections and impact updates brought into one clearer library.</h3>
-          <p>Search across Lightbulb and Greenlight reporting records, review latest submissions, and open Airtable-linked form responses or supporting documents.</p>
+          <p>Search across Lightbulb and Greenlight reporting records, review latest submissions, and open form responses or supporting documents.</p>
         </div>
 
         <div class="reporting-overview-grid">
@@ -2320,7 +2320,7 @@ table.simple .neg{color:var(--red);font-weight:600}
         <div class="investment-hero-strip">
           <div class="investment-hero-kicker">Investment Portfolio</div>
           <h3>Mission-aligned investments, current exposure and public updates in one place.</h3>
-          <p>This view brings together live investment records from Airtable and published news or release updates, giving trustees a clearer sense of portfolio activity and momentum.</p>
+          <p>This view brings together investment records and published news or release updates, giving trustees a clearer sense of portfolio activity and momentum.</p>
         </div>
 
         <div class="investment-section-tabs">
@@ -2354,7 +2354,7 @@ table.simple .neg{color:var(--red);font-weight:600}
             <div class="investment-overview-card">
               <div class="investment-overview-label">Investment records</div>
               <div class="investment-overview-value" id="investmentCountValue">...</div>
-              <div class="investment-overview-sub">Pulled live from Airtable.</div>
+              <div class="investment-overview-sub">Updated from the latest portfolio records.</div>
             </div>
             <div class="investment-overview-card">
               <div class="investment-overview-label">Latest investment</div>
@@ -2401,7 +2401,7 @@ table.simple .neg{color:var(--red);font-weight:600}
         <div class="trustee-section-hero">
           <div class="trustee-section-kicker">Funding Decisions</div>
           <h3>Recent and upcoming funding decisions across Lightbulb and Greenlight.</h3>
-          <p>A trustee-ready view of decisions, deferrals and items requiring board awareness. Records are stored in Supabase and editable by admins only.</p>
+          <p>A trustee-ready view of decisions, deferrals and items requiring board awareness.</p>
         </div>
 
         <div class="portfolio-controls">
@@ -2586,7 +2586,7 @@ table.simple .neg{color:var(--red);font-weight:600}
     <div class="trustee-section-hero">
       <div class="trustee-section-kicker">Governance</div>
       <h3>Trustee governance, compliance and policy actions in one place.</h3>
-      <p>Track board actions, policy reviews, compliance follow-ups and key governance deadlines. This is a static trustee-ready view for now, with admin editing and Supabase sync to follow later.</p>
+      <p>Track board actions, policy reviews, compliance follow-ups and key governance deadlines.</p>
     </div>
 
     <div class="section-block">
@@ -3916,7 +3916,7 @@ async function loadTrusteeFundingDecisions(){
   const list = document.getElementById('trusteeFundingDecisionsList');
 
   if (list) {
-    list.innerHTML = '<div class="portfolio-empty">Loading funding decisions from Supabase...</div>';
+    list.innerHTML = '<div class="portfolio-empty">Loading funding decisions...</div>';
   }
 
   try {
@@ -4742,7 +4742,7 @@ async function loadTrusteeGovernanceItems(){
   const list = document.getElementById('trusteeGovernanceList');
 
   if (list) {
-    list.innerHTML = '<div class="portfolio-empty">Loading governance items from Supabase...</div>';
+    list.innerHTML = '<div class="portfolio-empty">Loading governance items...</div>';
   }
 
   if (!window.supabaseClient) {
