@@ -1763,33 +1763,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       </div>
 
 
-      <div class="investment-list">
-        <article class="investment-row">
-          <div class="investment-row-main">
-            <div class="investment-row-name">
-              <strong>Example Investment One</strong>
-              <span>Lightbulb</span>
-            </div>
-            <div class="investment-row-cell"><span>Amount</span><strong>£10,000</strong></div>
-            <div class="investment-row-cell"><span>Start date</span><strong>Aug 2023</strong></div>
-            <div class="investment-row-cell"><span>Ongoing</span><strong>Yes</strong></div>
-            <span class="investment-status">Active</span>
-          </div>
-        </article>
-
-        <article class="investment-row">
-          <div class="investment-row-main">
-            <div class="investment-row-name">
-              <strong>Example Investment Two</strong>
-              <span>Lightbulb</span>
-            </div>
-            <div class="investment-row-cell"><span>Amount</span><strong>£30,000</strong></div>
-            <div class="investment-row-cell"><span>Start date</span><strong>Jan 2026</strong></div>
-            <div class="investment-row-cell"><span>Ongoing</span><strong>Yes</strong></div>
-            <span class="investment-status">Active</span>
-          </div>
-        </article>
-      </div>
+      <div class="investment-list" id="investmentList"></div>
 
     </div>
   </div>
@@ -2458,6 +2432,129 @@ function renderPortfolioItems(){
   }
 
   list.innerHTML = filtered.map(renderGrantCard).join('');
+}
+
+// =========================================
+// INVESTMENTS PAGE
+// =========================================
+let portfolioInvestments = [
+  {
+    name: 'Example Investment One',
+    amountRaw: 10000,
+    amount: '£10,000',
+    startDateRaw: '2023-08-01',
+    startDate: 'Aug 2023',
+    endDateRaw: '',
+    endDate: '',
+    ongoing: 'Yes',
+    status: 'Active'
+  },
+  {
+    name: 'Example Investment Two',
+    amountRaw: 30000,
+    amount: '£30,000',
+    startDateRaw: '2026-01-01',
+    startDate: 'Jan 2026',
+    endDateRaw: '',
+    endDate: '',
+    ongoing: 'Yes',
+    status: 'Active'
+  }
+];
+
+function mapAirtableInvestmentToPortfolioInvestment(investment){
+  return {
+    id: investment.id,
+    name: investment.name || '',
+    amountRaw: Number(investment.amount || 0),
+    amount: formatPortfolioCurrency(investment.amount),
+    startDateRaw: investment.startDate || '',
+    startDate: formatPortfolioDate(investment.startDate),
+    endDateRaw: investment.endDate || '',
+    endDate: formatPortfolioDate(investment.endDate),
+    ongoing: investment.endDate ? 'No' : 'Yes',
+    status: investment.status || ''
+  };
+}
+
+function renderInvestmentRow(item){
+  return `
+    <article class="investment-row">
+      <div class="investment-row-main">
+        <div class="investment-row-name">
+          <strong>${esc(item.name || '')}</strong>
+          <span>Investment</span>
+        </div>
+        <div class="investment-row-cell"><span>Amount</span><strong>${esc(item.amount || '')}</strong></div>
+        <div class="investment-row-cell"><span>Start date</span><strong>${esc(item.startDate || '')}</strong></div>
+        <div class="investment-row-cell"><span>Ongoing</span><strong>${esc(item.ongoing || '')}</strong></div>
+        <span class="investment-status">${esc(item.status || 'Active')}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderInvestments(){
+  const list = document.getElementById('investmentList');
+  if (!list) return;
+
+  if (!portfolioInvestments.length) {
+    list.innerHTML = `
+      <article class="investment-row">
+        <div class="investment-row-main">
+          <div class="investment-row-name">
+            <strong>No investments found</strong>
+            <span>No investment records are currently available.</span>
+          </div>
+        </div>
+      </article>
+    `;
+    return;
+  }
+
+  const sorted = [...portfolioInvestments].sort((a, b) => {
+    return new Date(b.startDateRaw || 0) - new Date(a.startDateRaw || 0);
+  });
+
+  list.innerHTML = sorted.map(renderInvestmentRow).join('');
+}
+
+async function loadPortfolioInvestments(){
+  const list = document.getElementById('investmentList');
+  const fallback = Array.isArray(portfolioInvestments) ? [...portfolioInvestments] : [];
+
+  if (list) {
+    list.innerHTML = `
+      <article class="investment-row">
+        <div class="investment-row-main">
+          <div class="investment-row-name">
+            <strong>Loading investments...</strong>
+            <span>Pulling latest investment records from Airtable.</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/portfolio-investments');
+    if (!response.ok) throw new Error('Portfolio investments function failed');
+
+    const data = await response.json();
+    const investments = Array.isArray(data.investments) ? data.investments : [];
+
+    if (!investments.length) {
+      portfolioInvestments = fallback;
+    } else {
+      portfolioInvestments = investments.map(mapAirtableInvestmentToPortfolioInvestment);
+    }
+
+    renderInvestments();
+  } catch (error) {
+    portfolioInvestments = fallback;
+    renderInvestments();
+    console.warn('Could not load portfolio investments:', error);
+  }
 }
 
 // =========================================
@@ -3573,6 +3670,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadFundingPanelCards();
   loadLiveReports();
   loadPortfolioGrants();
+  loadPortfolioInvestments();
   buildTimeline();
   loadTimelineItemsFromSupabase();
   restorePageFromHash();
