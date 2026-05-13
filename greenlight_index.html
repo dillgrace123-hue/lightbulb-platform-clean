@@ -2351,38 +2351,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
   </div>
 </div>
 
-<!-- Add grant modal -->
-<div class="modal-bg" id="addModal">
-  <div class="modal">
-    <h2>Add grant</h2>
-    <div class="modal-grid">
-      <div class="modal-full field"><label>Organisation</label><input id="m-name"></div>
-      <div class="field"><label>Start date</label><input id="m-start" type="date"></div>
-      <div class="field"><label>End date</label><input id="m-end" type="date"></div>
-      <div class="field"><label>Amount (£)</label><input id="m-amt" type="number"></div>
-      <div class="field"><label>Years funded</label><input id="m-yrs" type="number" min="1" max="4" value="1"></div>
-      <div class="field"><label>Follow-on eligible?</label><select id="m-fof"><option>Yes</option><option>No</option></select></div>
-      <div class="modal-full field"><label>Notes</label><input id="m-note"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="smallbtn light" onclick="closeAddModal()">Cancel</button>
-      <button class="smallbtn" onclick="saveNewGrant()">Add grant</button>
-    </div>
-  </div>
-</div>
 
-<!-- Remove timeline item confirmation modal -->
-<div class="modal-bg" id="removeTimelineModal">
-  <div class="modal" style="max-width:460px">
-    <h2>Remove timeline item?</h2>
-    <p id="remove-timeline-title" style="font-size:14px;color:var(--muted);line-height:1.5;margin:8px 0 18px"></p>
-    <input id="remove-timeline-id" type="hidden">
-    <div class="modal-actions">
-      <button class="smallbtn light" onclick="closeRemoveTimelineModal()">Cancel</button>
-      <button class="smallbtn danger" onclick="confirmRemoveTimelineItem()">Remove item</button>
-    </div>
-  </div>
-</div>
 
 <!-- Hover card for timeline -->
 <div class="hover-card" id="hoverCard"></div>
@@ -3294,7 +3263,6 @@ function buildAxis(){
 }
 
 let editingId = null;
-let nextId = Math.max(...grants.map(g => Number(g.id) || 0)) + 1;
 
 function isAdminUser(){
   return document.body.dataset.userRole === 'admin';
@@ -3343,140 +3311,7 @@ function toggleEdit(id){
   buildTimeline();
 }
 function cancelEdit(){ editingId = null; buildTimeline(); }
-async function saveEdit(id){
-  const g = grants.find(x => String(x.id) === String(id));
-  if (!g) {
-    alert('Could not find this timeline item.');
-    return;
-  }
 
-  ['name','start','end','amt','yrs','fof','note'].forEach(k => {
-    const el = document.getElementById(`e-${k}-${id}`);
-    if (el) g[k] = (k === 'amt' || k === 'yrs') ? Number(el.value) : el.value;
-  });
-
-  if (!window.supabaseClient) {
-    alert('Supabase is not ready yet. Please refresh and try again.');
-    return;
-  }
-
-  const { error } = await window.supabaseClient
-    .from('timeline_items')
-    .update({
-      organisation: g.name,
-      start_date: g.start,
-      end_date: g.end,
-      amount: g.amt,
-      funding_year: String(g.yrs || ''),
-      follow_on_eligible: g.fof,
-      notes: g.note,
-      updated_at: new Date().toISOString()
-    })
-    .eq('id', id);
-
-  if (error) {
-    alert('Could not save timeline item: ' + error.message);
-    return;
-  }
-
-  editingId = null;
-  await loadTimelineItemsFromAirtable();
-  toast('Saved to Supabase');
-}
-
-function deleteGrant(id){
-  const g = grants.find(x => String(x.id) === String(id));
-
-  document.getElementById('remove-timeline-id').value = id;
-  document.getElementById('remove-timeline-title').textContent = g?.name || 'Untitled item';
-  document.getElementById('removeTimelineModal').classList.add('open');
-}
-
-function closeRemoveTimelineModal(){
-  document.getElementById('removeTimelineModal').classList.remove('open');
-  document.getElementById('remove-timeline-id').value = '';
-  document.getElementById('remove-timeline-title').textContent = '';
-}
-
-async function confirmRemoveTimelineItem(){
-  const id = document.getElementById('remove-timeline-id').value;
-
-  if (!id) {
-    alert('Could not find this timeline item.');
-    return;
-  }
-
-  if (!window.supabaseClient) {
-    alert('Supabase is not ready yet. Please refresh and try again.');
-    return;
-  }
-
-  const { error } = await window.supabaseClient
-    .from('timeline_items')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    alert('Could not remove timeline item: ' + error.message);
-    return;
-  }
-
-  editingId = null;
-  closeRemoveTimelineModal();
-  await loadTimelineItemsFromSupabase();
-  toast('Removed from Supabase');
-}
-
-function openAddModal(){ document.getElementById('addModal').classList.add('open'); }
-function closeAddModal(){ document.getElementById('addModal').classList.remove('open'); }
-
-async function saveNewGrant(){
-  const name = document.getElementById('m-name').value.trim();
-  const start = document.getElementById('m-start').value;
-  const end = document.getElementById('m-end').value;
-  const amt = Number(document.getElementById('m-amt').value);
-  const yrs = Number(document.getElementById('m-yrs').value) || 1;
-  const fof = document.getElementById('m-fof').value;
-  const note = document.getElementById('m-note').value.trim();
-
-  if (!name || !start || !end || !amt){
-    alert('Please add name, dates and amount.');
-    return;
-  }
-
-  if (!window.supabaseClient) {
-    alert('Supabase is not ready yet. Please refresh and try again.');
-    return;
-  }
-
-  const nextSortOrder = grants.length + 1;
-
-  const { error } = await window.supabaseClient
-    .from('timeline_items')
-    .insert({
-      page: 'Greenlight',
-      organisation: name,
-      amount: amt,
-      start_date: start,
-      end_date: end,
-      funding_year: String(yrs),
-      follow_on_eligible: fof,
-      type: 'Standard grant',
-      status: 'Active',
-      notes: note,
-      sort_order: nextSortOrder
-    });
-
-  if (error) {
-    alert('Could not add timeline item: ' + error.message);
-    return;
-  }
-
-  closeAddModal();
-  ['m-name','m-start','m-end','m-amt','m-note'].forEach(fieldId => document.getElementById(fieldId).value = '');
-  await loadTimelineItemsFromSupabase();
-  toast('Timeline item added to Supabase');
-}
 
 function exportCSV(){
   const rows = [['Organisation','Grant Start','Grant End','Amount','Follow-on Eligible?','Years Funded','Notes'],
@@ -4290,9 +4125,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTimelineItemsFromAirtable();
   restorePageFromHash();
   setupEditables();
-  document.getElementById('addModal').addEventListener('click', e => {
-    if (e.target.id === 'addModal') closeAddModal();
-  });
 document.getElementById('dashboardModal').addEventListener('click', e => {
     if (e.target.id === 'dashboardModal') closeDashboardModal();
   });
