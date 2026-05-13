@@ -352,6 +352,65 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   color:var(--muted);
 }
 
+.investment-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.investment-row{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px 16px;
+  box-shadow:0 10px 26px rgba(0,0,0,.025);
+}
+
+.investment-row-main{
+  display:grid;
+  grid-template-columns:minmax(220px,1.8fr) repeat(3,minmax(100px,.8fr)) auto;
+  gap:14px;
+  align-items:center;
+}
+
+.investment-row-name strong{
+  display:block;
+  font-size:14px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:-.02em;
+  margin-bottom:3px;
+}
+
+.investment-row-name span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.investment-row-cell span{
+  display:block;
+  font-size:9.5px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--soft);
+  margin-bottom:3px;
+}
+
+.investment-row-cell strong{
+  display:block;
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.25;
+}
+
+@media(max-width:900px){
+  .investment-row-main{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
 .investment-news-section{
   background:#fff;
   border:1px solid var(--line);
@@ -529,9 +588,56 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 
 
 .portfolio-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.portfolio-row{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:15px 16px;
+  box-shadow:0 10px 26px rgba(0,0,0,.025);
+}
+
+.portfolio-row-main{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:minmax(220px,1.8fr) repeat(5,minmax(90px,.75fr)) auto;
   gap:14px;
+  align-items:center;
+}
+
+.portfolio-row-name strong{
+  display:block;
+  font-size:14px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:-.02em;
+  margin-bottom:3px;
+}
+
+.portfolio-row-name span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.portfolio-row-cell span{
+  display:block;
+  font-size:9.5px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--soft);
+  margin-bottom:3px;
+}
+
+.portfolio-row-cell strong{
+  display:block;
+  font-size:12.5px;
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.25;
 }
 
 .portfolio-card{
@@ -624,8 +730,8 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 
 @media(max-width:900px){
   .portfolio-controls{grid-template-columns:1fr}
-  .portfolio-list{grid-template-columns:1fr}
-  .portfolio-card-grid{grid-template-columns:1fr 1fr}
+  .portfolio-row-main{grid-template-columns:1fr 1fr}
+  .portfolio-status{width:fit-content}
 }
 
 
@@ -1616,56 +1722,30 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         </div>
       </div>
 
-      <div class="investment-overview-grid">
-        <article class="investment-card">
-          <div class="investment-card-head">
-            <div>
-              <h3>Example Investment One</h3>
-              <p>Early stage · Lightbulb</p>
+      <div class="investment-list">
+        <article class="investment-row">
+          <div class="investment-row-main">
+            <div class="investment-row-name">
+              <strong>Example Investment One</strong>
+              <span>Lightbulb</span>
             </div>
+            <div class="investment-row-cell"><span>Amount</span><strong>£10,000</strong></div>
+            <div class="investment-row-cell"><span>Start date</span><strong>Aug 2023</strong></div>
+            <div class="investment-row-cell"><span>Ongoing</span><strong>Yes</strong></div>
             <span class="investment-status">Active</span>
-          </div>
-
-          <div class="investment-field-grid">
-            <div><span>Investment</span><strong>£10,000</strong></div>
-            <div><span>Stage</span><strong>Early stage</strong></div>
-            <div><span>Contact</span><strong>Founder contact</strong></div>
-          </div>
-
-          <div class="investment-note">
-            <strong>Latest update</strong>
-            <p>Preparing for next growth phase, with progress to be reviewed against user and revenue milestones.</p>
-          </div>
-
-          <div class="investment-note">
-            <strong>Key decision</strong>
-            <p>Monitor next raise and assess whether further support is strategically useful.</p>
           </div>
         </article>
 
-        <article class="investment-card">
-          <div class="investment-card-head">
-            <div>
-              <h3>Example Investment Two</h3>
-              <p>Bridge round · Lightbulb</p>
+        <article class="investment-row">
+          <div class="investment-row-main">
+            <div class="investment-row-name">
+              <strong>Example Investment Two</strong>
+              <span>Lightbulb</span>
             </div>
+            <div class="investment-row-cell"><span>Amount</span><strong>£30,000</strong></div>
+            <div class="investment-row-cell"><span>Start date</span><strong>Jan 2026</strong></div>
+            <div class="investment-row-cell"><span>Ongoing</span><strong>Yes</strong></div>
             <span class="investment-status">Active</span>
-          </div>
-
-          <div class="investment-field-grid">
-            <div><span>Investment</span><strong>£30,000</strong></div>
-            <div><span>Stage</span><strong>Bridge round</strong></div>
-            <div><span>Contact</span><strong>Founder contact</strong></div>
-          </div>
-
-          <div class="investment-note">
-            <strong>Latest update</strong>
-            <p>Follow-on opportunity under review, with founder updates and next milestones to be tracked.</p>
-          </div>
-
-          <div class="investment-note">
-            <strong>Key decision</strong>
-            <p>Decision needed on participation, timing and strategic fit.</p>
           </div>
         </article>
       </div>
@@ -2196,8 +2276,8 @@ const portfolioGrants = [
     start: 'Apr 2024',
     end: 'Apr 2027',
     type: 'Standard grant',
-    followOn: 'Yes',
-    notes: 'Multi-year support. Follow-on context and reporting should be reviewed before the next decision point.'
+    activeYear: 'Year 2',
+    monthsRemaining: '11 months'
   },
   {
     organisation: 'Response Community Projects',
@@ -2207,8 +2287,8 @@ const portfolioGrants = [
     start: 'Feb 2025',
     end: 'Apr 2027',
     type: 'Standard grant',
-    followOn: 'Yes',
-    notes: 'Active relationship with recent interim reporting. Eligible for further consideration after current period.'
+    activeYear: 'Year 4',
+    monthsRemaining: '11 months'
   },
   {
     organisation: 'Fit For Life Youth',
@@ -2218,8 +2298,8 @@ const portfolioGrants = [
     start: 'Jun 2026',
     end: 'Jun 2027',
     type: 'Standard grant',
-    followOn: 'Yes',
-    notes: 'New Lightbulb relationship. Payment and setup actions are currently being processed.'
+    activeYear: 'Year 1',
+    monthsRemaining: '13 months'
   }
 ];
 
@@ -2240,23 +2320,19 @@ function portfolioMatchesFilters(item){
 
 function renderGrantCard(item){
   return `
-    <article class="portfolio-card">
-      <div class="portfolio-card-head">
-        <div>
-          <h3>${esc(item.organisation)}</h3>
-          <div class="portfolio-card-sub">${esc(item.type)} · ${esc(item.fund)}</div>
+    <article class="portfolio-row">
+      <div class="portfolio-row-main">
+        <div class="portfolio-row-name">
+          <strong>${esc(item.organisation)}</strong>
+          <span>${esc(item.type)} · ${esc(item.fund)}</span>
         </div>
+        <div class="portfolio-row-cell"><span>Amount</span><strong>${esc(item.amount)}</strong></div>
+        <div class="portfolio-row-cell"><span>Start</span><strong>${esc(item.start)}</strong></div>
+        <div class="portfolio-row-cell"><span>End</span><strong>${esc(item.end)}</strong></div>
+        <div class="portfolio-row-cell"><span>Active year</span><strong>${esc(item.activeYear || '')}</strong></div>
+        <div class="portfolio-row-cell"><span>Remaining</span><strong>${esc(item.monthsRemaining || '')}</strong></div>
         <span class="portfolio-status ${String(item.status).toLowerCase() === 'closed' ? 'closed' : ''}">${esc(item.status)}</span>
       </div>
-      <div class="portfolio-card-grid">
-        <div class="portfolio-field"><span>Amount</span><strong>${esc(item.amount)}</strong></div>
-        <div class="portfolio-field"><span>Start</span><strong>${esc(item.start)}</strong></div>
-        <div class="portfolio-field"><span>End</span><strong>${esc(item.end)}</strong></div>
-        <div class="portfolio-field"><span>Funding type</span><strong>${esc(item.type)}</strong></div>
-        <div class="portfolio-field"><span>Follow-on</span><strong>${esc(item.followOn)}</strong></div>
-        <div class="portfolio-field"><span>Fund</span><strong>${esc(item.fund)}</strong></div>
-      </div>
-      <div class="portfolio-note">${esc(item.notes || '')}</div>
     </article>
   `;
 }
