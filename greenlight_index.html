@@ -3457,7 +3457,7 @@ function exportCSV(){
   const rows = [['Organisation','Grant Start','Grant End','Amount','Follow-on Eligible?','Years Funded','Notes'],
     ...grants.map(g => [g.name, g.start, g.end, g.amt, g.fof, g.yrs, g.note || ''])];
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  downloadBlob(csv, 'lightbulb_grants.csv', 'text/csv');
+  downloadBlob(csv, 'greenlight_grants.csv', 'text/csv');
 }
 
 function downloadHTML(){
