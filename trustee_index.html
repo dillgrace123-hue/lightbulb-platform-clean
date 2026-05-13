@@ -94,6 +94,33 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .stat-value{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 .stat-desc{font-size:11.5px;color:var(--muted);line-height:1.4}
 
+
+/* Trustee dashboard hero */
+.dashboard-hero{
+  margin-bottom:22px;
+}
+
+.dashboard-hero .dashboard-date{
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.16em;
+  color:var(--trustee);
+}
+
+.dashboard-hero h3{
+  font-size:30px;
+  font-weight:850;
+  letter-spacing:-.055em;
+  line-height:1.05;
+  margin-top:8px;
+}
+
+.dashboard-hero p{
+  font-size:14px;
+  line-height:1.6;
+  max-width:760px;
+}
+
 /* Section block */
 .section-block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.03);margin:18px 0;overflow:hidden}
 .section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);background:#fbfaf7}
@@ -1653,10 +1680,10 @@ table.simple .neg{color:var(--red);font-weight:600}
        ========================= -->
   <div id="dashboard-page" class="page active">
 
-    <div class="hero">
-      <div class="hero-label">TRUSTEE OVERVIEW · MAY 2026</div>
-      <h2>Everything you need before the next board meeting.</h2>
-      <p>A consolidated picture of activity across Lightbulb Trust and Greenlight Project — financial position, decisions taken, governance status and upcoming dates. Updated weekly.</p>
+    <div class="trustee-section-hero dashboard-hero">
+      <div class="trustee-section-kicker dashboard-date" id="trusteeOverviewDate">Trustee Overview</div>
+      <h3>Everything you need before the next board meeting.</h3>
+      <p>A consolidated picture of activity across Lightbulb Trust and Greenlight Project, including financial position, decisions taken, governance status and upcoming dates.</p>
     </div>
 
     <div class="stats-grid">
@@ -3449,7 +3476,23 @@ function loadDataForPage(pageId){
   }
 }
 
+
+function setTrusteeOverviewDate(){
+  const el = document.getElementById('trusteeOverviewDate');
+  if (!el) return;
+
+  const now = new Date();
+  const formatted = now.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  el.textContent = `Trustee Overview · ${formatted}`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setTrusteeOverviewDate();
   restorePageFromHash();
 
   const currentPageId = document.querySelector('.page.active')?.id || 'dashboard-page';
