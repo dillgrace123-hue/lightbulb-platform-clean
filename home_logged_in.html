@@ -233,9 +233,6 @@ const cards = document.querySelectorAll('.workspace-card, .admin-strip');
 const welcomeTitle = document.getElementById('welcomeTitle');
 const welcomeSub = document.getElementById('welcomeSub');
 const accessMeta = document.getElementById('accessMeta');
-const attentionList = document.getElementById('attentionList');
-const activityList = document.getElementById('activityList');
-const shortcutList = document.getElementById('shortcutList');
 
 const content = {
   partner: {
@@ -355,9 +352,6 @@ function updateRole(role){
   welcomeSub.textContent = c.sub;
   accessMeta.textContent = c.meta;
 
-  if (attentionList) attentionList.innerHTML = c.attention.map(attentionHTML).join('');
-  if (activityList) activityList.innerHTML = c.activity.map(activityHTML).join('');
-  if (shortcutList) shortcutList.innerHTML = c.shortcuts.map(shortcutHTML).join('');
 
   cards.forEach(card => {
     const allowed = card.dataset.role.split(' ').includes(role) || role === 'admin';

@@ -1100,22 +1100,6 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 
 </div>
 
-<!-- What's New modal -->
-<div class="modal-bg" id="whatsNewModal">
-  <div class="modal">
-    <h2>Edit What's New</h2>
-    <div class="modal-grid">
-      <div class="modal-full field"><label>Title</label><input id="w-title"></div>
-      <div class="modal-full field"><label>Description</label><textarea id="w-desc" style="font-family:'DM Sans',sans-serif;min-height:60px;resize:vertical"></textarea></div>
-      <div class="modal-full field"><label>Link to report</label><input id="w-link" placeholder="https://..."></div>
-    </div>
-    <div class="modal-actions">
-      <button class="smallbtn light" onclick="closeWhatsNewModal()">Cancel</button>
-      <button class="smallbtn" onclick="saveWhatsNew()">Save</button>
-    </div>
-  </div>
-</div>
-
 <!-- Edit dashboard modal -->
 <div class="modal-bg" id="dashboardModal">
   <div class="modal">
@@ -1239,25 +1223,6 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   </div>
 </div>
 
-<!-- Add report modal -->
-<div class="modal-bg" id="addReportModal">
-  <div class="modal">
-    <h2>Add report</h2>
-    <div class="modal-grid">
-      <div class="modal-full field"><label>Organisation</label><input id="r-org"></div>
-      <div class="field"><label>Document type</label><select id="r-type"><option>Interim report</option><option>Annual impact report</option><option>Final report</option><option>Other</option></select></div>
-      <div class="field"><label>Date received</label><input id="r-date" type="date"></div>
-      <div class="field"><label>Status</label><select id="r-status"><option>Link added</option><option>Awaiting report</option><option>Ready to review</option><option>Reviewed</option><option>Filed</option></select></div>
-      <div class="field"><label>Document / Drive link</label><input id="r-link" placeholder="https://..."></div>
-      <div class="modal-full field"><label>Summary (1–2 sentences)</label><input id="r-summary"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="smallbtn light" onclick="closeAddReportModal()">Cancel</button>
-      <button class="smallbtn" onclick="saveNewReport()">Add report</button>
-    </div>
-  </div>
-</div>
-
 <!-- Hover card for timeline -->
 <div class="hover-card" id="hoverCard"></div>
 
@@ -1292,12 +1257,6 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 </script>
 
 <!-- Reports data -->
-<script id="reports-data" type="application/json">
-[
-  {"org":"WLAC","grant":"West London Action for Children FoF","type":"Interim report","date":"2026-04-12","summary":"Q1 update on the programme. Engagement numbers strong, two staffing changes flagged.","link":"https://drive.google.com/file/d/17aNANfFKWkRF7uJFcYrXFbDhrx7mD4Wq/view?usp=drive_link"},
-  {"org":"WLAC","grant":"West London Action for Children FoF","type":"Annual impact report","date":"2026-03-28","summary":"Full-year impact report. Highlights: 412 young people supported, 87% engagement rate, expansion plans for next year.","link":"https://drive.google.com/file/d/1ItEEXpnEilnSrYlSoLAR4Gc5Aw_v9N7x/view?usp=drive_link"}
-]
-</script>
 
 <script>
 
@@ -1320,7 +1279,6 @@ const START = new Date(2025, 8, 1);
 const END = new Date(2028, 6, 30);
 const TOTAL = END - START;
 const STORAGE_KEY = 'lightbulb_timeline_v3';
-const REPORTS_KEY = 'lightbulb_reports_v1';
 const MANUAL_PREFIX = 'lbt_manual_';
 
 // =========================================
@@ -1366,66 +1324,7 @@ let whatsNew = {
   desc: 'Youth Action Alliance — Interim Report received 1/5/2026',
   link: 'https://drive.google.com/file/d/1CNHNvxeChLa57T-CTNcxXuS1eAYWupxX/view?usp=sharing'
 };
-const WHATSNEW_KEY = 'lbt_whats_new';
 
-function loadWhatsNew(){
-  const saved = localStorage.getItem(WHATSNEW_KEY);
-  if (!saved) return whatsNew;
-  try {
-    return JSON.parse(saved);
-  } catch (e) {
-    return whatsNew;
-  }
-}
-
-function renderWhatsNew(){
-  whatsNew = loadWhatsNew();
-  const card = document.getElementById('whatsNewCard');
-  if (!card) return;
-
-  if (!whatsNew.title || !whatsNew.desc) {
-    card.style.display = 'none';
-    return;
-  }
-
-  card.style.display = 'flex';
-  document.getElementById('whatsNewTitle').textContent = whatsNew.title;
-  document.getElementById('whatsNewDesc').textContent = whatsNew.desc;
-  document.getElementById('whatsNewLink').href = whatsNew.link || '#';
-}
-
-function persistWhatsNew(){
-  localStorage.setItem(WHATSNEW_KEY, JSON.stringify(whatsNew));
-}
-
-function openWhatsNewModal(){
-  document.getElementById('whatsNewModal').classList.add('open');
-  document.getElementById('w-title').value = whatsNew.title;
-  document.getElementById('w-desc').value = whatsNew.desc;
-  document.getElementById('w-link').value = whatsNew.link;
-}
-
-function closeWhatsNewModal(){
-  document.getElementById('whatsNewModal').classList.remove('open');
-}
-
-function saveWhatsNew(){
-  whatsNew.title = document.getElementById('w-title').value.trim();
-  whatsNew.desc = document.getElementById('w-desc').value.trim();
-  whatsNew.link = document.getElementById('w-link').value.trim();
-  persistWhatsNew();
-  closeWhatsNewModal();
-  renderWhatsNew();
-  toast('What\'s New updated');
-}
-
-function clearWhatsNew(){
-  if (!confirm('Remove this item?')) return;
-  whatsNew = { title: '', desc: '', link: '' };
-  persistWhatsNew();
-  renderWhatsNew();
-  toast('Dismissed');
-}
 
 function loadDashboard(){
   const saved = localStorage.getItem(DASHBOARD_KEY);
@@ -1438,7 +1337,6 @@ function loadDashboard(){
 }
 
 let grants = loadGrants();
-let reports = loadReports();
 dashboard = loadDashboard();
 let activeFilter = 'all';
 
@@ -1479,10 +1377,6 @@ async function loadTimelineItemsFromSupabase(){
   } catch (error) {
     console.warn('Could not load Supabase timeline items:', error);
   }
-}
-function loadReports(){
-  try { return JSON.parse(localStorage.getItem(REPORTS_KEY)) || JSON.parse(document.getElementById('reports-data').textContent); }
-  catch(e) { return JSON.parse(document.getElementById('reports-data').textContent); }
 }
 
 // =========================================
@@ -2039,65 +1933,6 @@ async function loadLiveReports(){
 // =========================================
 // REPORTS / IMPACT HUB
 // =========================================
-let nextReportId = reports.length + 1;
-
-function persistReports(){
-  localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
-  document.getElementById('reports-data').textContent = JSON.stringify(reports, null, 2);
-}
-
-function renderReports(){
-  const tbody = document.getElementById('reportingTableBody');
-  if (!tbody) return;
-  const search = (document.getElementById('impactSearch')?.value || '').toLowerCase();
-  const filtered = reports.filter(r => {
-    if (!search) return true;
-    return (r.org + ' ' + r.summary + ' ' + r.type).toLowerCase().includes(search);
-  });
-  tbody.innerHTML = filtered.map((r, i) => `
-    <tr>
-      <td class="org">${esc(r.org)}</td>
-      <td>${esc(r.type)}</td>
-      <td>${r.date ? fmtDate(r.date) : '—'}</td>
-      <td class="summary-cell">${esc(r.summary)}</td>
-      <td><span class="status ${r.statusClass || ''}">${esc(r.status)}</span></td>
-      <td>${r.link ? `<a class="open-link" href="${esc(r.link)}" target="_blank" rel="noopener noreferrer">Open ↗</a>` : '—'}</td>
-      <td><button class="smallbtn danger" style="font-size:10px;padding:4px 8px" onclick="deleteReport('${esc(r.org)}','${esc(r.date)}')">Remove</button></td>
-    </tr>
-  `).join('');
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--soft);padding:30px">No reports match your search.</td></tr>`;
-  }
-}
-
-function deleteReport(org, date){
-  if (!confirm('Remove this report?')) return;
-  reports = reports.filter(r => !(r.org === org && r.date === date));
-  persistReports();
-  renderReports();
-  toast('Report removed');
-}
-
-function openAddReportModal(){ document.getElementById('addReportModal').classList.add('open'); }
-function closeAddReportModal(){ document.getElementById('addReportModal').classList.remove('open'); }
-function saveNewReport(){
-  const org = document.getElementById('r-org').value.trim();
-  const type = document.getElementById('r-type').value;
-  const date = document.getElementById('r-date').value;
-  const summary = document.getElementById('r-summary').value.trim();
-  const status = document.getElementById('r-status').value;
-  const link = document.getElementById('r-link').value.trim();
-  if (!org){ alert('Please add an organisation name.'); return; }
-  const statusMap = {'Ready to review':'orange','Reviewed':'green','Filed':'purple','Awaiting report':'','Link added':''};
-  reports.push({org, type, date: date || '', summary, status, statusClass: statusMap[status] || '', link});
-  persistReports();
-  closeAddReportModal();
-  renderReports();
-  ['r-org','r-date','r-summary','r-link'].forEach(id => document.getElementById(id).value = '');
-  toast('Report added');
-}
-
-function filterImpactTable(){ renderReports(); }
 
 // =========================================
 // FUNDING PANEL — editable, persisted
@@ -2601,21 +2436,14 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAttentionCards();
   loadFundingPanelCards();
   loadLiveReports();
-  renderWhatsNew();
   buildTimeline();
   loadTimelineItemsFromSupabase();
   setupEditables();
   document.getElementById('addModal').addEventListener('click', e => {
     if (e.target.id === 'addModal') closeAddModal();
   });
-  document.getElementById('addReportModal').addEventListener('click', e => {
-    if (e.target.id === 'addReportModal') closeAddReportModal();
-  });
-  document.getElementById('dashboardModal').addEventListener('click', e => {
+document.getElementById('dashboardModal').addEventListener('click', e => {
     if (e.target.id === 'dashboardModal') closeDashboardModal();
-  });
-  document.getElementById('whatsNewModal').addEventListener('click', e => {
-    if (e.target.id === 'whatsNewModal') closeWhatsNewModal();
   });
 });
 </script>
