@@ -322,6 +322,27 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 }
 
 
+
+.trustee-checkbox-field{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 13px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fbfaf7;
+}
+
+.trustee-checkbox-field input{
+  width:auto;
+}
+
+.trustee-checkbox-field span{
+  font-size:12.5px;
+  font-weight:750;
+  color:var(--ink);
+}
+
 /* Funding decision card */
 .decision-card{background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:16px;position:relative}
 .decision-card.approved{border-left:3px solid var(--green)}
@@ -1878,28 +1899,8 @@ table.simple .neg{color:var(--red);font-weight:600}
           </div>
         </div>
         <div class="section-body">
-          <div class="row-list">
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">Becauze funding decision <span class="tag amber">For review</span></div>
-                <div class="row-desc">Lightbulb funding panel has requested trustee input on whether to approve £35,000 for employee salary support.</div>
-              </div>
-              <div class="row-meta">Due 20 Jun</div>
-            </div>
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">Annual report sign-off <span class="tag purple">Governance</span></div>
-                <div class="row-desc">2025/26 Trustees' Annual Report draft ready for board review ahead of Charity Commission submission.</div>
-              </div>
-              <div class="row-meta">Due 30 Jun</div>
-            </div>
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">Reserves policy review <span class="tag grey">Policy</span></div>
-                <div class="row-desc">Triennial review of the reserves policy is scheduled for the June board meeting.</div>
-              </div>
-              <div class="row-meta">29 Jun</div>
-            </div>
+          <div class="row-list" id="trusteeAttentionList">
+            <div class="portfolio-empty">Loading flagged funding decisions...</div>
           </div>
         </div>
       </div>
@@ -2626,6 +2627,14 @@ table.simple .neg{color:var(--red);font-weight:600}
           <option>Medium</option>
           <option>Low</option>
         </select>
+      </div>
+
+      <div class="modal-full field">
+        <label>Dashboard attention</label>
+        <label class="trustee-checkbox-field">
+          <input id="trustee-decision-flag-attention" type="checkbox">
+          <span>Show in What needs your attention</span>
+        </label>
       </div>
     </div>
 
@@ -3590,6 +3599,11 @@ function openTrusteeDecisionModal(decision = null){
   setTrusteeDecisionField('trustee-decision-owner', decision?.owner || '');
   setTrusteeDecisionField('trustee-decision-priority', decision?.priority || 'Medium');
 
+  const attentionCheckbox = document.getElementById('trustee-decision-flag-attention');
+  if (attentionCheckbox) {
+    attentionCheckbox.checked = decision?.flag_for_attention === true;
+  }
+
   document.getElementById('trusteeDecisionModal').classList.add('open');
 }
 
@@ -3627,6 +3641,7 @@ async function saveTrusteeFundingDecision(){
     next_step: getTrusteeDecisionField('trustee-decision-next-step'),
     owner: getTrusteeDecisionField('trustee-decision-owner'),
     priority: getTrusteeDecisionField('trustee-decision-priority'),
+    flag_for_attention: document.getElementById('trustee-decision-flag-attention')?.checked === true,
     is_active: true,
     updated_at: new Date().toISOString()
   };
@@ -3662,6 +3677,7 @@ async function saveTrusteeFundingDecision(){
   closeTrusteeDecisionModal();
   await loadTrusteeFundingDecisions();
   await loadTrusteeDashboardSummary();
+  await loadTrusteeAttentionItems();
 }
 
 function deleteTrusteeFundingDecision(id){
@@ -3891,6 +3907,62 @@ async function loadTrusteeDashboardSummary(){
 }
 
 
+
+// ===== TRUSTEE DASHBOARD ATTENTION =====
+function renderTrusteeAttentionDecision(decision){
+  const status = decision.status || 'For review';
+  const tagClass = decisionTagClass(status);
+  const summary = decision.attention_note || decision.summary || decision.next_step || '';
+  const meta = decision.attention_due_text || decision.panel_date || '';
+
+  return `
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">${esc(decision.organisation || 'Untitled funding decision')} <span class="tag ${tagClass}">${esc(status)}</span></div>
+        ${summary ? `<div class="row-desc">${esc(summary)}</div>` : ''}
+      </div>
+      <div class="row-meta">${esc(meta)}</div>
+    </div>
+  `;
+}
+
+async function loadTrusteeAttentionItems(){
+  const list = document.getElementById('trusteeAttentionList');
+
+  if (!list) return;
+
+  list.innerHTML = '<div class="portfolio-empty">Loading flagged funding decisions...</div>';
+
+  if (!window.supabaseClient) {
+    window.addEventListener('supabase-ready', loadTrusteeAttentionItems, { once: true });
+    return;
+  }
+
+  try {
+    const { data, error } = await window.supabaseClient
+      .from('trustee_funding_decisions')
+      .select('id,organisation,fund,amount,status,decision_type,panel_date,summary,next_step,owner,priority,is_active,sort_order,flag_for_attention,attention_note,attention_due_text')
+      .eq('is_active', true)
+      .eq('flag_for_attention', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+
+    const decisions = Array.isArray(data) ? data : [];
+
+    if (!decisions.length) {
+      list.innerHTML = '<div class="portfolio-empty">No funding decisions are currently flagged for trustee attention.</div>';
+      return;
+    }
+
+    list.innerHTML = decisions.map(renderTrusteeAttentionDecision).join('');
+  } catch (error) {
+    console.warn('Could not load trustee attention items:', error);
+    list.innerHTML = '<div class="portfolio-empty">Could not load flagged funding decisions.</div>';
+  }
+}
+
+
 // ===== PAGE NAVIGATION =====
 function showPage(id, btn, updateHash = true){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3934,6 +4006,7 @@ function loadDataForPage(pageId){
   if (pageId === 'dashboard-page') {
     if (hasPageLoaded('dashboard')) return;
     loadTrusteeDashboardSummary();
+    loadTrusteeAttentionItems();
     markPageLoaded('dashboard');
     return;
   }
