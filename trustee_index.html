@@ -118,6 +118,8 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .tag.red{background:var(--red-soft);color:var(--red)}
 .tag.purple{background:var(--trustee-soft);color:var(--trustee)}
 .tag.grey{background:var(--bg);color:var(--soft)}
+.tag.fund-greenlight{background:var(--green-soft);color:var(--green)}
+.tag.fund-lightbulb{background:#e8f4fb;color:#3f7fa2}
 
 /* Portfolio */
 .portfolio-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
@@ -1147,6 +1149,16 @@ function reportFundLabel(fund){
 
 }
 
+function reportFundTagClass(fund){
+
+  if (fund === 'GLT') return 'fund-greenlight';
+
+  if (fund === 'LBT') return 'fund-lightbulb';
+
+  return 'grey';
+
+}
+
 function formatReportDate(dateString){
 
   if (!dateString) return 'No date';
@@ -1185,7 +1197,7 @@ function reportRowHtml(report){
 
       <div class="row-main">
 
-        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag purple">${esc(reportFundLabel(report.fund))}</span></div>
+        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag ${reportFundTagClass(report.fund)}">${esc(reportFundLabel(report.fund))}</span></div>
 
         <div class="row-desc">${esc(reportType)} · submitted ${esc(formatReportDate(report.submissionDate))}</div>
 
