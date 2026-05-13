@@ -1,7 +1,8 @@
-exports.handler = async function () {
+exports.handler = async function (event) {
   const token = process.env.AIRTABLE_TOKEN;
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = "Individual Grants";
+  const programme = event.queryStringParameters?.programme || "Lightbulb Trust";
 
   if (!token || !baseId) {
     return {
@@ -70,6 +71,7 @@ exports.handler = async function () {
       .filter(grant => {
         if (!grant.name) return false;
         if (grant.programme === "Investment") return false;
+        if (programme !== "all" && grant.programme !== programme) return false;
         return true;
       })
       .sort((a, b) => {
@@ -83,6 +85,7 @@ exports.handler = async function () {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         table: tableName,
+        programme,
         count: grants.length,
         grants
       })

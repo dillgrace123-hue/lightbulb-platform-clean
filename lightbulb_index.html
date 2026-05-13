@@ -2589,7 +2589,7 @@ async function loadPortfolioGrants(){
   }
 
   try {
-    const response = await fetch('/.netlify/functions/portfolio-grants');
+    const response = await fetch('/.netlify/functions/portfolio-grants?programme=all');
     if (!response.ok) throw new Error('Portfolio grants function failed');
 
     const data = await response.json();
