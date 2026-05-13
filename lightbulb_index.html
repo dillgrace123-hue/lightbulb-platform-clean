@@ -487,6 +487,58 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   max-width:680px;
 }
 
+.investment-highlights{
+  display:none;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:18px 0 14px;
+}
+
+.investment-highlights.show{
+  display:grid;
+}
+
+.investment-highlight-card{
+  background:linear-gradient(135deg,#fffaf0 0%,#fff 100%);
+  border:1px solid rgba(217,154,53,.25);
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 10px 26px rgba(217,154,53,.055);
+}
+
+.investment-highlight-card span{
+  display:block;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#9f6b22;
+  margin-bottom:6px;
+}
+
+.investment-highlight-card strong{
+  display:block;
+  font-size:13px;
+  font-weight:850;
+  color:var(--ink);
+  line-height:1.35;
+  margin-bottom:6px;
+}
+
+.investment-highlight-card p{
+  margin:0;
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.investment-news-count{
+  font-size:12px;
+  font-weight:800;
+  color:var(--ink);
+  margin:16px 0 0;
+}
+
 .investment-news-controls{
   display:grid;
   grid-template-columns:1fr 190px 160px;
@@ -572,6 +624,12 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   font-size:11.5px;
   color:var(--soft);
 }
+
+.investment-news-meta .investment-news-company,
+.investment-news-meta .investment-news-date{
+  font-weight:850;
+  color:var(--ink);
+}
 .investment-news-featured{
   display:inline-flex;
   font-size:10.5px;
@@ -618,7 +676,8 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 @media(max-width:900px){
   .investment-overview-grid,
   .investment-news-grid,
-  .investment-news-controls{
+  .investment-news-controls,
+  .investment-highlights{
     grid-template-columns:1fr;
   }
 
@@ -1864,10 +1923,14 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
           <div>
             <div class="section-kicker">Investment news</div>
             <h3>News, releases and coverage</h3>
-            <p>Press releases, company updates, media coverage and notable milestones relating to Lightbulb investments.</p>
+            <p>Press releases, company updates, media coverage and notable milestones relating to Lightbulb investments. Showing Jan 2026 to present.</p>
           </div>
           <button class="attention-edit-btn admin-only" type="button" onclick="window.addInvestmentNews()">+ Add news</button>
         </div>
+
+        <div class="investment-highlights" id="investmentHighlights"></div>
+
+        <div class="investment-news-count" id="investmentNewsCount">Showing investment news updates</div>
 
         <div class="investment-news-controls">
           <input id="investmentNewsSearch" type="search" placeholder="Search news, source or investment..." oninput="renderInvestmentNews()">
@@ -2174,6 +2237,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         <option>Company Update</option>
       </select></div>
       <div class="field"><label>Status</label><select id="investment-news-status"><option>Published</option><option>Draft</option><option>Hidden</option></select></div>
+      <div class="field"><label>Add to highlights?</label><select id="investment-news-featured"><option value="false">No</option><option value="true">Yes</option></select></div>
       <div class="modal-full field"><label>Source URL</label><input id="investment-news-url" placeholder="https://..."></div>
       <div class="modal-full field"><label>Image URL</label><input id="investment-news-image" placeholder="Optional image link, or upload a file below"></div>
       <div class="modal-full field"><label>Upload image</label><input id="investment-news-image-file" type="file" accept="image/*"></div>
@@ -2818,6 +2882,41 @@ function isInvestmentNewsNew(value){
   return diffDays >= 0 && diffDays <= 14;
 }
 
+function renderInvestmentHighlights(){
+  const container = document.getElementById('investmentHighlights');
+  if (!container) return;
+
+  const highlights = investmentNewsItems
+    .filter(item => item.featured && String(item.status || '').toLowerCase() === 'published')
+    .sort((a, b) => {
+      const dateA = new Date(a.published_date || a.publishedDate || 0).getTime();
+      const dateB = new Date(b.published_date || b.publishedDate || 0).getTime();
+      return dateB - dateA;
+    })
+    .slice(0, 3);
+
+  if (!highlights.length) {
+    container.classList.remove('show');
+    container.innerHTML = '';
+    return;
+  }
+
+  container.classList.add('show');
+  container.innerHTML = highlights.map(item => {
+    const date = formatInvestmentNewsDate(item.published_date || item.publishedDate);
+    const investmentName = item.investment_name || item.investmentName || '';
+    const title = item.title || 'Untitled update';
+
+    return `
+      <article class="investment-highlight-card">
+        <span>Latest highlight</span>
+        <strong>${esc(title)}</strong>
+        <p>${[investmentName, date].filter(Boolean).map(esc).join(' · ')}</p>
+      </article>
+    `;
+  }).join('');
+}
+
 function renderInvestmentNewsCard(item){
   const type = normaliseInvestmentNewsType(item.type || 'Update');
   const title = item.title || 'Untitled update';
@@ -2852,9 +2951,9 @@ function renderInvestmentNewsCard(item){
       <h4>${esc(title)}</h4>
       ${summary ? `<p>${esc(summary)}</p>` : ''}
       <div class="investment-news-meta">
-        ${investmentName ? `<span>${esc(investmentName)}</span>` : ''}
+        ${investmentName ? `<span class="investment-news-company">${esc(investmentName)}</span>` : ''}
         ${source ? `<span>${esc(source)}</span>` : ''}
-        ${date ? `<span>${esc(date)}</span>` : ''}
+        ${date ? `<span class="investment-news-date">${esc(date)}</span>` : ''}
       </div>
       <div class="investment-news-footer">
         ${link}
@@ -2868,7 +2967,12 @@ function renderInvestmentNews(){
   const grid = document.getElementById('investmentNewsGrid');
   if (!grid) return;
 
+  renderInvestmentHighlights();
+
   if (!investmentNewsItems.length) {
+    const countEl = document.getElementById('investmentNewsCount');
+    if (countEl) countEl.textContent = 'Showing 0 updates';
+
     grid.innerHTML = `
       <article class="investment-news-card">
         <span class="investment-news-type">No updates</span>
@@ -2893,6 +2997,12 @@ function renderInvestmentNews(){
 
       return dateB - dateA;
     });
+
+  const countEl = document.getElementById('investmentNewsCount');
+  if (countEl) {
+    const label = sorted.length === 1 ? 'update' : 'updates';
+    countEl.textContent = `Showing ${sorted.length} ${label}`;
+  }
 
   if (!sorted.length) {
     grid.innerHTML = `
@@ -2929,7 +3039,7 @@ async function loadInvestmentNews(){
 
     let query = window.supabaseClient
       .from('investment_news')
-      .select('id,title,investment_name,source,published_date,url,image_url,type,summary,status,created_at,updated_at')
+      .select('id,title,investment_name,source,published_date,url,image_url,type,summary,status,featured,created_at,updated_at')
       .order('published_date', { ascending: false });
 
     if (!isAdminUser()) {
@@ -4281,6 +4391,7 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
     setInvestmentNewsField('investment-news-date', '');
     setInvestmentNewsField('investment-news-type', 'Company Update');
     setInvestmentNewsField('investment-news-status', 'Published');
+    setInvestmentNewsField('investment-news-featured', 'false');
     setInvestmentNewsField('investment-news-url', '');
     setInvestmentNewsField('investment-news-image', '');
     const addFileInput = document.getElementById('investment-news-image-file');
@@ -4306,6 +4417,7 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
     setInvestmentNewsField('investment-news-date', item.published_date);
     setInvestmentNewsField('investment-news-type', item.type || 'Company Update');
     setInvestmentNewsField('investment-news-status', item.status || 'Published');
+    setInvestmentNewsField('investment-news-featured', item.featured ? 'true' : 'false');
     setInvestmentNewsField('investment-news-url', item.url);
     setInvestmentNewsField('investment-news-image', item.image_url);
     const editFileInput = document.getElementById('investment-news-image-file');
@@ -4379,6 +4491,7 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
       type: getInvestmentNewsField('investment-news-type') || 'Company Update',
       summary: getInvestmentNewsField('investment-news-summary'),
       status: getInvestmentNewsField('investment-news-status') || 'Published',
+      featured: getInvestmentNewsField('investment-news-featured') === 'true',
       updated_at: new Date().toISOString()
     };
 
