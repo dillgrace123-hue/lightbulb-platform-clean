@@ -206,6 +206,18 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   color:var(--ink);
 }
 
+.decision-admin-actions button.priority{
+  color:var(--trustee);
+  background:var(--trustee-soft);
+  border-color:rgba(123,104,217,.16);
+}
+
+.decision-admin-actions button.priority.active{
+  color:#fff;
+  background:var(--trustee);
+  border-color:var(--trustee);
+}
+
 .decision-admin-actions button.delete{
   color:var(--red);
   background:var(--red-soft);
@@ -2628,14 +2640,6 @@ table.simple .neg{color:var(--red);font-weight:600}
           <option>Low</option>
         </select>
       </div>
-
-      <div class="modal-full field">
-        <label>Dashboard attention</label>
-        <label class="trustee-checkbox-field">
-          <input id="trustee-decision-flag-attention" type="checkbox">
-          <span>Show in What needs your attention</span>
-        </label>
-      </div>
     </div>
 
     <div class="modal-actions">
@@ -3481,8 +3485,15 @@ function renderTrusteeDecisionCard(decision){
   const safeId = esc(decision.id);
   const isAdmin = document.body.dataset.userRole === 'admin';
 
+  const priorityActive = decision.flag_for_attention === true;
+  const priorityLabel = priorityActive ? 'Priority on' : 'Priority';
+  const priorityTitle = priorityActive
+    ? 'Remove this decision from What needs your attention'
+    : 'Show this decision in What needs your attention';
+
   const adminActions = isAdmin ? `
     <div class="decision-admin-actions">
+      <button class="priority ${priorityActive ? 'active' : ''}" type="button" title="${esc(priorityTitle)}" onclick="toggleTrusteeFundingDecisionPriority('${safeId}')">⚑ ${esc(priorityLabel)}</button>
       <button type="button" onclick="editTrusteeFundingDecision('${safeId}')">Edit</button>
       <button class="delete" type="button" onclick="deleteTrusteeFundingDecision('${safeId}')">Delete</button>
     </div>
@@ -3598,12 +3609,6 @@ function openTrusteeDecisionModal(decision = null){
   setTrusteeDecisionField('trustee-decision-next-step', decision?.next_step || decision?.trustee_note || '');
   setTrusteeDecisionField('trustee-decision-owner', decision?.owner || '');
   setTrusteeDecisionField('trustee-decision-priority', decision?.priority || 'Medium');
-
-  const attentionCheckbox = document.getElementById('trustee-decision-flag-attention');
-  if (attentionCheckbox) {
-    attentionCheckbox.checked = decision?.flag_for_attention === true;
-  }
-
   document.getElementById('trusteeDecisionModal').classList.add('open');
 }
 
@@ -3620,6 +3625,39 @@ function editTrusteeFundingDecision(id){
   }
 
   openTrusteeDecisionModal(decision);
+}
+
+async function toggleTrusteeFundingDecisionPriority(id){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet.');
+    return;
+  }
+
+  const decision = window.currentTrusteeFundingDecisions?.[id];
+
+  if (!decision) {
+    alert('Could not find this decision.');
+    return;
+  }
+
+  const nextValue = decision.flag_for_attention !== true;
+
+  const { error } = await window.supabaseClient
+    .from('trustee_funding_decisions')
+    .update({
+      flag_for_attention: nextValue,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id);
+
+  if (error) {
+    alert('Could not update priority flag: ' + error.message);
+    return;
+  }
+
+  await loadTrusteeFundingDecisions();
+  await loadTrusteeDashboardSummary();
+  await loadTrusteeAttentionItems();
 }
 
 async function saveTrusteeFundingDecision(){
@@ -3641,7 +3679,6 @@ async function saveTrusteeFundingDecision(){
     next_step: getTrusteeDecisionField('trustee-decision-next-step'),
     owner: getTrusteeDecisionField('trustee-decision-owner'),
     priority: getTrusteeDecisionField('trustee-decision-priority'),
-    flag_for_attention: document.getElementById('trustee-decision-flag-attention')?.checked === true,
     is_active: true,
     updated_at: new Date().toISOString()
   };
