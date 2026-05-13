@@ -431,6 +431,180 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   border-color:rgba(163,58,43,.16);
 }
 
+
+/* Dashboard feed cards */
+.dashboard-feed-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  min-height:128px;
+  box-shadow:0 12px 30px rgba(0,0,0,.035);
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.dashboard-feed-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 42px rgba(0,0,0,.06);
+  border-color:rgba(0,0,0,.12);
+}
+
+.dashboard-feed-card.attention{
+  border-top:6px solid var(--trustee);
+  box-shadow:0 18px 44px rgba(123,104,217,.10);
+  background:
+    radial-gradient(circle at top right, rgba(123,104,217,.08), transparent 32%),
+    #fff;
+}
+
+.dashboard-feed-card.activity{
+  background:#fbfaf7;
+  box-shadow:none;
+}
+
+.dashboard-feed-card.activity:hover{
+  background:#fff;
+  box-shadow:0 12px 28px rgba(0,0,0,.045);
+}
+
+.dashboard-feed-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+}
+
+.dashboard-feed-title{
+  font-size:15.5px;
+  line-height:1.25;
+  font-weight:850;
+  letter-spacing:-.035em;
+  color:var(--ink);
+  margin:0;
+}
+
+.dashboard-feed-date{
+  font-size:10.5px;
+  font-weight:850;
+  color:var(--trustee);
+  white-space:nowrap;
+  padding:6px 8px;
+  border-radius:999px;
+  background:var(--trustee-soft);
+  line-height:1;
+  font-family:'DM Sans',sans-serif;
+}
+
+.dashboard-feed-meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  align-items:center;
+}
+
+.dashboard-feed-chip{
+  font-size:10.5px;
+  font-weight:850;
+  border-radius:999px;
+  padding:6px 9px;
+  background:#f4f0e8;
+  color:var(--muted);
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+}
+
+.dashboard-feed-chip.green{
+  background:var(--green-soft);
+  color:var(--green);
+}
+
+.dashboard-feed-chip.amber{
+  background:var(--amber-soft);
+  color:var(--amber);
+}
+
+.dashboard-feed-chip.red{
+  background:var(--red-soft);
+  color:var(--red);
+}
+
+.dashboard-feed-chip.purple{
+  background:var(--trustee-soft);
+  color:var(--trustee);
+}
+
+.dashboard-feed-desc{
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+.dashboard-feed-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:auto;
+  padding-top:4px;
+}
+
+.dashboard-feed-actions button,
+.attention-remove-btn{
+  font-size:11px;
+  font-weight:850;
+  border-radius:999px;
+  padding:8px 11px;
+  background:var(--ink);
+  color:#fff;
+  border:0;
+  cursor:pointer;
+  line-height:1;
+}
+
+.dashboard-feed-actions button.secondary,
+.attention-remove-btn{
+  background:#f4f0e8;
+  color:var(--ink);
+  border:0;
+}
+
+.dashboard-feed-actions button.delete,
+.dashboard-feed-actions button.remove{
+  color:var(--red);
+  background:var(--red-soft);
+}
+
+.dashboard-feed-actions button:hover,
+.attention-remove-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.dashboard-section-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:14px;
+}
+
+.dashboard-section-actions .btn{
+  padding:9px 13px;
+  font-size:11.5px;
+  box-shadow:none;
+}
+
+@media(max-width:720px){
+  .dashboard-feed-head{
+    flex-direction:column;
+  }
+
+  .dashboard-feed-date{
+    width:fit-content;
+  }
+}
+
 /* Funding decision card */
 .decision-card{background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:16px;position:relative}
 .decision-card.approved{border-left:3px solid var(--green)}
@@ -4051,22 +4225,32 @@ function renderTrusteeAttentionDecision(decision){
   const status = decision.status || 'For review';
   const tagClass = decisionTagClass(status);
   const summary = decision.attention_note || decision.summary || decision.next_step || '';
-  const meta = decision.attention_due_text || decision.panel_date || '';
+  const meta = decision.attention_due_text || decision.panel_date || 'For trustee review';
+  const fund = decision.fund || 'Funding decision';
+  const decisionType = decision.decision_type || 'Priority item';
 
   const safeId = esc(decision.id);
   const adminRemove = document.body.dataset.userRole === 'admin'
-    ? `<button class="attention-remove-btn" type="button" onclick="removeTrusteeDecisionFromAttention('${safeId}')">Remove priority</button>`
+    ? `<div class="dashboard-feed-actions"><button class="secondary" type="button" onclick="removeTrusteeDecisionFromAttention('${safeId}')">Remove priority</button></div>`
     : '';
 
   return `
-    <div class="row">
-      <div class="row-main">
-        <div class="row-title">${esc(decision.organisation || 'Untitled funding decision')} <span class="tag ${tagClass}">${esc(status)}</span></div>
-        ${summary ? `<div class="row-desc">${esc(summary)}</div>` : ''}
-        ${adminRemove}
+    <article class="dashboard-feed-card attention">
+      <div class="dashboard-feed-head">
+        <h4 class="dashboard-feed-title">${esc(decision.organisation || 'Untitled funding decision')}</h4>
+        <span class="dashboard-feed-date">${esc(meta)}</span>
       </div>
-      <div class="row-meta">${esc(meta)}</div>
-    </div>
+
+      <div class="dashboard-feed-meta-row">
+        <span class="dashboard-feed-chip ${tagClass}">${esc(status)}</span>
+        <span class="dashboard-feed-chip purple">${esc(fund)}</span>
+        <span class="dashboard-feed-chip">${esc(decisionType)}</span>
+      </div>
+
+      ${summary ? `<div class="dashboard-feed-desc">${esc(summary)}</div>` : ''}
+
+      ${adminRemove}
+    </article>
   `;
 }
 
@@ -4150,21 +4334,27 @@ function renderTrusteeRecentActivityRow(item){
   const isAdmin = document.body.dataset.userRole === 'admin';
 
   const actions = isAdmin ? `
-    <div class="recent-activity-actions">
-      <button type="button" onclick="editTrusteeRecentActivity('${safeId}')">Edit</button>
+    <div class="dashboard-feed-actions">
+      <button class="secondary" type="button" onclick="editTrusteeRecentActivity('${safeId}')">Edit</button>
       <button class="delete" type="button" onclick="deleteTrusteeRecentActivity('${safeId}')">Delete</button>
     </div>
   ` : '';
 
   return `
-    <div class="row">
-      <div class="row-main">
-        <div class="row-title">${esc(item.title || 'Untitled activity')} <span class="tag grey">${esc(item.label || 'Update')}</span></div>
-        ${item.description ? `<div class="row-desc">${esc(item.description)}</div>` : ''}
-        ${actions}
+    <article class="dashboard-feed-card activity">
+      <div class="dashboard-feed-head">
+        <h4 class="dashboard-feed-title">${esc(item.title || 'Untitled activity')}</h4>
+        <span class="dashboard-feed-date">${esc(item.activity_date || 'Today')}</span>
       </div>
-      <div class="row-meta">${esc(item.activity_date || '')}</div>
-    </div>
+
+      <div class="dashboard-feed-meta-row">
+        <span class="dashboard-feed-chip">${esc(item.label || 'Update')}</span>
+      </div>
+
+      ${item.description ? `<div class="dashboard-feed-desc">${esc(item.description)}</div>` : ''}
+
+      ${actions}
+    </article>
   `;
 }
 
