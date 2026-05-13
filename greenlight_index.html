@@ -4114,6 +4114,7 @@ async function loadAverageGrantSize() {
 // INIT
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
+  restorePageFromHash();
   renderDashboard();
   loadDashboardSummary();
   loadPlatformContent();
@@ -4123,7 +4124,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPortfolioGrants();
   loadPortfolioInvestments();
   loadTimelineItemsFromAirtable();
-  restorePageFromHash();
   setupEditables();
 document.getElementById('dashboardModal').addEventListener('click', e => {
     if (e.target.id === 'dashboardModal') closeDashboardModal();

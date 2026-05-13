@@ -17,6 +17,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:28px;-webkit-font-smoothing:antialiased}
+body.preload .app{opacity:0}
+body:not(.preload) .app{opacity:1;transition:opacity .12s ease}
 .app{max-width:1180px;margin:0 auto}
 
 /* ===== PLATFORM SHELL ===== */
@@ -227,7 +229,7 @@ table.simple .neg{color:var(--red);font-weight:600}
 }
 </style>
 </head>
-<body>
+<body class="preload">
 <div class="app">
 
   <!-- ===== PLATFORM SHELL ===== -->
@@ -1142,10 +1144,6 @@ function renderPortfolioItems(){
   list.innerHTML = filtered.map(renderGrantCard).join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadPortfolioGrants();
-});
-
 
 
 
@@ -1369,22 +1367,39 @@ async function loadLiveReports(){
 
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
-  loadLiveReports();
-
-});
-
 
 // ===== PAGE NAVIGATION =====
-function showPage(id, btn){
+function showPage(id, btn, updateHash = true){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
   const page = document.getElementById(id);
   if (page) page.classList.add('active');
+
   document.querySelectorAll('.main-nav .navbtn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
+
+  const activeBtn = btn || document.querySelector(`.main-nav .navbtn[onclick*="${id}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (updateHash && window.location.hash !== `#${id}`) {
+    history.replaceState(null, '', `#${id}`);
+  }
+
+  window.scrollTo({top:0, behavior:'auto'});
 }
+
+function restorePageFromHash(){
+  const id = window.location.hash ? window.location.hash.slice(1) : 'dashboard-page';
+  if (document.getElementById(id)) {
+    showPage(id, null, false);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  restorePageFromHash();
+  document.body.classList.remove('preload');
+  loadPortfolioGrants();
+  loadLiveReports();
+});
 </script>
 
 </body>
