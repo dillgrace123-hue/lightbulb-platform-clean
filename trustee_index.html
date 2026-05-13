@@ -836,6 +836,33 @@ table.simple .neg{color:var(--red);font-weight:600}
   max-width:760px;
 }
 
+
+/* Investment hero title emphasis */
+.investment-hero-kicker{
+  font-size:13px !important;
+  letter-spacing:.08em !important;
+  color:var(--ink) !important;
+  font-weight:900 !important;
+  margin-bottom:10px !important;
+}
+
+.investment-hero-kicker::before{
+  content:"";
+  display:inline-block;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#7b68d9,#6fae9c);
+  margin-right:8px;
+  vertical-align:1px;
+}
+
+.investment-hero-strip h3{
+  font-size:28px !important;
+  font-weight:850 !important;
+  max-width:840px !important;
+}
+
 </style>
 </head>
 <body class="preload">
@@ -1122,16 +1149,9 @@ table.simple .neg{color:var(--red);font-weight:600}
   <div id="investments-page" class="page">
 
     <div class="section-block">
-      <div class="section-title">
-        <div>
-          <h2>Investments</h2>
-          <p>Shared trustee view of investment records, news and releases.</p>
-        </div>
-      </div>
-
       <div class="section-body">
         <div class="investment-hero-strip">
-          <div class="investment-hero-kicker">Investment portfolio</div>
+          <div class="investment-hero-kicker">Investment Portfolio</div>
           <h3>Mission-aligned investments, current exposure and public updates in one place.</h3>
           <p>This view brings together live investment records from Airtable and published news or release updates, giving trustees a clearer sense of portfolio activity and momentum.</p>
         </div>
