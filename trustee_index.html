@@ -378,6 +378,464 @@ table.simple .neg{color:var(--red);font-weight:600}
 .investment-section-panel{display:none}
 .investment-section-panel.active{display:block}
 
+
+/* Trustee investment visual polish */
+.investment-hero-strip{
+  background:
+    radial-gradient(circle at top right, rgba(123,104,217,.18), transparent 34%),
+    linear-gradient(135deg,#fff 0%,#f2efff 100%);
+  border:1px solid rgba(123,104,217,.16);
+  border-radius:22px;
+  padding:24px;
+  margin-bottom:18px;
+  box-shadow:0 18px 42px rgba(123,104,217,.08);
+}
+
+.investment-hero-kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--trustee);
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.investment-hero-strip h3{
+  font-size:24px;
+  letter-spacing:-.04em;
+  margin-bottom:7px;
+}
+
+.investment-hero-strip p{
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:760px;
+}
+
+.investment-card{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.94)),
+    radial-gradient(circle at top right, rgba(123,104,217,.14), transparent 28%);
+  border:1px solid rgba(123,104,217,.12);
+  box-shadow:0 12px 32px rgba(0,0,0,.04);
+}
+
+.investment-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:4px;
+  background:linear-gradient(90deg,#7b68d9,#5b8aa6,#6fae9c);
+}
+
+.investment-card .investment-card-name strong{
+  font-size:15px;
+  letter-spacing:-.025em;
+}
+
+.investment-card .portfolio-status{
+  width:fit-content;
+}
+
+.investment-card-details{
+  align-items:center;
+}
+
+.investment-news-featured{
+  grid-column:1 / -1;
+  background:
+    radial-gradient(circle at top right, rgba(111,174,156,.18), transparent 35%),
+    linear-gradient(135deg,#fff 0%,#eef8f4 100%);
+  border:1px solid rgba(111,174,156,.22);
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 18px 42px rgba(0,0,0,.055);
+  display:grid;
+  grid-template-columns:minmax(0,1.4fr) auto;
+  gap:24px;
+  align-items:end;
+}
+
+.investment-news-featured h3{
+  font-size:24px;
+  letter-spacing:-.045em;
+  line-height:1.08;
+  max-width:720px;
+  margin:10px 0;
+}
+
+.investment-news-featured p{
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:680px;
+}
+
+.investment-news-card{
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.investment-news-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 42px rgba(0,0,0,.07);
+  border-color:rgba(123,104,217,.18);
+}
+
+.investment-news-card-tag{
+  display:inline-flex;
+  width:fit-content;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:10.5px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:#e7f4ef;
+  color:#3f9f7f;
+}
+
+.investment-news-card-tag.media{
+  background:#e8eff4;
+  color:#3f6f8e;
+}
+
+.investment-news-card-tag.company{
+  background:#e7f4ef;
+  color:#3f9f7f;
+}
+
+.investment-news-card-tag.other{
+  background:#eeeafd;
+  color:#7b68d9;
+}
+
+.investment-news-card-date{
+  font-size:11px;
+  color:var(--soft);
+  font-family:'DM Mono',monospace;
+}
+
+.investment-news-card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+@media(max-width:900px){
+  .investment-news-featured{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* Trustee investment news emphasis */
+.investment-news-company{
+  display:block;
+  font-size:12px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin:4px 0 8px;
+}
+
+.investment-news-date-strong{
+  display:inline-flex;
+  align-items:center;
+  width:fit-content;
+  border-radius:999px;
+  padding:5px 10px;
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  color:var(--ink);
+  font-family:'DM Mono',monospace;
+  font-size:11.5px;
+  font-weight:700;
+}
+
+
+/* Editorial trustee investment news cards */
+.investment-news-card,
+.investment-news-featured{
+  position:relative;
+  overflow:hidden;
+}
+
+.investment-news-card::before,
+.investment-news-featured::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:linear-gradient(90deg,#7b68d9,#5b8aa6,#6fae9c);
+}
+
+.investment-news-title{
+  font-size:16px;
+  line-height:1.22;
+  letter-spacing:-.035em;
+  margin:4px 0 12px;
+}
+
+.investment-news-featured .investment-news-title{
+  font-size:25px;
+  max-width:760px;
+}
+
+.investment-news-company-band{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:linear-gradient(135deg,#eef4f7 0%,#f8fbfc 100%);
+  border:1px solid rgba(63,111,142,.12);
+  border-radius:13px;
+  padding:10px 12px;
+  margin:6px 0 10px;
+}
+
+.investment-news-company-label{
+  font-size:9.5px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:900;
+  color:#3f6f8e;
+}
+
+.investment-news-company-name{
+  font-size:13px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+
+.investment-news-source-line{
+  display:block;
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.35;
+  margin:3px 0 10px;
+}
+
+.investment-news-source-line strong{
+  color:var(--soft);
+  font-size:9.5px;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  margin-right:5px;
+}
+
+.investment-news-summary-block{
+  display:block;
+  background:#fbfaf7;
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:14px;
+  padding:12px 13px;
+  font-size:12.8px;
+  line-height:1.5;
+  color:#56565d;
+  margin-top:8px;
+}
+
+.investment-news-card-actions{
+  padding-top:4px;
+}
+
+
+/* Clean trustee investment news cards */
+.investment-news-card-featured{
+  grid-column:auto;
+}
+
+.investment-news-card-featured h3{
+  font-size:16px;
+  max-width:none;
+}
+
+.investment-news-card-featured p{
+  font-size:12.5px;
+}
+
+.investment-news-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.035);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:210px;
+}
+
+.investment-news-card h3{
+  font-size:15px;
+  line-height:1.25;
+  letter-spacing:-.02em;
+  margin:2px 0 2px;
+}
+
+.investment-news-meta-line{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin:3px 0 4px;
+}
+
+.investment-news-company-name{
+  font-size:12px;
+  font-weight:850;
+  color:var(--ink);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.investment-news-via{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:5px 9px;
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:11.5px;
+  line-height:1.2;
+}
+
+.investment-news-summary-clean{
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.45;
+  margin:0;
+}
+
+.investment-news-card-actions{
+  margin-top:auto;
+}
+
+
+/* Restored trustee investment hero */
+.investment-hero-strip{
+  background:
+    radial-gradient(circle at top right, rgba(111,174,156,.22), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(123,104,217,.16), transparent 36%),
+    linear-gradient(135deg,#ffffff 0%,#f2efff 48%,#eef8f4 100%);
+  border:1px solid rgba(123,104,217,.18);
+  border-radius:24px;
+  padding:28px;
+  margin-bottom:20px;
+  box-shadow:0 20px 48px rgba(123,104,217,.10);
+  position:relative;
+  overflow:hidden;
+}
+
+.investment-hero-strip::after{
+  content:"";
+  position:absolute;
+  top:-70px;
+  right:-70px;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.55);
+}
+
+.investment-hero-strip > *{
+  position:relative;
+  z-index:1;
+}
+
+.investment-hero-kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--trustee);
+  font-weight:850;
+  margin-bottom:8px;
+}
+
+.investment-hero-strip h3{
+  font-size:26px;
+  line-height:1.08;
+  letter-spacing:-.05em;
+  margin-bottom:9px;
+  max-width:780px;
+}
+
+.investment-hero-strip p{
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:760px;
+}
+
+
+/* Force trustee investment hero */
+.investment-hero-strip{
+  background:
+    radial-gradient(circle at top right, rgba(111,174,156,.24), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(123,104,217,.18), transparent 36%),
+    linear-gradient(135deg,#ffffff 0%,#f2efff 48%,#eef8f4 100%) !important;
+  border:1px solid rgba(123,104,217,.18) !important;
+  border-radius:24px !important;
+  padding:28px !important;
+  margin-bottom:20px !important;
+  box-shadow:0 20px 48px rgba(123,104,217,.10) !important;
+  position:relative;
+  overflow:hidden;
+}
+
+.investment-hero-strip::after{
+  content:"";
+  position:absolute;
+  top:-70px;
+  right:-70px;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.55);
+}
+
+.investment-hero-strip > *{
+  position:relative;
+  z-index:1;
+}
+
+.investment-hero-kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--trustee);
+  font-weight:850;
+  margin-bottom:8px;
+}
+
+.investment-hero-strip h3{
+  font-size:26px;
+  line-height:1.08;
+  letter-spacing:-.05em;
+  margin-bottom:9px;
+  max-width:780px;
+}
+
+.investment-hero-strip p{
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:760px;
+}
+
 </style>
 </head>
 <body class="preload">
@@ -672,6 +1130,12 @@ table.simple .neg{color:var(--red);font-weight:600}
       </div>
 
       <div class="section-body">
+        <div class="investment-hero-strip">
+          <div class="investment-hero-kicker">Investment portfolio</div>
+          <h3>Mission-aligned investments, current exposure and public updates in one place.</h3>
+          <p>This view brings together live investment records from Airtable and published news or release updates, giving trustees a clearer sense of portfolio activity and momentum.</p>
+        </div>
+
         <div class="investment-section-tabs">
           <button class="investment-section-tab active" type="button" onclick="setTrusteeInvestmentSection('portfolio', this)">Portfolio</button>
           <button class="investment-section-tab" type="button" onclick="setTrusteeInvestmentSection('news', this)">News and Releases</button>
@@ -1641,16 +2105,24 @@ function renderInvestmentCard(item){
   const statusClass = String(item.status || '').toLowerCase() === 'closed' || String(item.status || '').toLowerCase() === 'complete' ? 'closed' : '';
 
   return `
-    <article class="portfolio-row">
-      <div class="portfolio-row-main">
-        <div class="portfolio-row-name">
+    <article class="investment-card">
+      <div class="investment-card-head">
+        <div class="investment-card-name">
           <strong>${esc(item.name || 'Untitled investment')}</strong>
           <span>${esc(item.programme || 'Investment')}</span>
-          <span class="portfolio-status ${statusClass}">${esc(item.status || 'Unknown')}</span>
         </div>
-        <div class="portfolio-row-cell"><span>Amount</span><strong>${esc(item.amount)}</strong></div>
-        <div class="portfolio-row-cell"><span>Start</span><strong>${esc(item.start || '')}</strong></div>
-        <div class="portfolio-row-cell"><span>End</span><strong>${esc(item.end || 'Ongoing')}</strong></div>
+        <span class="portfolio-status ${statusClass}">${esc(item.status || 'Unknown')}</span>
+      </div>
+
+      <div class="investment-card-details">
+        <div class="investment-detail">
+          <span>Amount</span>
+          <strong>${esc(item.amount)}</strong>
+        </div>
+        <div class="investment-detail">
+          <span>Start</span>
+          <strong>${esc(item.start || '')}</strong>
+        </div>
       </div>
     </article>
   `;
@@ -1781,27 +2253,38 @@ function investmentNewsMatchesFilters(item){
   return true;
 }
 
-function renderInvestmentNewsRow(item){
+function investmentNewsTagClass(type){
+  const lower = String(type || '').toLowerCase();
+  if (lower.includes('media')) return 'media';
+  if (lower.includes('company')) return 'company';
+  return 'other';
+}
+
+function renderInvestmentNewsRow(item, featured = false){
   const link = String(item.url || '').trim();
-  const summary = String(item.summary || '').trim();
+  const tagClass = investmentNewsTagClass(item.type);
+  const title = item.title || 'Untitled update';
+  const company = item.investment_name || 'Investment update';
+  const source = item.source || 'Source not specified';
+  const summary = item.summary || '';
+
+  const cardClass = featured ? 'investment-news-card investment-news-card-featured' : 'investment-news-card';
 
   return `
-    <article class="investment-news-card">
-      <div>
-        <div class="investment-news-card-top">
-          <span class="investment-news-card-type">${esc(item.type || 'Update')}</span>
-          <span class="investment-news-card-date">${esc(formatInvestmentNewsDate(item.published_date))}</span>
-        </div>
-
-        <h3>${esc(item.title || 'Untitled update')}</h3>
-
-        <div class="investment-news-card-meta">
-          ${esc(item.investment_name || 'Investment update')}
-          ${item.source ? ` · ${esc(item.source)}` : ''}
-        </div>
-
-        ${summary ? `<div class="investment-news-card-summary">${esc(summary)}</div>` : ''}
+    <article class="${cardClass}">
+      <div class="investment-news-card-top">
+        <span class="investment-news-card-tag ${tagClass}">${esc(item.type || 'Update')}</span>
+        <span class="investment-news-date-strong">${esc(formatInvestmentNewsDate(item.published_date))}</span>
       </div>
+
+      <h3>${esc(title)}</h3>
+
+      <div class="investment-news-meta-line">
+        <span class="investment-news-company-name">${esc(company)}</span>
+        <span class="investment-news-via">via ${esc(source)}</span>
+      </div>
+
+      ${summary ? `<p class="investment-news-summary-clean">${esc(summary)}</p>` : ''}
 
       <div class="investment-news-card-actions">
         ${link ? `<a class="meeting-link" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Open update ↗</a>` : `<span class="meeting-link grey">No link</span>`}
@@ -1814,18 +2297,18 @@ function renderTrusteeInvestmentNews(){
   const list = document.getElementById('investmentNewsList');
   if (!list) return;
 
-  updateInvestmentNewsSummary();
-
   const filtered = trusteeInvestmentNews
     .filter(investmentNewsMatchesFilters)
     .sort((a, b) => new Date(b.published_date || 0) - new Date(a.published_date || 0));
+
+  updateInvestmentNewsSummary();
 
   if (!filtered.length) {
     list.innerHTML = '<div class="portfolio-empty">No investment news matches this search or filter.</div>';
     return;
   }
 
-  list.innerHTML = filtered.map(renderInvestmentNewsRow).join('');
+  list.innerHTML = filtered.map((item, index) => renderInvestmentNewsRow(item, index === 0)).join('');
 }
 
 async function loadTrusteeInvestmentNews(){
