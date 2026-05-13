@@ -863,6 +863,240 @@ table.simple .neg{color:var(--red);font-weight:600}
   max-width:840px !important;
 }
 
+
+/* Trustee beautiful section headers */
+.trustee-section-hero{
+  background:
+    radial-gradient(circle at top right, rgba(111,174,156,.22), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(123,104,217,.16), transparent 36%),
+    linear-gradient(135deg,#ffffff 0%,#f2efff 48%,#eef8f4 100%);
+  border:1px solid rgba(123,104,217,.18);
+  border-radius:24px;
+  padding:28px;
+  margin-bottom:20px;
+  box-shadow:0 20px 48px rgba(123,104,217,.10);
+  position:relative;
+  overflow:hidden;
+}
+
+.trustee-section-hero::after{
+  content:"";
+  position:absolute;
+  top:-70px;
+  right:-70px;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.55);
+}
+
+.trustee-section-hero > *{
+  position:relative;
+  z-index:1;
+}
+
+.trustee-section-kicker{
+  font-size:13px;
+  letter-spacing:.08em;
+  color:var(--ink);
+  font-weight:900;
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+
+.trustee-section-kicker::before{
+  content:"";
+  display:inline-block;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#7b68d9,#6fae9c);
+  margin-right:8px;
+  vertical-align:1px;
+}
+
+.trustee-section-hero h3{
+  font-size:28px;
+  line-height:1.08;
+  letter-spacing:-.05em;
+  font-weight:850;
+  margin-bottom:9px;
+  max-width:840px;
+}
+
+.trustee-section-hero p{
+  font-size:13.5px;
+  color:var(--muted);
+  line-height:1.55;
+  max-width:760px;
+}
+
+.trustee-view-tabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  background:#f4f1fb;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px;
+  width:fit-content;
+  margin-bottom:18px;
+}
+
+.trustee-view-tab{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12.5px;
+  font-weight:800;
+  border-radius:999px;
+  padding:9px 15px;
+}
+
+.trustee-view-tab.active{
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+
+/* Reporting visual overhaul */
+.reporting-overview-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.reporting-overview-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.035);
+}
+
+.reporting-overview-label{
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  font-weight:850;
+  color:var(--soft);
+  margin-bottom:8px;
+}
+
+.reporting-overview-value{
+  font-size:22px;
+  font-weight:850;
+  letter-spacing:-.04em;
+  color:var(--ink);
+}
+
+.reporting-overview-sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:5px;
+  line-height:1.4;
+}
+
+.reporting-gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.reporting-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.035);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:205px;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.reporting-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 42px rgba(0,0,0,.07);
+  border-color:rgba(123,104,217,.18);
+}
+
+.reporting-card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.reporting-fund-pill{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:10.5px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.reporting-fund-pill.lbt{
+  background:#e8eff4;
+  color:#3f6f8e;
+}
+
+.reporting-fund-pill.glt{
+  background:#e7f4ef;
+  color:#3f9f7f;
+}
+
+.reporting-date-pill{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:5px 9px;
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:11.5px;
+  font-family:'DM Mono',monospace;
+}
+
+.reporting-card h3{
+  font-size:15px;
+  line-height:1.25;
+  letter-spacing:-.02em;
+}
+
+.reporting-type{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+.reporting-card-actions{
+  margin-top:auto;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+@media(max-width:1000px){
+  .reporting-gallery,
+  .reporting-overview-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:640px){
+  .reporting-gallery,
+  .reporting-overview-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body class="preload">
@@ -1044,24 +1278,27 @@ table.simple .neg{color:var(--red);font-weight:600}
   <div id="portfolio-page" class="page">
 
     <div class="section-block">
-      <div class="section-title">
-        <div>
-          <h2>All grants portfolio</h2>
-          <p>Shared trustee view of Lightbulb and Greenlight grant records, pulled live from Airtable.</p>
-        </div>
-      </div>
       <div class="section-body">
+        <div class="trustee-section-hero">
+          <div class="trustee-section-kicker">Grant Portfolio</div>
+          <h3>Live grant records across Lightbulb and Greenlight in one trustee-ready view.</h3>
+          <p>Use this view to scan active and completed grants, compare fund activity, and quickly find organisation-level records pulled from Airtable.</p>
+        </div>
+
+        <div class="trustee-view-tabs" aria-label="Portfolio fund view">
+          <button class="trustee-view-tab active" type="button" onclick="setPortfolioFundView('all', this)">All Grants</button>
+          <button class="trustee-view-tab" type="button" onclick="setPortfolioFundView('Greenlight', this)">Greenlight</button>
+          <button class="trustee-view-tab" type="button" onclick="setPortfolioFundView('Lightbulb Trust', this)">Lightbulb</button>
+        </div>
+
         <div class="portfolio-controls">
           <input id="portfolioSearch" type="search" placeholder="Search by organisation..." oninput="renderPortfolioItems()">
-          <select id="portfolioFundFilter" onchange="renderPortfolioItems()">
-            <option value="all">All funds</option>
-            <option value="Lightbulb Trust">Lightbulb</option>
-            <option value="Greenlight">Greenlight</option>
-          </select>
+          <input id="portfolioFundFilter" type="hidden" value="all">
           <select id="portfolioStatusFilter" onchange="renderPortfolioItems()">
             <option value="active">Active</option>
             <option value="all">All statuses</option>
             <option value="complete">Complete</option>
+            <option value="closed">Closed</option>
           </select>
           <select id="portfolioSortFilter" onchange="renderPortfolioItems()">
             <option value="start-desc">Newest start first</option>
@@ -1080,20 +1317,38 @@ table.simple .neg{color:var(--red);font-weight:600}
 
   </div>
 
+
   <!-- =========================
        REPORTING PAGE
        ========================= -->
   <div id="reports-page" class="page">
 
     <div class="section-block">
-      <div class="section-title">
-        <div>
-          <h2>Reporting archive</h2>
-          <p>Shared trustee view of Lightbulb and Greenlight reports, pulled live from Airtable.</p>
-        </div>
-      </div>
-
       <div class="section-body">
+        <div class="trustee-section-hero">
+          <div class="trustee-section-kicker">Reporting Archive</div>
+          <h3>Partner reports, reflections and impact updates brought into one clearer library.</h3>
+          <p>Search across Lightbulb and Greenlight reporting records, review latest submissions, and open Airtable-linked form responses or supporting documents.</p>
+        </div>
+
+        <div class="reporting-overview-grid">
+          <div class="reporting-overview-card">
+            <div class="reporting-overview-label">Reports shown</div>
+            <div class="reporting-overview-value" id="reportingShownValue">...</div>
+            <div class="reporting-overview-sub">Based on the current filters.</div>
+          </div>
+          <div class="reporting-overview-card">
+            <div class="reporting-overview-label">Latest report</div>
+            <div class="reporting-overview-value" id="reportingLatestValue">...</div>
+            <div class="reporting-overview-sub" id="reportingLatestMeta">Most recent submission.</div>
+          </div>
+          <div class="reporting-overview-card">
+            <div class="reporting-overview-label">Current view</div>
+            <div class="reporting-overview-value" id="reportingViewValue">All</div>
+            <div class="reporting-overview-sub">Lightbulb, Greenlight or combined.</div>
+          </div>
+        </div>
+
         <div class="portfolio-controls">
           <input id="reportSearch" type="search" placeholder="Search by organisation..." oninput="renderLiveReports()">
           <select id="reportFundFilter" onchange="renderLiveReports()">
@@ -1106,36 +1361,26 @@ table.simple .neg{color:var(--red);font-weight:600}
           </select>
         </div>
 
-        <div class="section-title" style="padding:0;margin:4px 0 12px;border:0;box-shadow:none">
+        <div class="section-title" style="padding:0;margin:22px 0 12px;border:0;box-shadow:none">
           <div>
             <h2 style="font-size:18px">Latest reports received</h2>
-            <p id="latestReportsMeta">The three most recently submitted reports across both funds.</p>
+            <p id="latestReportsMeta">Loading latest reports...</p>
           </div>
         </div>
 
-        <div class="row-list latest-report-list" id="latestReportsGrid" style="margin-bottom:18px">
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Loading latest reports...</div>
-              <div class="row-desc">Pulling report records from Airtable.</div>
-            </div>
-          </div>
+        <div class="reporting-gallery" id="latestReportsGrid">
+          <div class="portfolio-empty">Loading latest reports...</div>
         </div>
 
-        <div class="section-title" style="padding:0;margin:22px 0 12px;border:0;box-shadow:none">
+        <div class="section-title" style="padding:0;margin:28px 0 12px;border:0;box-shadow:none">
           <div>
             <h2 style="font-size:18px">Full report library</h2>
             <p id="reportsFilterMeta">Loading reports...</p>
           </div>
         </div>
 
-        <div class="row-list report-library-scroll" id="reportLibraryGrid">
-          <div class="row">
-            <div class="row-main">
-              <div class="row-title">Loading report library...</div>
-              <div class="row-desc">Pulling report records from Airtable.</div>
-            </div>
-          </div>
+        <div class="reporting-gallery" id="reportLibraryGrid">
+          <div class="portfolio-empty">Loading report library...</div>
         </div>
       </div>
     </div>
@@ -1865,6 +2110,28 @@ function renderPortfolioItems(){
 
 
 
+
+function setPortfolioFundView(fund, button){
+  const hidden = document.getElementById('portfolioFundFilter');
+  if (hidden) hidden.value = fund;
+
+  document.querySelectorAll('.trustee-view-tab').forEach(tab => {
+    const onclick = tab.getAttribute('onclick') || '';
+    if (onclick.includes('setPortfolioFundView')) tab.classList.remove('active');
+  });
+
+  if (button) button.classList.add('active');
+
+  localStorage.setItem('trusteePortfolioFundView', fund);
+  renderPortfolioItems();
+}
+
+function restorePortfolioFundView(){
+  const fund = localStorage.getItem('trusteePortfolioFundView') || 'all';
+  const button = document.querySelector(`.trustee-view-tab[onclick*="${fund}"]`);
+  setPortfolioFundView(fund, button);
+}
+
 // ===== TRUSTEE REPORTING VIEW =====
 
 let liveReports = [];
@@ -1926,39 +2193,27 @@ function formatReportDate(dateString){
 }
 
 function reportRowHtml(report){
-
   const formResponseLink = cleanReportLink(report.reportLink);
-
-  const openReportLink = cleanReportLink(report.additionalReports);
-
-  const reportType = report.reportType || 'Report';
+  const additionalReportLink = cleanReportLink(report.additionalReports);
+  const fund = report.fund || '';
+  const fundClass = reportFundTagClass(fund) || 'grey';
 
   return `
-
-    <div class="row">
-
-      <div class="row-main">
-
-        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag ${reportFundTagClass(report.fund)}">${esc(reportFundLabel(report.fund))}</span> <span class="tag report-type ${String(reportType).toLowerCase().includes('final') ? 'final' : ''}">${esc(reportType)}</span></div>
-
-        <div class="row-desc">Submitted ${esc(formatReportDate(report.submissionDate))}</div>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px">
-
-          ${formResponseLink ? `<a class="meeting-link" href="${esc(formResponseLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : `<span class="meeting-link grey">No form response</span>`}
-
-          ${openReportLink ? `<a class="meeting-link grey" href="${esc(openReportLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
-
-        </div>
-
+    <article class="reporting-card">
+      <div class="reporting-card-top">
+        <span class="reporting-fund-pill ${esc(fundClass)}">${esc(reportFundLabel(fund))}</span>
+        <span class="reporting-date-pill">${esc(formatReportDate(report.submissionDate))}</span>
       </div>
 
-      <div class="row-meta">${esc(formatReportDate(report.submissionDate))}</div>
+      <h3>${esc(report.organisation || 'Untitled organisation')}</h3>
+      <div class="reporting-type">${esc(report.reportType || 'Report')}</div>
 
-    </div>
-
+      <div class="reporting-card-actions">
+        ${formResponseLink ? `<a class="meeting-link" href="${esc(formResponseLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : `<span class="meeting-link grey">No form response</span>`}
+        ${additionalReportLink ? `<a class="meeting-link grey" href="${esc(additionalReportLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
+      </div>
+    </article>
   `;
-
 }
 
 function getFilteredReports(){
@@ -2005,84 +2260,89 @@ function populateReportTypeFilter(){
 
 }
 
+function updateReportingSummary(filtered){
+  const shownEl = document.getElementById('reportingShownValue');
+  const latestEl = document.getElementById('reportingLatestValue');
+  const latestMetaEl = document.getElementById('reportingLatestMeta');
+  const viewEl = document.getElementById('reportingViewValue');
+
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'all';
+  const fundLabel = fundFilter === 'all' ? 'All' : reportFundLabel(fundFilter);
+
+  const sorted = [...filtered].sort((a, b) => new Date(b.submissionDate || 0) - new Date(a.submissionDate || 0));
+  const latest = sorted[0];
+
+  if (shownEl) shownEl.textContent = filtered.length;
+  if (viewEl) viewEl.textContent = fundLabel;
+  if (latestEl) latestEl.textContent = latest?.organisation || 'None yet';
+  if (latestMetaEl) latestMetaEl.textContent = latest ? `${formatReportDate(latest.submissionDate)} · ${latest.reportType || 'Report'}` : 'No reports match this view.';
+}
+
 function renderLiveReports(){
-
   const latestEl = document.getElementById('latestReportsGrid');
-
   const libraryEl = document.getElementById('reportLibraryGrid');
-
   const metaEl = document.getElementById('reportsFilterMeta');
-
   const latestMetaEl = document.getElementById('latestReportsMeta');
 
   if (!latestEl || !libraryEl) return;
 
   const filtered = getFilteredReports();
-
   const latest = filtered.slice(0, 3);
 
+  updateReportingSummary(filtered);
+
   latestEl.innerHTML = latest.length
-
     ? latest.map(reportRowHtml).join('')
-
-    : '<div class="row"><div class="row-main"><div class="row-title">No latest reports found</div><div class="row-desc">Try changing the search or filters.</div></div></div>';
+    : '<div class="portfolio-empty">No latest reports found. Try changing the search or filters.</div>';
 
   libraryEl.innerHTML = filtered.length
-
     ? filtered.map(reportRowHtml).join('')
-
-    : '<div class="row"><div class="row-main"><div class="row-title">No reports found</div><div class="row-desc">Try changing the search or filters.</div></div></div>';
+    : '<div class="portfolio-empty">No reports found. Try changing the search or filters.</div>';
 
   if (metaEl) {
-
     metaEl.textContent = reportsLoaded ? `${filtered.length} reports shown` : 'Loading reports...';
-
   }
 
   if (latestMetaEl) {
-
     latestMetaEl.textContent = reportsLoaded
       ? `Showing the latest ${latest.length} reports from ${filtered.length} matching records.`
       : 'Loading latest reports...';
-
   }
-
 }
 
 async function loadLiveReports(){
-
   const latestEl = document.getElementById('latestReportsGrid');
-
   const libraryEl = document.getElementById('reportLibraryGrid');
 
-  if (!latestEl || !libraryEl) return;
+  if (!latestEl || !libraryEl) {
+    console.warn('Reporting containers not found.');
+    return;
+  }
+
+  latestEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Loading latest reports...</div><div class="row-desc">Pulling reporting records from Airtable.</div></div></div>';
+  libraryEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Loading report library...</div><div class="row-desc">Pulling reporting records from Airtable.</div></div></div>';
 
   try {
-
     const response = await fetch('/.netlify/functions/reports');
 
-    if (!response.ok) throw new Error('Reports function failed');
+    if (!response.ok) {
+      const details = await response.text();
+      throw new Error(`Reports function failed: ${response.status} ${details}`);
+    }
 
     const data = await response.json();
 
     liveReports = Array.isArray(data.reports) ? data.reports : [];
-
     reportsLoaded = true;
 
     populateReportTypeFilter();
-
     renderLiveReports();
-
   } catch (error) {
-
     console.warn('Could not load live reports:', error);
 
-    latestEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load latest reports</div><div class="row-desc">Check the reports function or Airtable connection.</div></div></div>';
-
-    libraryEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load report library</div><div class="row-desc">Check the reports function or Airtable connection.</div></div></div>';
-
+    latestEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load latest reports</div><div class="row-desc">Check the Airtable reports function and local environment variables.</div></div></div>';
+    libraryEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load report library</div><div class="row-desc">Check the Airtable reports function and local environment variables.</div></div></div>';
   }
-
 }
 
 
@@ -2427,6 +2687,8 @@ function loadDataForPage(pageId){
   if (!pageId) return;
 
   if (pageId === 'portfolio-page') {
+    restorePortfolioFundView();
+
     if (hasPageLoaded('portfolio')) return;
     loadPortfolioGrants();
     markPageLoaded('portfolio');
