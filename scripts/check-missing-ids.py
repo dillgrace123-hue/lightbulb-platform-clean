@@ -3,6 +3,7 @@ import re
 
 FILES_TO_CHECK = [
     Path("lightbulb_index.html"),
+    Path("greenlight_index.html"),
     Path("home_logged_in.html"),
     Path("index.html"),
 ]
