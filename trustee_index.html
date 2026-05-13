@@ -4707,127 +4707,92 @@ window.currentTrusteeGovernanceItems = {};
 
 function setTrusteeGovernanceField(id, value){
   const el = document.getElementById(id);
-  if (el) el.value = value || '';
+  if (el) el.value = value ?? '';
 }
 
 function getTrusteeGovernanceField(id){
   return document.getElementById(id)?.value?.trim() || '';
 }
 
-function governanceStatusClass(status){
+function governanceChipClass(status){
   const value = String(status || '').toLowerCase();
 
-  if (value === 'complete') return 'approved';
-  if (value === 'waiting') return 'deferred';
-
-  return 'pending';
-}
-
-function governanceTagClass(status){
-  const value = String(status || '').toLowerCase();
-
-  if (value === 'complete') return 'green';
-  if (value === 'waiting') return 'amber';
+  if (value.includes('complete') || value.includes('current')) return 'green';
+  if (value.includes('due') || value.includes('upcoming') || value.includes('review')) return 'amber';
+  if (value.includes('overdue') || value.includes('urgent')) return 'red';
 
   return 'purple';
 }
 
-function governanceItemMatchesFilters(item){
-  const search = (document.getElementById('governanceSearch')?.value || '').toLowerCase().trim();
-  const status = document.getElementById('governanceStatusFilter')?.value || 'all';
-  const category = document.getElementById('governanceCategoryFilter')?.value || 'all';
-
-  const haystack = Object.values(item).join(' ').toLowerCase();
-
-  if (search && !haystack.includes(search)) return false;
-  if (status !== 'all' && item.status !== status) return false;
-  if (category !== 'all' && item.category !== category) return false;
-
-  return true;
-}
-
-function populateGovernanceCategoryFilter(){
-  const select = document.getElementById('governanceCategoryFilter');
-  if (!select) return;
-
-  const current = select.value || 'all';
-  const categories = [...new Set(trusteeGovernanceItems.map(item => item.category).filter(Boolean))].sort();
-
-  select.innerHTML = '<option value="all">All categories</option>' + categories.map(category => (
-    `<option value="${esc(category)}">${esc(category)}</option>`
-  )).join('');
-
-  select.value = categories.includes(current) ? current : 'all';
-}
-
-function renderTrusteeGovernanceCard(item){
+function renderTrusteeGovernanceItem(item){
+  const chipClass = governanceChipClass(item.status);
   const safeId = esc(item.id);
   const isAdmin = document.body.dataset.userRole === 'admin';
-  const statusClass = governanceStatusClass(item.status);
-  const tagClass = governanceTagClass(item.status);
 
   const actions = isAdmin ? `
-    <div class="dashboard-feed-actions">
+    <div class="governance-item-actions">
       <button type="button" onclick="editTrusteeGovernanceItem('${safeId}')">Edit</button>
       <button class="delete" type="button" onclick="deleteTrusteeGovernanceItem('${safeId}')">Delete</button>
     </div>
   ` : '';
 
-  const footerParts = [
-    item.category,
-    item.owner ? `Owner: ${item.owner}` : ''
-  ].filter(Boolean).join(' · ');
-
   return `
-    <div class="decision-card ${statusClass}">
-      <div class="decision-head">
-        <div class="decision-org">
-          ${esc(item.title || 'Untitled governance item')}
-          <span class="tag ${tagClass}">${esc(item.status || 'Open')}</span>
-        </div>
-        <div class="decision-amount">${esc(item.priority || 'Medium')}</div>
+    <article class="governance-item">
+      <div class="governance-item-top">
+        <div class="governance-item-title">${esc(item.title || 'Untitled item')}</div>
+        <div class="governance-item-date">${esc(item.due_text || '')}</div>
       </div>
 
-      ${item.description ? `<div class="decision-body">${esc(item.description)}</div>` : ''}
+      ${item.description ? `<div class="governance-item-desc">${esc(item.description)}</div>` : ''}
 
-      <div class="decision-foot">
-        <span>${esc(footerParts || 'Governance item')}</span>
-        <span>${esc(item.due_text || '')}</span>
+      <div class="governance-mini-meta">
+        <span class="governance-chip ${chipClass}">${esc(item.status || 'Current')}</span>
+        ${item.category ? `<span class="governance-chip">${esc(item.category)}</span>` : ''}
       </div>
 
       ${actions}
-    </div>
+    </article>
   `;
 }
 
 function renderTrusteeGovernanceItems(){
-  const list = document.getElementById('trusteeGovernanceList');
-  if (!list) return;
+  const actionsList = document.getElementById('governanceActionsList');
+  const policiesList = document.getElementById('governancePoliciesList');
+  const actionsCount = document.getElementById('governanceActionsCount');
+  const policiesCount = document.getElementById('governancePoliciesCount');
+
+  if (!actionsList || !policiesList) return;
 
   const activeItems = trusteeGovernanceItems
     .filter(item => item.is_active !== false)
-    .filter(governanceItemMatchesFilters)
     .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
 
+  const actions = activeItems.filter(item => item.section === 'actions');
+  const policies = activeItems.filter(item => item.section === 'policies');
+
   window.currentTrusteeGovernanceItems = {};
-  trusteeGovernanceItems.forEach(item => {
+  activeItems.forEach(item => {
     if (item.id) window.currentTrusteeGovernanceItems[item.id] = item;
   });
 
-  if (!activeItems.length) {
-    list.innerHTML = '<div class="portfolio-empty">No governance items match this view.</div>';
-    return;
-  }
+  if (actionsCount) actionsCount.textContent = `${actions.length} ${actions.length === 1 ? 'item' : 'items'}`;
+  if (policiesCount) policiesCount.textContent = `${policies.length} ${policies.length === 1 ? 'policy' : 'policies'}`;
 
-  list.innerHTML = activeItems.map(renderTrusteeGovernanceCard).join('');
+  actionsList.innerHTML = actions.length
+    ? actions.map(renderTrusteeGovernanceItem).join('')
+    : '<div class="portfolio-empty">No governance actions added yet.</div>';
+
+  policiesList.innerHTML = policies.length
+    ? policies.map(renderTrusteeGovernanceItem).join('')
+    : '<div class="portfolio-empty">No policy reviews added yet.</div>';
 }
 
 async function loadTrusteeGovernanceItems(){
-  const list = document.getElementById('trusteeGovernanceList');
+  const actionsList = document.getElementById('governanceActionsList');
+  const policiesList = document.getElementById('governancePoliciesList');
 
-  if (list) {
-    list.innerHTML = '<div class="portfolio-empty">Loading governance items...</div>';
-  }
+  if (actionsList) actionsList.innerHTML = '<div class="portfolio-empty">Loading governance actions...</div>';
+  if (policiesList) policiesList.innerHTML = '<div class="portfolio-empty">Loading policy reviews...</div>';
 
   if (!window.supabaseClient) {
     window.addEventListener('supabase-ready', loadTrusteeGovernanceItems, { once: true });
@@ -4837,148 +4802,33 @@ async function loadTrusteeGovernanceItems(){
   try {
     const { data, error } = await window.supabaseClient
       .from('trustee_governance_items')
-      .select('id,title,description,category,status,due_text,owner,priority,flag_for_attention,sort_order,is_active,created_at,updated_at')
+      .select('id,section,title,description,status,category,due_text,sort_order,is_active,created_at,updated_at')
       .eq('is_active', true)
+      .order('section', { ascending: true })
       .order('sort_order', { ascending: true });
 
     if (error) throw error;
 
     trusteeGovernanceItems = Array.isArray(data) ? data : [];
-
-    populateGovernanceCategoryFilter();
     renderTrusteeGovernanceItems();
   } catch (error) {
     console.warn('Could not load trustee governance items:', error);
-    if (list) list.innerHTML = '<div class="portfolio-empty">Could not load governance items.</div>';
+
+    if (actionsList) actionsList.innerHTML = '<div class="portfolio-empty">Could not load governance actions.</div>';
+    if (policiesList) policiesList.innerHTML = '<div class="portfolio-empty">Could not load policy reviews.</div>';
   }
 }
 
-function openTrusteeGovernanceModal(item = null){
-  document.getElementById('trusteeGovernanceModalTitle').textContent = item ? 'Edit governance item' : 'Add governance item';
-
-  setTrusteeGovernanceField('trustee-governance-id', item?.id || '');
-  setTrusteeGovernanceField('trustee-governance-title', item?.title || '');
-  setTrusteeGovernanceField('trustee-governance-description', item?.description || '');
-  setTrusteeGovernanceField('trustee-governance-category', item?.category || '');
-  setTrusteeGovernanceField('trustee-governance-status', item?.status || 'Open');
-  setTrusteeGovernanceField('trustee-governance-due-text', item?.due_text || '');
-  setTrusteeGovernanceField('trustee-governance-owner', item?.owner || '');
-  setTrusteeGovernanceField('trustee-governance-priority', item?.priority || 'Medium');
-
-  document.getElementById('trusteeGovernanceModal').classList.add('open');
-}
-
-function closeTrusteeGovernanceModal(){
-  document.getElementById('trusteeGovernanceModal').classList.remove('open');
+function openTrusteeGovernanceModal(section = 'actions', item = null){
+  alert('Governance editing modal is being added next.');
 }
 
 function editTrusteeGovernanceItem(id){
-  const item = window.currentTrusteeGovernanceItems?.[id];
-
-  if (!item) {
-    alert('Could not find this governance item.');
-    return;
-  }
-
-  openTrusteeGovernanceModal(item);
-}
-
-async function saveTrusteeGovernanceItem(){
-  if (!window.supabaseClient) {
-    alert('Supabase is not ready yet.');
-    return;
-  }
-
-  const id = getTrusteeGovernanceField('trustee-governance-id');
-
-  const payload = {
-    title: getTrusteeGovernanceField('trustee-governance-title'),
-    description: getTrusteeGovernanceField('trustee-governance-description'),
-    category: getTrusteeGovernanceField('trustee-governance-category'),
-    status: getTrusteeGovernanceField('trustee-governance-status'),
-    due_text: getTrusteeGovernanceField('trustee-governance-due-text'),
-    owner: getTrusteeGovernanceField('trustee-governance-owner'),
-    priority: getTrusteeGovernanceField('trustee-governance-priority'),
-    is_active: true,
-    updated_at: new Date().toISOString()
-  };
-
-  if (!payload.title) {
-    alert('Please add a title.');
-    return;
-  }
-
-  let result;
-
-  if (id) {
-    result = await window.supabaseClient
-      .from('trustee_governance_items')
-      .update(payload)
-      .eq('id', id);
-  } else {
-    const nextSortOrder = trusteeGovernanceItems.length + 1;
-
-    result = await window.supabaseClient
-      .from('trustee_governance_items')
-      .insert({
-        ...payload,
-        sort_order: nextSortOrder
-      });
-  }
-
-  if (result.error) {
-    alert('Could not save governance item: ' + result.error.message);
-    return;
-  }
-
-  closeTrusteeGovernanceModal();
-  await loadTrusteeGovernanceItems();
-  await loadTrusteeDashboardSummary();
+  alert('Governance editing modal is being added next.');
 }
 
 function deleteTrusteeGovernanceItem(id){
-  const item = window.currentTrusteeGovernanceItems?.[id];
-
-  if (!item) {
-    alert('Could not find this governance item.');
-    return;
-  }
-
-  setTrusteeGovernanceField('trustee-governance-delete-id', id);
-  document.getElementById('trusteeGovernanceDeleteModal').classList.add('open');
-}
-
-function closeTrusteeGovernanceDeleteModal(){
-  document.getElementById('trusteeGovernanceDeleteModal').classList.remove('open');
-  setTrusteeGovernanceField('trustee-governance-delete-id', '');
-}
-
-async function confirmDeleteTrusteeGovernanceItem(){
-  if (!window.supabaseClient) {
-    alert('Supabase is not ready yet.');
-    return;
-  }
-
-  const id = getTrusteeGovernanceField('trustee-governance-delete-id');
-
-  if (!id) {
-    alert('Could not find this governance item.');
-    return;
-  }
-
-  const { error } = await window.supabaseClient
-    .from('trustee_governance_items')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    alert('Could not delete governance item: ' + error.message);
-    return;
-  }
-
-  closeTrusteeGovernanceDeleteModal();
-  await loadTrusteeGovernanceItems();
-  await loadTrusteeDashboardSummary();
+  alert('Governance delete modal is being added next.');
 }
 
 
