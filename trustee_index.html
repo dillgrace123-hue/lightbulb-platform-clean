@@ -1097,6 +1097,496 @@ table.simple .neg{color:var(--red);font-weight:600}
   }
 }
 
+
+/* Trustee reporting richer cards */
+.reporting-gallery{
+  align-items:stretch;
+}
+
+.reporting-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:18px !important;
+  padding:18px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.94)),
+    radial-gradient(circle at top right, rgba(123,104,217,.08), transparent 30%);
+  border:1px solid rgba(0,0,0,.075) !important;
+  box-shadow:0 12px 30px rgba(0,0,0,.045) !important;
+}
+
+.reporting-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:linear-gradient(90deg,#7b68d9,#5b8aa6,#6fae9c);
+  opacity:.85;
+}
+
+.reporting-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 44px rgba(0,0,0,.075) !important;
+  border-color:rgba(123,104,217,.18) !important;
+}
+
+.reporting-card-top{
+  margin-bottom:8px;
+}
+
+.reporting-fund-pill{
+  letter-spacing:.09em !important;
+  font-weight:900 !important;
+  padding:5px 10px !important;
+}
+
+.reporting-fund-pill.fund-greenlight,
+.reporting-fund-pill.glt{
+  background:#e7f4ef !important;
+  color:#2f8a6e !important;
+}
+
+.reporting-fund-pill.fund-lightbulb,
+.reporting-fund-pill.lbt{
+  background:#e8eff4 !important;
+  color:#3f6f8e !important;
+}
+
+.reporting-card h3{
+  font-size:16px !important;
+  line-height:1.2 !important;
+  letter-spacing:-.03em !important;
+  margin:8px 0 10px !important;
+}
+
+.reporting-report-type{
+  display:inline-flex;
+  width:fit-content;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  color:var(--muted);
+}
+
+.reporting-report-type.final{
+  background:#eeeafd;
+  color:#7b68d9;
+  border-color:rgba(123,104,217,.18);
+}
+
+.reporting-report-type.interim{
+  background:#fbf0df;
+  color:#b97920;
+  border-color:rgba(217,154,53,.20);
+}
+
+.reporting-details-box{
+  margin-top:4px;
+  padding:11px 12px;
+  border-radius:13px;
+  background:#fbfaf7;
+  border:1px solid rgba(0,0,0,.06);
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.reporting-details-label{
+  font-size:9.5px;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--soft);
+}
+
+.reporting-details-value{
+  font-size:12.5px;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+.reporting-card-actions{
+  padding-top:6px;
+}
+
+#latestReportsGrid .reporting-card{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.95)),
+    radial-gradient(circle at top right, rgba(111,174,156,.13), transparent 32%);
+  border-color:rgba(111,174,156,.15) !important;
+}
+
+#latestReportsGrid .reporting-card::before{
+  background:linear-gradient(90deg,#6fae9c,#5b8aa6,#7b68d9);
+}
+
+.reporting-section-subhead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px 18px !important;
+  margin:24px 0 14px !important;
+  border:1px solid rgba(0,0,0,.06) !important;
+  border-radius:16px;
+  background:
+    linear-gradient(135deg,#fff 0%,#fbfaf7 100%) !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.025) !important;
+}
+
+.reporting-section-subhead h2{
+  font-size:18px !important;
+  letter-spacing:-.035em;
+}
+
+.reporting-section-subhead p{
+  font-size:12px !important;
+  color:var(--muted);
+  margin-top:3px !important;
+}
+
+
+/* Professional compact reporting library */
+.reporting-gallery{
+  gap:12px !important;
+}
+
+#reportLibraryGrid{
+  max-height:620px;
+  overflow-y:auto;
+  padding-right:8px;
+  scroll-behavior:smooth;
+}
+
+#reportLibraryGrid::-webkit-scrollbar{
+  width:8px;
+}
+
+#reportLibraryGrid::-webkit-scrollbar-track{
+  background:#f2f0ea;
+  border-radius:999px;
+}
+
+#reportLibraryGrid::-webkit-scrollbar-thumb{
+  background:rgba(123,104,217,.35);
+  border-radius:999px;
+}
+
+.reporting-card{
+  min-height:150px !important;
+  padding:16px !important;
+  border-radius:16px !important;
+  gap:9px !important;
+}
+
+.reporting-card h3{
+  font-size:15px !important;
+  line-height:1.22 !important;
+  margin:4px 0 2px !important;
+}
+
+.reporting-card-top{
+  margin-bottom:4px !important;
+}
+
+.reporting-card-meta-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:2px 0 8px;
+}
+
+.reporting-report-type{
+  display:inline-flex;
+  width:fit-content;
+  align-items:center;
+  border-radius:999px;
+  padding:4px 9px;
+  font-size:10.5px;
+  font-weight:850;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  background:#fbf0df;
+  color:#b97920;
+  border:1px solid rgba(217,154,53,.20);
+}
+
+.reporting-report-type.final{
+  background:#eeeafd;
+  color:#7b68d9;
+  border-color:rgba(123,104,217,.18);
+}
+
+.reporting-report-type.interim{
+  background:#fbf0df;
+  color:#b97920;
+  border-color:rgba(217,154,53,.20);
+}
+
+.reporting-card-actions{
+  margin-top:auto;
+  padding-top:4px !important;
+}
+
+.reporting-card .meeting-link{
+  font-size:11px;
+  padding:5px 10px;
+}
+
+.reporting-library-frame{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.04);
+}
+
+.reporting-library-note{
+  font-size:11.5px;
+  color:var(--soft);
+  margin:-4px 0 12px;
+}
+
+#latestReportsGrid .reporting-card{
+  min-height:165px !important;
+}
+
+.reporting-section-subhead{
+  margin-top:22px !important;
+}
+
+
+/* Sleek trustee reporting library */
+.reporting-view-tabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  background:#f4f1fb;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px;
+  width:fit-content;
+  margin:0 0 18px;
+}
+
+.reporting-view-tab{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12.5px;
+  font-weight:800;
+  border-radius:999px;
+  padding:9px 15px;
+}
+
+.reporting-view-tab.active{
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+
+.reporting-gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px !important;
+}
+
+.reporting-card{
+  position:relative;
+  min-height:135px !important;
+  padding:16px !important;
+  border-radius:16px !important;
+  background:#fff !important;
+  border:1px solid rgba(0,0,0,.075) !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.028) !important;
+  display:flex;
+  flex-direction:column;
+  gap:9px !important;
+  overflow:hidden;
+  transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.reporting-card::before{
+  display:none !important;
+}
+
+.reporting-card:hover{
+  transform:translateY(-1px);
+  border-color:rgba(0,0,0,.14) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.045) !important;
+}
+
+.reporting-card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:2px !important;
+}
+
+.reporting-fund-pill{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:4px 9px !important;
+  font-size:10px;
+  font-weight:850 !important;
+  letter-spacing:.08em !important;
+  text-transform:uppercase;
+}
+
+.reporting-fund-pill.fund-greenlight,
+.reporting-fund-pill.glt{
+  background:#edf6f2 !important;
+  color:#357d66 !important;
+}
+
+.reporting-fund-pill.fund-lightbulb,
+.reporting-fund-pill.lbt{
+  background:#eef4f8 !important;
+  color:#3f6f8e !important;
+}
+
+.reporting-date-pill{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:4px 8px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--soft);
+  font-size:10.5px;
+  font-family:'DM Mono',monospace;
+}
+
+.reporting-card h3{
+  font-size:14.5px !important;
+  line-height:1.22 !important;
+  letter-spacing:-.02em !important;
+  margin:2px 0 0 !important;
+}
+
+.reporting-card-meta-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:0 0 4px;
+}
+
+.reporting-report-type{
+  display:inline-flex;
+  width:fit-content;
+  border-radius:999px;
+  padding:4px 8px;
+  background:#f7f6f2 !important;
+  border:1px solid var(--line) !important;
+  color:var(--muted) !important;
+  font-size:10.5px;
+  font-weight:750;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.reporting-card-actions{
+  margin-top:auto;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  padding-top:2px !important;
+}
+
+.reporting-card .meeting-link{
+  font-size:11px;
+  padding:5px 10px;
+}
+
+.reporting-library-frame{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:14px;
+  box-shadow:0 10px 26px rgba(0,0,0,.03);
+}
+
+#reportLibraryGrid{
+  max-height:580px;
+  overflow-y:auto;
+  padding-right:8px;
+  scroll-behavior:smooth;
+}
+
+#reportLibraryGrid::-webkit-scrollbar{
+  width:8px;
+}
+
+#reportLibraryGrid::-webkit-scrollbar-track{
+  background:#f2f0ea;
+  border-radius:999px;
+}
+
+#reportLibraryGrid::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.18);
+  border-radius:999px;
+}
+
+.reporting-library-note{
+  font-size:11.5px;
+  color:var(--soft);
+  margin:-2px 0 12px;
+}
+
+.reporting-section-subhead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 !important;
+  margin:24px 0 12px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.reporting-section-subhead h2{
+  font-size:18px !important;
+  letter-spacing:-.035em;
+}
+
+.reporting-section-subhead p{
+  font-size:12px !important;
+  color:var(--muted);
+  margin-top:3px !important;
+}
+
+#latestReportsGrid .reporting-card{
+  min-height:145px !important;
+  background:#fff !important;
+  border-color:rgba(0,0,0,.075) !important;
+}
+
+@media(max-width:1000px){
+  .reporting-gallery{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:640px){
+  .reporting-gallery{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body class="preload">
@@ -1349,19 +1839,21 @@ table.simple .neg{color:var(--red);font-weight:600}
           </div>
         </div>
 
+        <div class="reporting-view-tabs" aria-label="Reporting fund view">
+          <button class="reporting-view-tab active" type="button" onclick="setReportingFundView('all', this)">All</button>
+          <button class="reporting-view-tab" type="button" onclick="setReportingFundView('GLT', this)">Greenlight</button>
+          <button class="reporting-view-tab" type="button" onclick="setReportingFundView('LBT', this)">Lightbulb</button>
+        </div>
+
         <div class="portfolio-controls">
           <input id="reportSearch" type="search" placeholder="Search by organisation..." oninput="renderLiveReports()">
-          <select id="reportFundFilter" onchange="renderLiveReports()">
-            <option value="all">All funds</option>
-            <option value="LBT">Lightbulb</option>
-            <option value="GLT">Greenlight</option>
-          </select>
+          <input id="reportFundFilter" type="hidden" value="all">
           <select id="reportTypeFilter" onchange="renderLiveReports()">
             <option value="all">All report types</option>
           </select>
         </div>
 
-        <div class="section-title" style="padding:0;margin:22px 0 12px;border:0;box-shadow:none">
+        <div class="section-title reporting-section-subhead">
           <div>
             <h2 style="font-size:18px">Latest reports received</h2>
             <p id="latestReportsMeta">Loading latest reports...</p>
@@ -1372,15 +1864,18 @@ table.simple .neg{color:var(--red);font-weight:600}
           <div class="portfolio-empty">Loading latest reports...</div>
         </div>
 
-        <div class="section-title" style="padding:0;margin:28px 0 12px;border:0;box-shadow:none">
+        <div class="section-title reporting-section-subhead">
           <div>
             <h2 style="font-size:18px">Full report library</h2>
             <p id="reportsFilterMeta">Loading reports...</p>
           </div>
         </div>
 
-        <div class="reporting-gallery" id="reportLibraryGrid">
-          <div class="portfolio-empty">Loading report library...</div>
+        <div class="reporting-library-frame">
+          <div class="reporting-library-note">Scrollable library. Use search and filters above to narrow the list.</div>
+          <div class="reporting-gallery" id="reportLibraryGrid">
+            <div class="portfolio-empty">Loading report library...</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2206,7 +2701,10 @@ function reportRowHtml(report){
       </div>
 
       <h3>${esc(report.organisation || 'Untitled organisation')}</h3>
-      <div class="reporting-type">${esc(report.reportType || 'Report')}</div>
+
+      <div class="reporting-card-meta-row">
+        <span class="reporting-report-type ${String(report.reportType || '').toLowerCase().includes('final') ? 'final' : 'interim'}">${esc(report.reportType || 'Report')}</span>
+      </div>
 
       <div class="reporting-card-actions">
         ${formResponseLink ? `<a class="meeting-link" href="${esc(formResponseLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : `<span class="meeting-link grey">No form response</span>`}
@@ -2276,6 +2774,24 @@ function updateReportingSummary(filtered){
   if (viewEl) viewEl.textContent = fundLabel;
   if (latestEl) latestEl.textContent = latest?.organisation || 'None yet';
   if (latestMetaEl) latestMetaEl.textContent = latest ? `${formatReportDate(latest.submissionDate)} · ${latest.reportType || 'Report'}` : 'No reports match this view.';
+}
+
+
+function setReportingFundView(fund, button){
+  const hidden = document.getElementById('reportFundFilter');
+  if (hidden) hidden.value = fund;
+
+  document.querySelectorAll('.reporting-view-tab').forEach(tab => tab.classList.remove('active'));
+  if (button) button.classList.add('active');
+
+  localStorage.setItem('trusteeReportingFundView', fund);
+  renderLiveReports();
+}
+
+function restoreReportingFundView(){
+  const fund = localStorage.getItem('trusteeReportingFundView') || 'all';
+  const button = document.querySelector(`.reporting-view-tab[onclick*="${fund}"]`);
+  setReportingFundView(fund, button);
 }
 
 function renderLiveReports(){
@@ -2696,6 +3212,8 @@ function loadDataForPage(pageId){
   }
 
   if (pageId === 'reports-page') {
+    restoreReportingFundView();
+
     if (hasPageLoaded('reports')) return;
     loadLiveReports();
     markPageLoaded('reports');
