@@ -566,7 +566,7 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 
 .portfolio-controls{
   display:grid;
-  grid-template-columns:1fr 180px 180px;
+  grid-template-columns:1fr 170px 160px 190px;
   gap:10px;
   background:#fff;
   border:1px solid var(--line);
@@ -1692,14 +1692,21 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       <div class="portfolio-controls">
         <input id="portfolioSearch" type="search" placeholder="Search by organisation..." oninput="renderPortfolioItems()">
         <select id="portfolioFundFilter" onchange="renderPortfolioItems()">
-          <option value="LBT">Lightbulb</option>
-          <option value="GLT">Greenlight</option>
-          <option value="all">All funds</option>
+          <option value="Lightbulb Trust">Lightbulb</option>
+          <option value="Greenlight">Greenlight</option>
+          <option value="all">All programmes</option>
         </select>
         <select id="portfolioStatusFilter" onchange="renderPortfolioItems()">
           <option value="active">Active</option>
           <option value="all">All statuses</option>
           <option value="closed">Closed</option>
+        </select>
+        <select id="portfolioSortFilter" onchange="renderPortfolioItems()">
+          <option value="start-desc">Newest start first</option>
+          <option value="start-asc">Oldest start first</option>
+          <option value="end-asc">Ending soonest</option>
+          <option value="amount-desc">Amount high to low</option>
+          <option value="name-asc">Name A to Z</option>
         </select>
       </div>
 
@@ -2269,10 +2276,10 @@ function restorePageFromHash(){
 // =========================================
 // PORTFOLIO PAGE
 // =========================================
-const portfolioGrants = [
+let portfolioGrants = [
   {
     organisation: 'West London Action for Children',
-    fund: 'LBT',
+    fund: 'Lightbulb Trust',
     amount: '£29,640',
     status: 'Active',
     start: 'Apr 2024',
@@ -2283,7 +2290,7 @@ const portfolioGrants = [
   },
   {
     organisation: 'Response Community Projects',
-    fund: 'LBT',
+    fund: 'Lightbulb Trust',
     amount: '£20,000',
     status: 'Active',
     start: 'Feb 2025',
@@ -2294,7 +2301,7 @@ const portfolioGrants = [
   },
   {
     organisation: 'Fit For Life Youth',
-    fund: 'LBT',
+    fund: 'Lightbulb Trust',
     amount: '£20,000',
     status: 'Active',
     start: 'Jun 2026',
@@ -2306,9 +2313,82 @@ const portfolioGrants = [
 ];
 
 
+function formatPortfolioCurrency(value){
+  const number = Number(value || 0);
+
+  if (!Number.isFinite(number)) return value || '';
+
+  return number.toLocaleString('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+}
+
+function formatPortfolioDate(value){
+  if (!value) return '';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString('en-GB', {
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+function mapAirtableGrantToPortfolioGrant(grant){
+  return {
+    id: grant.id,
+    organisation: grant.name || '',
+    fund: grant.programme || '',
+    amountRaw: Number(grant.amount || 0),
+    amount: formatPortfolioCurrency(grant.amount),
+    status: grant.status || '',
+    startRaw: grant.startDate || '',
+    endRaw: grant.endDate || '',
+    start: formatPortfolioDate(grant.startDate),
+    end: formatPortfolioDate(grant.endDate),
+    type: grant.fundingType || '',
+    activeYear: grant.activeYear || '',
+    monthsRemaining: grant.monthsRemaining || ''
+  };
+}
+
+async function loadPortfolioGrants(){
+  const list = document.getElementById('portfolioList');
+  const fallback = Array.isArray(portfolioGrants) ? [...portfolioGrants] : [];
+
+  if (list) {
+    list.innerHTML = `<div class="portfolio-row"><div class="portfolio-row-main"><div class="portfolio-row-name"><strong>Loading grants...</strong><span>Pulling latest records from Airtable.</span></div></div></div>`;
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/portfolio-grants');
+    if (!response.ok) throw new Error('Portfolio grants function failed');
+
+    const data = await response.json();
+    const grants = Array.isArray(data.grants) ? data.grants : [];
+
+    if (!grants.length) {
+      portfolioGrants = fallback;
+    } else {
+      portfolioGrants = grants.map(mapAirtableGrantToPortfolioGrant);
+    }
+
+    renderPortfolioItems();
+  } catch (error) {
+    portfolioGrants = fallback;
+    renderPortfolioItems();
+    console.warn('Could not load portfolio grants:', error);
+  }
+}
+
 function portfolioMatchesFilters(item){
   const search = (document.getElementById('portfolioSearch')?.value || '').toLowerCase();
-  const fund = document.getElementById('portfolioFundFilter')?.value || 'LBT';
+  const fund = document.getElementById('portfolioFundFilter')?.value || 'Lightbulb Trust';
   const status = document.getElementById('portfolioStatusFilter')?.value || 'active';
 
   const haystack = Object.values(item).join(' ').toLowerCase();
@@ -2344,7 +2424,29 @@ function renderPortfolioItems(){
   if (!list) return;
 
   const source = portfolioGrants;
-  const filtered = source.filter(portfolioMatchesFilters);
+  const sort = document.getElementById('portfolioSortFilter')?.value || 'start-desc';
+
+  const filtered = source
+    .filter(portfolioMatchesFilters)
+    .sort((a, b) => {
+      if (sort === 'start-asc') {
+        return new Date(a.startRaw || a.start || 0) - new Date(b.startRaw || b.start || 0);
+      }
+
+      if (sort === 'end-asc') {
+        return new Date(a.endRaw || a.end || 8640000000000000) - new Date(b.endRaw || b.end || 8640000000000000);
+      }
+
+      if (sort === 'amount-desc') {
+        return Number(b.amountRaw || 0) - Number(a.amountRaw || 0);
+      }
+
+      if (sort === 'name-asc') {
+        return String(a.organisation || '').localeCompare(String(b.organisation || ''));
+      }
+
+      return new Date(b.startRaw || b.start || 0) - new Date(a.startRaw || a.start || 0);
+    });
 
   if (!filtered.length) {
     list.innerHTML = `<div class="portfolio-card"><h3>No records found</h3><div class="portfolio-card-sub">Try changing the search or filter options.</div></div>`;
@@ -3466,7 +3568,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAttentionCards();
   loadFundingPanelCards();
   loadLiveReports();
-  renderPortfolioItems();
+  loadPortfolioGrants();
   buildTimeline();
   loadTimelineItemsFromSupabase();
   restorePageFromHash();
