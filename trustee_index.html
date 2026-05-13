@@ -1661,24 +1661,47 @@ table.simple .neg{color:var(--red);font-weight:600}
 
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">TOTAL FUNDS UNDER MANAGEMENT</div>
-        <div class="stat-value">£3.2m</div>
-        <div class="stat-desc">Across Lightbulb Trust and Greenlight Project</div>
+        <div class="stat-label">ACTIVE GREENLIGHT FUNDS</div>
+        <div class="stat-value" id="trustee-activeGreenlightFunds">Loading...</div>
+        <div class="stat-desc" id="trustee-activeGreenlightMeta">Active Greenlight grant commitments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ACTIVE LIGHTBULB FUNDS</div>
+        <div class="stat-value" id="trustee-activeLightbulbFunds">Loading...</div>
+        <div class="stat-desc" id="trustee-activeLightbulbMeta">Active Lightbulb grant commitments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ACTIVE INVESTMENTS</div>
+        <div class="stat-value" id="trustee-activeInvestments">Loading...</div>
+        <div class="stat-desc" id="trustee-activeInvestmentsMeta">Active investment commitments</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">TOTAL ACTIVE FUNDS</div>
+        <div class="stat-value" id="trustee-totalActiveFunds">Loading...</div>
+        <div class="stat-desc">Active grants and investments combined</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">ALL-TIME FUNDS DEPLOYED</div>
+        <div class="stat-value" id="trustee-allTimeFundsDeployed">Loading...</div>
+        <div class="stat-desc" id="trustee-allTimeFundsMeta">All grants and investments tracked</div>
       </div>
       <div class="stat-card green">
         <div class="stat-label">DECISIONS THIS QUARTER</div>
-        <div class="stat-value">12</div>
-        <div class="stat-desc">8 approved, 2 deferred, 2 declined</div>
+        <div class="stat-value" id="trustee-decisionsQuarter">Loading...</div>
+        <div class="stat-desc" id="trustee-decisionsQuarterMeta">Pulled from funding decisions</div>
       </div>
       <div class="stat-card amber">
         <div class="stat-label">GOVERNANCE TASKS</div>
-        <div class="stat-value">3 due</div>
-        <div class="stat-desc">Items requiring attention this month</div>
+        <div class="stat-value" id="trustee-governanceTasks">Loading...</div>
+        <div class="stat-desc" id="trustee-governanceTasksMeta">Pulled from platform content</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">NEXT BOARD MEETING</div>
-        <div class="stat-value">29 Jun</div>
-        <div class="stat-desc">2026 · Quarterly review</div>
+        <div class="stat-value" id="trustee-nextBoardMeeting">Loading...</div>
+        <div class="stat-desc" id="trustee-nextBoardMeetingMeta">Pulled from platform content</div>
       </div>
     </div>
 
@@ -3162,6 +3185,188 @@ function restoreTrusteeInvestmentSection(){
   setTrusteeInvestmentSection(section, button);
 }
 
+
+// ===== TRUSTEE DASHBOARD SUMMARY =====
+function formatTrusteeCurrency(value){
+  const number = Number(value || 0);
+
+  if (!Number.isFinite(number)) return '£0';
+
+  if (number >= 1000000) {
+    return `£${(number / 1000000).toFixed(1)}m`;
+  }
+
+  return number.toLocaleString('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    maximumFractionDigits: 0
+  });
+}
+
+function isTrusteeActiveRecord(item){
+  const status = String(item.status || '').toLowerCase();
+
+  return status !== 'complete'
+    && status !== 'closed'
+    && status !== 'declined'
+    && status !== 'rejected'
+    && status !== 'inactive';
+}
+
+function getTrusteeGrantProgramme(item){
+  return String(item.programme || item.fund || '').trim();
+}
+
+function isGreenlightGrant(item){
+  const programme = getTrusteeGrantProgramme(item).toLowerCase();
+  return programme.includes('greenlight') || programme === 'glt';
+}
+
+function isLightbulbGrant(item){
+  const programme = getTrusteeGrantProgramme(item).toLowerCase();
+  return programme.includes('lightbulb') || programme === 'lbt';
+}
+
+function sumTrusteeAmounts(items){
+  return items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+}
+
+async function loadTrusteeDashboardSummary(){
+  const activeGreenlightEl = document.getElementById('trustee-activeGreenlightFunds');
+  const activeLightbulbEl = document.getElementById('trustee-activeLightbulbFunds');
+  const activeInvestmentsEl = document.getElementById('trustee-activeInvestments');
+  const totalActiveEl = document.getElementById('trustee-totalActiveFunds');
+  const allTimeEl = document.getElementById('trustee-allTimeFundsDeployed');
+
+  const activeGreenlightMetaEl = document.getElementById('trustee-activeGreenlightMeta');
+  const activeLightbulbMetaEl = document.getElementById('trustee-activeLightbulbMeta');
+  const activeInvestmentsMetaEl = document.getElementById('trustee-activeInvestmentsMeta');
+  const allTimeMetaEl = document.getElementById('trustee-allTimeFundsMeta');
+
+  const decisionsEl = document.getElementById('trustee-decisionsQuarter');
+  const decisionsMetaEl = document.getElementById('trustee-decisionsQuarterMeta');
+  const governanceEl = document.getElementById('trustee-governanceTasks');
+  const governanceMetaEl = document.getElementById('trustee-governanceTasksMeta');
+  const nextMeetingEl = document.getElementById('trustee-nextBoardMeeting');
+  const nextMeetingMetaEl = document.getElementById('trustee-nextBoardMeetingMeta');
+
+  try {
+    const [grantsResponse, investmentsResponse] = await Promise.all([
+      fetch('/.netlify/functions/portfolio-grants?programme=all'),
+      fetch('/.netlify/functions/portfolio-investments')
+    ]);
+
+    if (!grantsResponse.ok) throw new Error('Trustee grants summary failed');
+    if (!investmentsResponse.ok) throw new Error('Trustee investments summary failed');
+
+    const grantsData = await grantsResponse.json();
+    const investmentsData = await investmentsResponse.json();
+
+    const grants = Array.isArray(grantsData.grants) ? grantsData.grants : [];
+    const investments = Array.isArray(investmentsData.investments) ? investmentsData.investments : [];
+
+    const activeGrants = grants.filter(isTrusteeActiveRecord);
+    const activeInvestments = investments.filter(isTrusteeActiveRecord);
+
+    const activeGreenlightGrants = activeGrants.filter(isGreenlightGrant);
+    const activeLightbulbGrants = activeGrants.filter(isLightbulbGrant);
+
+    const activeGreenlightTotal = sumTrusteeAmounts(activeGreenlightGrants);
+    const activeLightbulbTotal = sumTrusteeAmounts(activeLightbulbGrants);
+    const activeInvestmentTotal = sumTrusteeAmounts(activeInvestments);
+    const totalActiveFunds = activeGreenlightTotal + activeLightbulbTotal + activeInvestmentTotal;
+
+    const allTimeGrantTotal = sumTrusteeAmounts(grants);
+    const allTimeInvestmentTotal = sumTrusteeAmounts(investments);
+    const allTimeFundsDeployed = allTimeGrantTotal + allTimeInvestmentTotal;
+
+    if (activeGreenlightEl) activeGreenlightEl.textContent = formatTrusteeCurrency(activeGreenlightTotal);
+    if (activeLightbulbEl) activeLightbulbEl.textContent = formatTrusteeCurrency(activeLightbulbTotal);
+    if (activeInvestmentsEl) activeInvestmentsEl.textContent = formatTrusteeCurrency(activeInvestmentTotal);
+    if (totalActiveEl) totalActiveEl.textContent = formatTrusteeCurrency(totalActiveFunds);
+    if (allTimeEl) allTimeEl.textContent = formatTrusteeCurrency(allTimeFundsDeployed);
+
+    if (activeGreenlightMetaEl) activeGreenlightMetaEl.textContent = `${activeGreenlightGrants.length} active Greenlight grants`;
+    if (activeLightbulbMetaEl) activeLightbulbMetaEl.textContent = `${activeLightbulbGrants.length} active Lightbulb grants`;
+    if (activeInvestmentsMetaEl) activeInvestmentsMetaEl.textContent = `${activeInvestments.length} active investment records`;
+    if (allTimeMetaEl) allTimeMetaEl.textContent = `${grants.length} grants and ${investments.length} investments tracked`;
+
+  } catch (error) {
+    console.warn('Could not load trustee dashboard funding summary:', error);
+
+    [activeGreenlightEl, activeLightbulbEl, activeInvestmentsEl, totalActiveEl, allTimeEl].forEach(el => {
+      if (el) el.textContent = 'Unavailable';
+    });
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/platform-cards?page=Trustee&section=funding_decisions');
+
+    if (!response.ok) throw new Error('Trustee funding decisions failed');
+
+    const data = await response.json();
+    const cards = Array.isArray(data.cards) ? data.cards : [];
+
+    const now = new Date();
+    const currentQuarter = Math.floor(now.getMonth() / 3);
+    const currentYear = now.getFullYear();
+
+    const decisionsThisQuarter = cards.filter(card => {
+      const rawDate = card.updated_at || card.created_at || card.due_date;
+      const date = rawDate ? new Date(rawDate) : null;
+
+      if (!date || Number.isNaN(date.getTime())) return true;
+
+      return date.getFullYear() === currentYear && Math.floor(date.getMonth() / 3) === currentQuarter;
+    });
+
+    if (decisionsEl) decisionsEl.textContent = decisionsThisQuarter.length;
+    if (decisionsMetaEl) decisionsMetaEl.textContent = `${cards.length} funding decision records tracked`;
+
+  } catch (error) {
+    console.warn('Could not load trustee decisions summary:', error);
+    if (decisionsEl) decisionsEl.textContent = 'Unavailable';
+  }
+
+  try {
+    const [contentResponse, governanceResponse] = await Promise.all([
+      fetch('/.netlify/functions/platform-content?page=Trustee&section=Dashboard'),
+      fetch('/.netlify/functions/platform-cards?page=Trustee&section=governance')
+    ]);
+
+    if (!contentResponse.ok) throw new Error('Trustee platform content failed');
+    if (!governanceResponse.ok) throw new Error('Trustee governance cards failed');
+
+    const contentData = await contentResponse.json();
+    const governanceData = await governanceResponse.json();
+
+    const content = contentData.content || {};
+    const governanceCards = Array.isArray(governanceData.cards) ? governanceData.cards : [];
+
+    const openGovernanceCards = governanceCards.filter(card => {
+      return String(card.status || '').toLowerCase() !== 'complete';
+    });
+
+    if (governanceEl) governanceEl.textContent = `${openGovernanceCards.length} due`;
+    if (governanceMetaEl) governanceMetaEl.textContent = `${governanceCards.length} governance records tracked`;
+
+    if (nextMeetingEl) {
+      nextMeetingEl.textContent = content.next_board_meeting || content.next_trustee_meeting || content.next_meeting || '29 Jun';
+    }
+
+    if (nextMeetingMetaEl) {
+      nextMeetingMetaEl.textContent = content.next_board_meeting_meta || content.next_trustee_meeting_meta || 'Board meeting date from platform content';
+    }
+
+  } catch (error) {
+    console.warn('Could not load trustee platform content summary:', error);
+
+    if (governanceEl) governanceEl.textContent = 'Unavailable';
+    if (nextMeetingEl) nextMeetingEl.textContent = '29 Jun';
+  }
+}
+
+
 // ===== PAGE NAVIGATION =====
 function showPage(id, btn, updateHash = true){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3201,6 +3406,13 @@ function hasPageLoaded(key){
 
 function loadDataForPage(pageId){
   if (!pageId) return;
+
+  if (pageId === 'dashboard-page') {
+    if (hasPageLoaded('dashboard')) return;
+    loadTrusteeDashboardSummary();
+    markPageLoaded('dashboard');
+    return;
+  }
 
   if (pageId === 'portfolio-page') {
     restorePortfolioFundView();
