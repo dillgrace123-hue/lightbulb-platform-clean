@@ -80,7 +80,7 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .quick-card span{font-size:11.5px;color:var(--soft);line-height:1.4}
 
 /* Resource groups grid */
-.resource-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;overflow:visible}
+.resource-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;overflow:visible}
 .resource-group{
   overflow:visible;
   background:#fbfaf7;
@@ -88,7 +88,14 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   border-radius:16px;
   padding:16px;
 }
-.resource-group h3{font-size:10.8px;text-transform:uppercase;letter-spacing:.13em;color:#8f96a3;font-weight:900;margin-bottom:12px}
+.resource-group h3{font-size:10.8px;text-transform:uppercase;letter-spacing:.13em;color:#8f96a3;font-weight:900;margin-bottom:7px}
+.resource-group-desc{
+  margin:0 0 14px;
+  font-size:12.5px;
+  line-height:1.45;
+  color:var(--muted);
+  max-width:340px;
+}
 
 .resource-list{display:flex;flex-direction:column;gap:8px;overflow:visible}
 .resource-link{
@@ -107,6 +114,17 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   transition:.15s ease;
 }
 .resource-link:hover{background:#fff;border-color:rgba(63,111,142,.28);box-shadow:0 10px 24px rgba(63,111,142,.08);transform:translateY(-1px)}
+.resource-link-featured{
+  min-height:58px;
+  padding:16px 16px;
+  font-size:14px;
+  border-color:rgba(63,111,142,.14);
+  background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);
+}
+
+.resource-link-featured .arrow{
+  font-size:16px;
+}
 .resource-link .arrow{color:var(--soft);font-size:14px}
 .resource-link .label-row{display:flex;align-items:center;gap:10px}
 
@@ -1072,8 +1090,9 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       <div class="resource-groups">
         <div class="resource-group">
           <h3>Portfolio oversight</h3>
+          <p class="resource-group-desc">Open the main portfolio records behind the dashboard.</p>
           <div class="resource-list">
-            <a class="resource-link" href="https://airtable.com/appKEkZGqyOZS3Br5/shrQM2AgJLXGKiUfa" target="_blank" rel="noopener noreferrer">
+            <a class="resource-link resource-link-featured" href="https://airtable.com/appKEkZGqyOZS3Br5/shrQM2AgJLXGKiUfa" target="_blank" rel="noopener noreferrer">
               <span class="label-row">Full Portfolio</span>
               <span class="arrow">↗</span>
               <span class="resource-tooltip"><strong>Full Portfolio</strong>View the underlying portfolio records in Airtable, including grants, investments, status and key funding details.</span>
@@ -1082,6 +1101,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         </div>
         <div class="resource-group">
           <h3>Partner context</h3>
+          <p class="resource-group-desc">Review contact and organisation-level context for portfolio relationships.</p>
           <div class="resource-list">
             <a class="resource-link" href="https://airtable.com/appKEkZGqyOZS3Br5/shr9K2znAEWRwL6QU" target="_blank" rel="noopener noreferrer">
               <span class="label-row">Contacts</span>
@@ -1095,25 +1115,10 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
             </a>
           </div>
         </div>
-        <div class="resource-group">
-          <h3>Records and Interactions</h3>
-          <div class="resource-list">
-            <a class="resource-link" href="https://luxurious-chamomile-eec.notion.site/ebd//34fa34463018809ab1c3000c6e7994c7" target="_blank" rel="noopener noreferrer">
-              <span class="label-row">Full Reporting Archive</span>
-              <span class="arrow">↗</span>
-              <span class="resource-tooltip"><strong>Full reporting archive</strong>The complete library of historical reports, evaluations and supporting evidence from partner organisations.</span>
-            </a>
-            <a class="resource-link" href="https://luxurious-chamomile-eec.notion.site/ebd//34fa34463018803e9013c3c01526a82c" target="_blank" rel="noopener noreferrer">
-              <span class="label-row">Internal Meeting Notes</span>
-              <span class="arrow">↗</span>
-              <span class="resource-tooltip"><strong>Internal meeting notes</strong>Notes from team meetings, decisions taken, actions assigned and context you may want to look back on.</span>
-            </a>
-          </div>
-        </div>
       </div>
       <div class="source-access-note">
         <span>Reference links</span>
-        <p>Use these links for deeper oversight of the underlying portfolio records, partner context and reporting archive.</p>
+        <p>Use these links for deeper oversight of the underlying portfolio and partner records.</p>
       </div>
     </div>
   </div>
