@@ -645,8 +645,9 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 .panel-tag.purple{background:var(--end26-soft);color:#5545b0}
 .panel-add{font-size:11px;font-weight:650;color:var(--soft);background:transparent;border:1px dashed rgba(0,0,0,.18);border-radius:8px;padding:8px;letter-spacing:.04em}
 .panel-add:hover{color:var(--ink);border-color:var(--ink);background:#fff}
-.panel-delete{position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;color:var(--soft);background:transparent;border:0;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;opacity:0;transition:.15s ease}
-.panel-card:hover .panel-delete{opacity:1}
+.panel-delete{display:none;position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;color:var(--soft);background:transparent;border:0;padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;opacity:0;transition:.15s ease}
+body[data-user-role="admin"] .panel-delete{display:block}
+body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
 .panel-delete:hover{color:#b23b2c;background:rgba(178,59,44,.08)}
 
 /* Editable */
@@ -1560,6 +1561,14 @@ function isAdminUser(){
   return document.body.dataset.userRole === 'admin';
 }
 
+function applyReadOnlyMode(){
+  if (isAdminUser()) return;
+
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+    el.setAttribute('contenteditable', 'false');
+  });
+}
+
 function persist(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grants));
   document.getElementById('grant-data').textContent = JSON.stringify(grants, null, 2);
@@ -2197,13 +2206,16 @@ function panelTagClass(columnKey) {
 function renderPanelCard(card) {
   const tagClass = panelTagClass(card.column_key);
   const safeId = esc(card.id);
-
-  return `
-    <div class="panel-card" data-card-id="${safeId}">
-      <div class="attention-actions admin-only" style="justify-content:flex-end;margin-bottom:8px">
+  const adminActions = isAdminUser() ? `
+      <div class="attention-actions" style="justify-content:flex-end;margin-bottom:8px">
         <button class="attention-edit-btn" type="button" onclick="editFundingPanelCard('${safeId}')">Edit</button>
         <button class="attention-delete-btn" type="button" onclick="deletePanelCard('${safeId}')">Remove</button>
       </div>
+  ` : '';
+
+  return `
+    <div class="panel-card" data-card-id="${safeId}">
+      ${adminActions}
       <h4>${esc(card.title || 'Untitled card')}</h4>
       <p>${esc(card.description || '')}</p>
       <span class="panel-tag ${tagClass}">${esc(card.type || card.status || 'Open')}</span>
@@ -2505,7 +2517,9 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
       return;
     }
 
+    document.body.dataset.userRole = profile.role || 'viewer';
     userNameEl.textContent = profile.role || 'Signed in';
+    applyReadOnlyMode();
   }
 
   function setActionField(id, value) {
