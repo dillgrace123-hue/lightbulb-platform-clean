@@ -411,6 +411,50 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   }
 }
 
+.investment-section-tabs{
+  display:flex;
+  gap:8px;
+  width:fit-content;
+  padding:6px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:999px;
+  box-shadow:0 8px 24px rgba(0,0,0,.025);
+}
+
+.investment-section-tab{
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  padding:8px 16px;
+  font-size:12.5px;
+  font-weight:750;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+
+.investment-section-tab.active{
+  background:var(--ink);
+  color:#fff;
+}
+
+.investment-section-panel{
+  display:none;
+}
+
+.investment-section-panel.active{
+  display:block;
+}
+
+.investment-portfolio-section{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 14px 36px rgba(0,0,0,.028);
+}
+
 .investment-news-section{
   background:#fff;
   border:1px solid var(--line);
@@ -454,6 +498,25 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   border:1px solid var(--line);
   border-radius:16px;
   padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:hidden;
+}
+
+.investment-news-image{
+  height:150px;
+  margin:-18px -18px 4px;
+  background-size:cover;
+  background-position:center;
+  border-bottom:1px solid var(--line);
+}
+
+.investment-news-topline{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
 }
 
 .investment-news-type{
@@ -490,6 +553,48 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   gap:8px;
   font-size:11.5px;
   color:var(--soft);
+}
+.investment-news-featured{
+  display:inline-flex;
+  font-size:10.5px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#3f8d77;
+  background:#e6f0ec;
+  border-radius:999px;
+  padding:5px 8px;
+}
+
+.investment-news-footer{
+  margin-top:auto;
+  padding-top:8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.investment-news-link{
+  font-size:12px;
+  font-weight:850;
+  color:var(--ink);
+  text-decoration:none;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 10px;
+}
+
+.investment-news-link:hover{
+  border-color:rgba(63,111,142,.28);
+  box-shadow:0 8px 18px rgba(63,111,142,.08);
+}
+
+.investment-news-actions{
+  display:flex;
+  gap:6px;
 }
 
 @media(max-width:900px){
@@ -1721,14 +1826,20 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         <div>
           <div class="section-kicker">Investments</div>
           <h2>Lightbulb Investments</h2>
-          <p>A view-only overview of active investments, latest updates, key decisions and recent news or releases.</p>
+          <p>Review investment-related news, releases and portfolio records in one place.</p>
         </div>
         <div class="investments-hero-meta">
-          <span>Active portfolio</span>
-          <span>News ready</span>
+          <span>News & portfolio</span>
+          <span>View only</span>
         </div>
       </div>
 
+      <div class="investment-section-tabs">
+        <button class="investment-section-tab active" type="button" onclick="setInvestmentSection('portfolio', this)">Portfolio</button>
+        <button class="investment-section-tab" type="button" onclick="setInvestmentSection('news', this)">News and Releases</button>
+      </div>
+
+      <div id="investment-news-tab" class="investment-section-panel">
       <div class="investment-news-section">
         <div class="investment-news-head">
           <div>
@@ -1736,34 +1847,32 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
             <h3>News, releases and coverage</h3>
             <p>Press releases, company updates, media coverage and notable milestones relating to Lightbulb investments.</p>
           </div>
-          <button class="attention-edit-btn admin-only" type="button">+ Add news</button>
+          <button class="attention-edit-btn admin-only" type="button" onclick="window.addInvestmentNews()">+ Add news</button>
         </div>
 
-        <div class="investment-news-grid">
+        <div class="investment-news-grid" id="investmentNewsGrid">
           <article class="investment-news-card">
-            <span class="investment-news-type">Company update</span>
-            <h4>Example investment announces new growth milestone</h4>
-            <p>Short summary of the release or coverage. This will later link to the full article, press release or source record.</p>
-            <div class="investment-news-meta">
-              <span>Example Investment One</span>
-              <span>Pending source link</span>
-            </div>
-          </article>
-
-          <article class="investment-news-card">
-            <span class="investment-news-type">Media coverage</span>
-            <h4>Founder profile or sector coverage appears online</h4>
-            <p>Useful coverage can be logged here so Ben and Salome have one place to review investment-related news.</p>
-            <div class="investment-news-meta">
-              <span>Example Investment Two</span>
-              <span>Pending source link</span>
-            </div>
+            <span class="investment-news-type">Loading</span>
+            <h4>Loading investment news...</h4>
+            <p>Pulling the latest investment updates from Supabase.</p>
           </article>
         </div>
       </div>
+      </div>
 
+      <div id="investment-portfolio-tab" class="investment-section-panel active">
+        <div class="investment-portfolio-section">
+          <div class="investment-news-head">
+            <div>
+              <div class="section-kicker">Investment portfolio</div>
+              <h3>Active investment records</h3>
+              <p>A compact view of investment records pulled from Airtable.</p>
+            </div>
+          </div>
 
-      <div class="investment-list" id="investmentList"></div>
+          <div class="investment-list" id="investmentList"></div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -2554,6 +2663,164 @@ async function loadPortfolioInvestments(){
     portfolioInvestments = fallback;
     renderInvestments();
     console.warn('Could not load portfolio investments:', error);
+  }
+}
+
+function setInvestmentSection(section, button){
+  document.querySelectorAll('.investment-section-panel').forEach(panel => {
+    panel.classList.remove('active');
+  });
+
+  document.querySelectorAll('.investment-section-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  const panel = document.getElementById(`investment-${section}-tab`);
+
+  if (panel) panel.classList.add('active');
+  if (button) button.classList.add('active');
+}
+
+// =========================================
+// INVESTMENT NEWS
+// =========================================
+let investmentNewsItems = [];
+
+function formatInvestmentNewsDate(value){
+  if (!value) return '';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+function renderInvestmentNewsCard(item){
+  const type = item.type || 'Update';
+  const title = item.title || 'Untitled update';
+  const summary = item.summary || '';
+  const investmentName = item.investment_name || item.investmentName || '';
+  const source = item.source || '';
+  const date = formatInvestmentNewsDate(item.published_date || item.publishedDate);
+  const url = item.url || '';
+  const imageUrl = item.image_url || item.imageUrl || '';
+  const featured = item.featured ? '<span class="investment-news-featured">Featured</span>' : '';
+
+  const image = imageUrl
+    ? `<div class="investment-news-image" style="background-image:url('${esc(imageUrl)}')"></div>`
+    : '';
+
+  const link = url
+    ? `<a class="investment-news-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open source ↗</a>`
+    : '';
+
+  const adminActions = isAdminUser() && item.id
+    ? `<div class="investment-news-actions"><button class="attention-edit-btn" type="button" onclick="window.editInvestmentNews('${esc(item.id)}')">Edit</button><button class="attention-delete-btn" type="button" onclick="window.deleteInvestmentNews('${esc(item.id)}')">Remove</button></div>`
+    : '';
+
+  return `
+    <article class="investment-news-card">
+      ${image}
+      <div class="investment-news-topline">
+        <span class="investment-news-type">${esc(type)}</span>
+        ${featured}
+      </div>
+      <h4>${esc(title)}</h4>
+      ${summary ? `<p>${esc(summary)}</p>` : ''}
+      <div class="investment-news-meta">
+        ${investmentName ? `<span>${esc(investmentName)}</span>` : ''}
+        ${source ? `<span>${esc(source)}</span>` : ''}
+        ${date ? `<span>${esc(date)}</span>` : ''}
+      </div>
+      <div class="investment-news-footer">
+        ${link}
+        ${adminActions}
+      </div>
+    </article>
+  `;
+}
+
+function renderInvestmentNews(){
+  const grid = document.getElementById('investmentNewsGrid');
+  if (!grid) return;
+
+  if (!investmentNewsItems.length) {
+    grid.innerHTML = `
+      <article class="investment-news-card">
+        <span class="investment-news-type">No updates</span>
+        <h4>No investment news has been added yet.</h4>
+        <p>Admin users can add press releases, company updates and investment coverage here.</p>
+      </article>
+    `;
+    return;
+  }
+
+  const sorted = [...investmentNewsItems].sort((a, b) => {
+    const featuredA = a.featured ? 1 : 0;
+    const featuredB = b.featured ? 1 : 0;
+
+    if (featuredA !== featuredB) return featuredB - featuredA;
+
+    const sortA = Number(a.sort_order || a.sortOrder || 0);
+    const sortB = Number(b.sort_order || b.sortOrder || 0);
+
+    if (sortA !== sortB) return sortA - sortB;
+
+    const dateA = new Date(a.published_date || a.publishedDate || 0).getTime();
+    const dateB = new Date(b.published_date || b.publishedDate || 0).getTime();
+
+    return dateB - dateA;
+  });
+
+  grid.innerHTML = sorted.map(renderInvestmentNewsCard).join('');
+}
+
+async function loadInvestmentNews(){
+  const grid = document.getElementById('investmentNewsGrid');
+
+  if (grid) {
+    grid.innerHTML = `
+      <article class="investment-news-card">
+        <span class="investment-news-type">Loading</span>
+        <h4>Loading investment news...</h4>
+        <p>Pulling the latest investment updates from Supabase.</p>
+      </article>
+    `;
+  }
+
+  try {
+    if (!window.supabaseClient) {
+      renderInvestmentNews();
+      return;
+    }
+
+    let query = window.supabaseClient
+      .from('investment_news')
+      .select('id,title,investment_name,source,published_date,url,image_url,type,summary,status,featured,sort_order,created_at,updated_at')
+      .order('featured', { ascending: false })
+      .order('sort_order', { ascending: true })
+      .order('published_date', { ascending: false });
+
+    if (!isAdminUser()) {
+      query = query.eq('status', 'Published');
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    investmentNewsItems = Array.isArray(data) ? data : [];
+    renderInvestmentNews();
+  } catch (error) {
+    console.warn('Could not load investment news:', error);
+    renderInvestmentNews();
   }
 }
 
@@ -3863,6 +4130,10 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
   };
 
   loadAdminSession();
+
+  if (typeof loadInvestmentNews === 'function') {
+    loadInvestmentNews();
+  }
 </script>
 
 </body>
