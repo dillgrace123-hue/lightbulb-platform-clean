@@ -2038,10 +2038,9 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       <div class="section-title" style="border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px">
         <div>
           <h2>The active grant timeline</h2>
-          <p>Every live commitment Greenlight has made, organised by the financial year in which it ends. Bars are coloured by ending year. Admin users can click any row to edit.</p>
+          <p>Every live Greenlight commitment pulled from Airtable, organised by the financial year in which it ends. Bars are coloured by ending year.</p>
         </div>
         <div class="timeline-actions">
-          <button class="btn admin-only" onclick="openAddModal()">+ Add grant</button>
           <button class="btn" onclick="exportCSV()">Export CSV</button>
           <button class="btn dark" onclick="window.print()">Print / save PDF</button>
         </div>
@@ -2499,16 +2498,18 @@ function mapTimelineItemToGrant(item, index){
     fof: item.follow_on_eligible || 'No',
     yrs: Number(item.funding_year || 1),
     note: item.notes || '',
+    totalYearsFunded: item.total_years_funded ?? '',
+    eligibleFofYears: item.eligible_fof_years ?? '',
     status: item.status || 'Active',
     type: item.type || 'Standard grant',
     sort_order: item.sort_order || index + 1
   };
 }
 
-async function loadTimelineItemsFromSupabase(){
+async function loadTimelineItemsFromAirtable(){
   try {
-    const response = await fetch('/.netlify/functions/timeline-items?page=Greenlight');
-    if (!response.ok) throw new Error('Timeline items function failed');
+    const response = await fetch('/.netlify/functions/timeline-grants?programme=Greenlight');
+    if (!response.ok) throw new Error('Timeline grants function failed');
 
     const data = await response.json();
     const items = Array.isArray(data.items) ? data.items : [];
@@ -2519,7 +2520,7 @@ async function loadTimelineItemsFromSupabase(){
     document.getElementById('grant-data').textContent = JSON.stringify(grants, null, 2);
     buildTimeline();
   } catch (error) {
-    console.warn('Could not load Supabase timeline items:', error);
+    console.warn('Could not load Airtable timeline grants:', error);
   }
 }
 
@@ -3305,10 +3306,7 @@ function buildRow(g){
 }
 
 function buildPanel(g, open){
-  if (!isAdminUser()) return '';
-  const id = String(g.id);
-  const safeId = esc(id);
-  return `<div class="panel ${open ? 'open' : ''}"><h3>${esc(g.name)}</h3><div class="edit-grid"><div class="field"><label>Organisation</label><input id="e-name-${safeId}" value="${esc(g.name)}"></div><div class="field"><label>Start</label><input id="e-start-${safeId}" type="date" value="${g.start}"></div><div class="field"><label>End</label><input id="e-end-${safeId}" type="date" value="${g.end}"></div><div class="field"><label>Amount</label><input id="e-amt-${safeId}" type="number" value="${g.amt}"></div><div class="field"><label>Years</label><input id="e-yrs-${safeId}" type="number" min="1" max="4" value="${g.yrs}"></div><div class="field"><label>FoF</label><select id="e-fof-${safeId}"><option ${g.fof==='Yes'?'selected':''}>Yes</option><option ${g.fof==='No'?'selected':''}>No</option></select></div><div class="field notes"><label>Notes</label><input id="e-note-${safeId}" value="${esc(g.note)}"></div></div><div class="panel-actions-row"><button class="smallbtn" onclick="saveEdit('${safeId}')">Save changes</button><button class="smallbtn light" onclick="cancelEdit()">Cancel</button><span class="hint">Changes now save to Supabase.</span><button class="smallbtn danger" onclick="deleteGrant('${safeId}')">Remove</button></div></div>`;
+  return '';
 }
 
 function toggleEdit(id){
@@ -3355,7 +3353,7 @@ async function saveEdit(id){
   }
 
   editingId = null;
-  await loadTimelineItemsFromSupabase();
+  await loadTimelineItemsFromAirtable();
   toast('Saved to Supabase');
 }
 
@@ -3500,6 +3498,8 @@ function showHover(e, id){
       <div><div class="hover-k">End</div><div class="hover-v">${fmtDate(g.end)}</div></div>
       <div><div class="hover-k">Amount</div><div class="hover-v">${fmtAmt(g.amt)}</div></div>
       <div><div class="hover-k">Follow-on</div><div class="hover-v">${g.fof}</div></div>
+      <div><div class="hover-k">Total years funded</div><div class="hover-v">${esc(g.totalYearsFunded || '')}</div></div>
+      <div><div class="hover-k">Eligible FOF years</div><div class="hover-v">${esc(g.eligibleFofYears || '')}</div></div>
     </div>
     ${g.note ? `<div class="hover-note">${esc(g.note)}</div>` : ''}
   `;
@@ -4260,8 +4260,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLiveReports();
   loadPortfolioGrants();
   loadPortfolioInvestments();
-  buildTimeline();
-  loadTimelineItemsFromSupabase();
+  loadTimelineItemsFromAirtable();
   restorePageFromHash();
   setupEditables();
   document.getElementById('addModal').addEventListener('click', e => {
