@@ -146,10 +146,28 @@ h1{font-size:40px;letter-spacing:-.055em;font-weight:650;line-height:1.02;max-wi
 
 @media(max-width:1040px){.hero,.lower-grid{grid-template-columns:1fr}.workspace-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.app{padding:16px}.platform-bar{border-radius:14px;align-items:flex-start}.workspace-grid{grid-template-columns:1fr}.welcome-card,.today-card{border-radius:18px}h1{font-size:31px}.info-strip{flex-direction:column;align-items:flex-start}.info-strip-meta{text-align:left}}
+
+/* Auth loading state */
+body.auth-loading .workspace-grid,
+body.auth-loading .admin-strip,
+body.auth-loading .section-head,
+body.auth-loading .info-strip{
+  opacity:0;
+  pointer-events:none;
+}
+
+body:not(.auth-loading) .workspace-grid,
+body:not(.auth-loading) .admin-strip,
+body:not(.auth-loading) .section-head,
+body:not(.auth-loading) .info-strip{
+  opacity:1;
+  transition:opacity .12s ease;
+}
+
 </style>
 </head>
 
-<body>
+<body class="auth-loading">
 <div class="app">
 
   <div class="platform-bar">
@@ -372,12 +390,11 @@ function updateRole(role){
 roleSelect.addEventListener('change', e => updateRole(e.target.value));
 
 window.setWorkspaceRole = function(role) {
-  const safeRole = content[role] ? role : 'partner';
+  const safeRole = content[role] ? role : 'admin';
   roleSelect.value = safeRole;
   updateRole(safeRole);
 };
 
-window.setWorkspaceRole('partner');
 </script>
 
 <script type="module">
@@ -405,12 +422,13 @@ window.setWorkspaceRole('partner');
       .single();
 
     if (error || !profile) {
-      window.setWorkspaceRole('partner');
+      window.setWorkspaceRole('admin');
       if (roleSelect) roleSelect.style.display = 'none';
+      document.body.classList.remove('auth-loading');
       return;
     }
 
-    const role = profile.role || 'partner';
+    const role = profile.role || 'admin';
     window.setWorkspaceRole(role);
 
     if (roleSelect && role !== 'admin') {
@@ -418,6 +436,8 @@ window.setWorkspaceRole('partner');
       const viewingAsLabel = document.getElementById('viewingAsLabel');
       if (viewingAsLabel) viewingAsLabel.textContent = `${role.charAt(0).toUpperCase() + role.slice(1)} access`;
     }
+
+    document.body.classList.remove('auth-loading');
   }
 
   loadWorkspaceRole();
