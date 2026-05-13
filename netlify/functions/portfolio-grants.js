@@ -62,6 +62,7 @@ exports.handler = async function (event) {
           startDate: fields["Start Date"] || "",
           endDate: fields["End Date"] || "",
           fundingType: fields["Funding Type"] || "",
+          fundingTerm: fields["Funding Term (Years)"] || "",
           activeYear: fields["Active Year"] || "",
           monthsRemaining: fields["Months Remaining"] || "",
           programme: fields["Programme"] || "",

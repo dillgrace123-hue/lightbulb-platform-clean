@@ -791,13 +791,20 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
   align-items:center;
 }
 
+.portfolio-row-title-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:3px;
+}
+
 .portfolio-row-name strong{
   display:block;
   font-size:14px;
   font-weight:850;
   color:var(--ink);
   letter-spacing:-.02em;
-  margin-bottom:3px;
 }
 
 .portfolio-row-name span{
@@ -2575,6 +2582,7 @@ function mapAirtableGrantToPortfolioGrant(grant){
     start: formatPortfolioDate(grant.startDate),
     end: formatPortfolioDate(grant.endDate),
     type: grant.fundingType || '',
+    fundingTerm: grant.fundingTerm || '',
     activeYear: grant.activeYear || '',
     monthsRemaining: grant.monthsRemaining || ''
   };
@@ -2632,15 +2640,18 @@ function renderGrantCard(item){
     <article class="portfolio-row">
       <div class="portfolio-row-main">
         <div class="portfolio-row-name">
-          <strong>${esc(item.organisation)}</strong>
+          <div class="portfolio-row-title-line">
+            <strong>${esc(item.organisation)}</strong>
+            <span class="portfolio-status ${String(item.status).toLowerCase() === 'closed' || String(item.status).toLowerCase() === 'complete' ? 'closed' : ''}">${esc(item.status)}</span>
+          </div>
           <span>${esc(item.type)} · ${esc(item.fund)}</span>
         </div>
         <div class="portfolio-row-cell"><span>Amount</span><strong>${esc(item.amount)}</strong></div>
         <div class="portfolio-row-cell"><span>Start</span><strong>${esc(item.start)}</strong></div>
         <div class="portfolio-row-cell"><span>End</span><strong>${esc(item.end)}</strong></div>
-        <div class="portfolio-row-cell"><span>Active year</span><strong>${esc(item.activeYear || '')}</strong></div>
-        <div class="portfolio-row-cell"><span>Remaining</span><strong>${esc(item.monthsRemaining || '')}</strong></div>
-        <span class="portfolio-status ${String(item.status).toLowerCase() === 'closed' ? 'closed' : ''}">${esc(item.status)}</span>
+        <div class="portfolio-row-cell"><span>Term</span><strong>${esc(item.fundingTerm || '')}</strong></div>
+        <div class="portfolio-row-cell"><span>Year</span><strong>${esc(item.activeYear || '')}</strong></div>
+        <div class="portfolio-row-cell"><span>Months left</span><strong>${esc(item.monthsRemaining || '')}</strong></div>
       </div>
     </article>
   `;
