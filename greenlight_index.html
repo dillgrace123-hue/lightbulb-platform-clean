@@ -1234,8 +1234,25 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 .today{position:absolute;top:0;bottom:0;width:1px;background:var(--focus);opacity:.55;z-index:3}
 .bar{position:absolute;top:14px;height:16px;border-radius:999px;min-width:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
 .bar.end25{background:var(--end25)}.bar.end26{background:var(--end26)}.bar.end27{background:var(--end27)}
-.end-label{position:absolute;top:-18px;right:0;transform:translateX(50%);font-family:'DM Mono',monospace;font-size:9.5px;color:var(--soft);display:none;white-space:nowrap}
-.row:hover .end-label{display:block}
+.end-label{
+  position:absolute;
+  top:-24px;
+  right:0;
+  transform:translateX(50%);
+  font-family:'DM Sans',sans-serif;
+  font-size:10.5px;
+  font-weight:750;
+  color:#333;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:999px;
+  padding:4px 8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  display:none;
+  white-space:nowrap;
+  z-index:5;
+}
+.row:hover .end-label{display:inline-flex;align-items:center}
 .badge{display:inline-flex;align-items:center;border-radius:999px;background:rgba(0,0,0,.045);color:var(--muted);font-size:10px;font-weight:700;padding:2px 7px;margin-left:7px;vertical-align:middle}
 .badge.no{background:var(--not-soft);color:#605f5b}
 
@@ -3498,8 +3515,8 @@ function showHover(e, id){
       <div><div class="hover-k">End</div><div class="hover-v">${fmtDate(g.end)}</div></div>
       <div><div class="hover-k">Amount</div><div class="hover-v">${fmtAmt(g.amt)}</div></div>
       <div><div class="hover-k">Follow-on</div><div class="hover-v">${g.fof}</div></div>
-      <div><div class="hover-k">Total years funded</div><div class="hover-v">${esc(g.totalYearsFunded || '')}</div></div>
-      <div><div class="hover-k">Eligible FOF years</div><div class="hover-v">${esc(g.eligibleFofYears || '')}</div></div>
+      <div><div class="hover-k">Total years funded by grant end</div><div class="hover-v">${esc(g.totalYearsFunded || '')}</div></div>
+      <div><div class="hover-k">FOF years remaining</div><div class="hover-v">${esc(g.eligibleFofYears || '')}</div></div>
     </div>
     ${g.note ? `<div class="hover-note">${esc(g.note)}</div>` : ''}
   `;
