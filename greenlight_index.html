@@ -2029,15 +2029,15 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
       <div class="reports-toolbar">
         <input id="reportSearch" type="search" placeholder="Search by organisation..." oninput="renderLiveReports()">
         <div class="report-view-switch" aria-label="Report view">
-          <button class="report-view-btn active" type="button" data-report-fund="LBT" onclick="setReportFundView('LBT', this)">Greenlight</button>
-          <button class="report-view-btn" type="button" data-report-fund="GLT" onclick="setReportFundView('GLT', this)">Greenlight</button>
+          <button class="report-view-btn active" type="button" data-report-fund="GLT" onclick="setReportFundView('GLT', this)">Greenlight</button>
+          <button class="report-view-btn" type="button" data-report-fund="LBT" onclick="setReportFundView('LBT', this)">Lightbulb</button>
           <button class="report-view-btn" type="button" data-report-fund="all" onclick="setReportFundView('all', this)">All</button>
         </div>
         <select id="reportTypeFilter" onchange="renderLiveReports()">
           <option value="all">All report types</option>
         </select>
       </div>
-      <input id="reportFundFilter" type="hidden" value="LBT">
+      <input id="reportFundFilter" type="hidden" value="GLT">
 
       <div class="reports-source-note">Reports are pulled live from Airtable.</div>
 
@@ -3531,7 +3531,7 @@ function setReportFundView(fund, button){
 
 function getFilteredReports(){
   const search = (document.getElementById('reportSearch')?.value || '').toLowerCase().trim();
-  const fundFilter = document.getElementById('reportFundFilter')?.value || 'LBT';
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'GLT';
   const typeFilter = document.getElementById('reportTypeFilter')?.value || 'all';
 
   return liveReports.filter(report => {
@@ -3566,7 +3566,7 @@ function renderLiveReports(){
   if (!latestEl || !libraryEl) return;
 
   const filtered = getFilteredReports();
-  const fundFilter = document.getElementById('reportFundFilter')?.value || 'LBT';
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'GLT';
   const fundLabel = fundFilter === 'all' ? 'All funds' : reportFundLabel(fundFilter);
 
   const latest = filtered.slice(0, 3);
