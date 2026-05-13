@@ -159,7 +159,7 @@ h1{font-size:40px;letter-spacing:-.055em;font-weight:650;line-height:1.02;max-wi
     </div>
 
     <div class="top-actions">
-      <span class="user-pill">Viewing as</span>
+      <span class="user-pill" id="viewingAsLabel">Viewing as</span>
       <select class="role-select" id="roleSelect">
         <option value="partner">Partner Hub</option>
         <option value="lightbulb">Lightbulb Portfolio</option>
@@ -181,15 +181,18 @@ h1{font-size:40px;letter-spacing:-.055em;font-weight:650;line-height:1.02;max-wi
     </div>
   </section>
 
-  <div class="section-head">
-    <h2>Your workspaces</h2>
+  <div class="section-head workspace-intro">
+    <div>
+      <h2>Your workspace</h2>
+      <p id="workspaceIntro">Open your approved workspace below.</p>
+    </div>
     <span class="meta" id="accessMeta">Partner Hub</span>
   </div>
 
   <div class="workspace-grid">
     <a class="workspace-card lightbulb" data-role="lightbulb admin" href="lightbulb_index.html?skipcheck">
       <div class="card-header"><span class="card-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a6 6 0 0 0-3 11.2V17h6v-2.8A6 6 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.8"/><path d="M9 20h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="card-status">Open</span></div>
-      <div class="card-body"><h3>Lightbulb Portfolio</h3><p>Portfolio dashboard, reports, funding panel and actions for Ben and Salome.</p></div>
+      <div class="card-body"><h3>Lightbulb Portfolio</h3><p>Dashboard, timeline, reports and funding panel for the Lightbulb portfolio.</p></div>
       <div class="card-footer"><span class="users">Principal view</span><span class="arrow">Open →</span></div>
     </a>
 
@@ -255,7 +258,7 @@ const content = {
   },
   lightbulb: {
     title: "Welcome back to the Lightbulb portfolio.",
-    sub: "Review the portfolio dashboard, funding panel items, recent reports and outstanding actions.",
+    sub: "Open your approved workspace to review the portfolio dashboard, timeline, reports and funding panel.",
     meta: "Lightbulb Portfolio",
     pills: ["Lightbulb Portfolio available", "2 actions", "Next panel: 29 Jun"],
     attention: [
@@ -267,7 +270,7 @@ const content = {
       ["Funding panel card updated", "Latest notes added for June panel.", "Panel", "amber", "Today"]
     ],
     shortcuts: [
-      ["Open Lightbulb Portfolio", "Portfolio dashboard, reports and panel cards.", "lightbulb_index.html?skipcheck"],
+      ["Open Lightbulb Portfolio", "Dashboard, timeline, reports and funding panel.", "lightbulb_index.html?skipcheck"],
       ["Review reports", "Open the reporting and impact view.", "lightbulb_index.html?skipcheck"]
     ]
   },
@@ -352,6 +355,13 @@ function updateRole(role){
   welcomeSub.textContent = c.sub;
   accessMeta.textContent = c.meta;
 
+  const workspaceIntro = document.getElementById('workspaceIntro');
+  if (workspaceIntro) {
+    workspaceIntro.textContent = role === 'admin'
+      ? 'Choose the area you want to manage or review.'
+      : 'Your approved workspace is shown below.';
+  }
+
 
   cards.forEach(card => {
     const allowed = card.dataset.role.split(' ').includes(role) || role === 'admin';
@@ -396,10 +406,18 @@ window.setWorkspaceRole('partner');
 
     if (error || !profile) {
       window.setWorkspaceRole('partner');
+      if (roleSelect) roleSelect.style.display = 'none';
       return;
     }
 
-    window.setWorkspaceRole(profile.role || 'partner');
+    const role = profile.role || 'partner';
+    window.setWorkspaceRole(role);
+
+    if (roleSelect && role !== 'admin') {
+      roleSelect.style.display = 'none';
+      const viewingAsLabel = document.getElementById('viewingAsLabel');
+      if (viewingAsLabel) viewingAsLabel.textContent = `${role.charAt(0).toUpperCase() + role.slice(1)} access`;
+    }
   }
 
   loadWorkspaceRole();
