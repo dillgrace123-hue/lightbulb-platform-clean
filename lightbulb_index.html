@@ -3077,6 +3077,73 @@ function toast(m){
 // =========================================
 // LIVE DATA
 // =========================================
+async function loadDashboardSummary() {
+  const els = {
+    totalFunding: document.getElementById('dash-totalFunding'),
+    liveGrants: document.getElementById('dash-liveGrants'),
+    investments: document.getElementById('dash-investments'),
+    grantsEndingSoon: document.getElementById('dash-grantsEndingSoon'),
+    avgGrantSize: document.getElementById('dash-avgGrantSize')
+  };
+
+  const fallback = {
+    totalFunding: els.totalFunding?.textContent || '',
+    liveGrants: els.liveGrants?.textContent || '',
+    investments: els.investments?.textContent || '',
+    grantsEndingSoon: els.grantsEndingSoon?.textContent || '',
+    avgGrantSize: els.avgGrantSize?.textContent || ''
+  };
+
+  Object.values(els).forEach(el => {
+    if (el) el.textContent = '...';
+  });
+
+  try {
+    const response = await fetch('/.netlify/functions/dashboard-summary');
+    if (!response.ok) throw new Error('Dashboard summary function failed');
+
+    const data = await response.json();
+
+    if (els.totalFunding && typeof data.totalActiveFunding === 'number') {
+      els.totalFunding.textContent = data.totalActiveFunding.toLocaleString('en-GB', {
+        style: 'currency',
+        currency: 'GBP',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    if (els.liveGrants && typeof data.liveGrants === 'number') {
+      els.liveGrants.textContent = data.liveGrants;
+    }
+
+    if (els.investments && typeof data.investments === 'number') {
+      els.investments.textContent = data.investments;
+    }
+
+    if (els.grantsEndingSoon && typeof data.grantsEndingSoon === 'number') {
+      els.grantsEndingSoon.textContent = data.grantsEndingSoon;
+    }
+
+    if (els.avgGrantSize && typeof data.averageGrantSize === 'number') {
+      els.avgGrantSize.textContent = data.averageGrantSize.toLocaleString('en-GB', {
+        style: 'currency',
+        currency: 'GBP',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+  } catch (error) {
+    if (els.totalFunding) els.totalFunding.textContent = fallback.totalFunding;
+    if (els.liveGrants) els.liveGrants.textContent = fallback.liveGrants;
+    if (els.investments) els.investments.textContent = fallback.investments;
+    if (els.grantsEndingSoon) els.grantsEndingSoon.textContent = fallback.grantsEndingSoon;
+    if (els.avgGrantSize) els.avgGrantSize.textContent = fallback.avgGrantSize;
+
+    console.warn('Could not load dashboard summary:', error);
+  }
+}
+
 async function loadLiveGrants() {
   const liveGrantsEl = document.getElementById('dash-liveGrants');
 
@@ -3394,11 +3461,7 @@ async function loadAverageGrantSize() {
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderDashboard();
-  loadTotalActiveFunding();
-  loadLiveGrants();
-  loadInvestmentsCount();
-  loadGrantsEndingSoon();
-  loadAverageGrantSize();
+  loadDashboardSummary();
   loadPlatformContent();
   loadAttentionCards();
   loadFundingPanelCards();
