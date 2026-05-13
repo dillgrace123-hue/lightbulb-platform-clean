@@ -1382,20 +1382,32 @@ async function loadTimelineItemsFromSupabase(){
 // =========================================
 // NAVIGATION
 // =========================================
-function showPage(id, btn){
+function showPage(id, btn, updateHash = true){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const page = document.getElementById(id);
   if (page) page.classList.add('active');
+
   document.querySelectorAll('.main-nav .navbtn').forEach(b => b.classList.remove('active'));
   if (btn) {
     btn.classList.add('active');
   } else {
-    // Find matching nav button by onclick
     document.querySelectorAll('.main-nav .navbtn').forEach(b => {
       if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(id)) b.classList.add('active');
     });
   }
+
+  if (updateHash && window.location.hash !== `#${id}`) {
+    history.replaceState(null, '', `#${id}`);
+  }
+
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function restorePageFromHash(){
+  const id = window.location.hash ? window.location.hash.slice(1) : 'home-page';
+  if (document.getElementById(id)) {
+    showPage(id, null, false);
+  }
 }
 
 // =========================================
@@ -2438,6 +2450,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLiveReports();
   buildTimeline();
   loadTimelineItemsFromSupabase();
+  restorePageFromHash();
   setupEditables();
   document.getElementById('addModal').addEventListener('click', e => {
     if (e.target.id === 'addModal') closeAddModal();
