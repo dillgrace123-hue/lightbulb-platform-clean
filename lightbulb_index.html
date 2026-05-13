@@ -1694,12 +1694,12 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         <select id="portfolioFundFilter" onchange="renderPortfolioItems()">
           <option value="Lightbulb Trust">Lightbulb</option>
           <option value="Greenlight">Greenlight</option>
-          <option value="all">All programmes</option>
+          <option value="all">All grants</option>
         </select>
         <select id="portfolioStatusFilter" onchange="renderPortfolioItems()">
           <option value="active">Active</option>
           <option value="all">All statuses</option>
-          <option value="closed">Closed</option>
+          <option value="complete">Complete</option>
         </select>
         <select id="portfolioSortFilter" onchange="renderPortfolioItems()">
           <option value="start-desc">Newest start first</option>
@@ -2395,7 +2395,11 @@ function portfolioMatchesFilters(item){
 
   if (search && !haystack.includes(search)) return false;
   if (fund !== 'all' && item.fund !== fund) return false;
-  if (status !== 'all' && String(item.status || '').toLowerCase() !== status) return false;
+  if (status !== 'all') {
+    const itemStatus = String(item.status || '').toLowerCase();
+    if (status === 'complete' && itemStatus !== 'complete') return false;
+    if (status !== 'complete' && itemStatus !== status) return false;
+  }
 
   return true;
 }
