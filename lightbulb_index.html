@@ -177,15 +177,83 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
 .attention-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .attention-meta{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);background:rgba(91,138,166,.1);border-radius:999px;padding:4px 7px}
 .attention-card-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
-.quick-nav-section{margin-bottom:32px}
-.quick-nav-section h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);margin-bottom:14px}
-.quick-nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.quick-nav-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center;cursor:pointer;display:flex;flex-direction:column;gap:8px;align-items:center;transition:.2s ease;font-family:'DM Sans',sans-serif;position:relative}
-.quick-nav-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg, rgba(63,159,127,.04) 0%, transparent 100%);border-radius:14px;pointer-events:none}
-.quick-nav-card:hover{border-color:var(--end25);box-shadow:0 10px 28px rgba(63,159,127,.12);transform:translateY(-3px)}
-.qn-icon{font-size:24px;display:block}
-.qn-label{font-size:13px;font-weight:650;color:var(--ink)}
-.qn-desc{font-size:11px;color:var(--muted)}
+.quick-nav-section{
+  margin-bottom:32px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 14px 36px rgba(0,0,0,.028);
+}
+.quick-nav-section h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--soft);margin-bottom:14px}
+.quick-nav-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.quick-nav-card{
+  background:#fbfaf7;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  text-align:left;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  align-items:flex-start;
+  transition:.2s ease;
+  font-family:'DM Sans',sans-serif;
+  position:relative;
+  min-height:118px;
+}
+.quick-nav-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg, rgba(63,111,142,.06) 0%, transparent 70%);border-radius:16px;pointer-events:none}
+.quick-nav-card:hover{border-color:rgba(63,111,142,.35);box-shadow:0 14px 34px rgba(63,111,142,.12);transform:translateY(-3px);background:#fff}
+.qn-label{font-size:16px;font-weight:850;color:var(--ink);letter-spacing:-.03em}
+.qn-desc{font-size:12.5px;color:var(--muted);line-height:1.45;max-width:260px}
+.partner-link-card{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px 20px;
+  background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.partner-link-kicker{
+  display:block;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--soft);
+  margin-bottom:6px;
+}
+.partner-link-card h4{
+  margin:0 0 4px;
+  font-size:18px;
+  letter-spacing:-.03em;
+  color:var(--ink);
+}
+.partner-link-card p{
+  margin:0;
+  font-size:13px;
+  line-height:1.45;
+  color:var(--muted);
+}
+.partner-link-card button{
+  border:0;
+  border-radius:999px;
+  background:var(--ink);
+  color:#fff;
+  padding:10px 14px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.partner-link-card button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+}
 
 @media(max-width:1200px){
   .stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -830,7 +898,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
     </div>
 
     <div class="data-source-note">
-      <strong>Data source:</strong> live portfolio metrics are pulled from the main Airtable base. Planning fields are maintained through Platform Content.
+      <strong>Data source:</strong> live portfolio metrics are pulled from Airtable. Planning notes are maintained in platform content.
     </div>
 
     <!-- What needs attention -->
@@ -839,7 +907,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         <h3>What needs attention</h3>
         <button class="attention-edit-btn admin-only" type="button" onclick="window.addAttentionCard()">+ Add action</button>
       </div>
-      <p class="attention-intro">Current operational snapshot. This will become an editable action board in the next platform phase.</p>
+      <p class="attention-intro">Current operational snapshot for priority follow-ups, decisions and payment actions.</p>
       <ul id="dash-attentionItems">
         <li>Payment to be made for FFLY and LCAT grants.</li>
         <li>Decision to be made on Becauze: whether to fund. They have proposed a split of the role between the current employee and Carlos.</li>
@@ -848,33 +916,29 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
 
     <!-- Quick navigation -->
     <div class="quick-nav-section">
-      <h3>Explore the hub</h3>
-      <div class="quick-nav-grid">
+      <h3>Open key areas</h3>
+      <div class="quick-nav-grid core-nav-grid">
         <button class="quick-nav-card" onclick="showPage('timeline-page')">
-          <span class="qn-icon">📅</span>
           <span class="qn-label">Timeline</span>
-          <span class="qn-desc">Active grant periods</span>
+          <span class="qn-desc">Grant periods, end dates and follow-on context.</span>
         </button>
         <button class="quick-nav-card" onclick="showPage('impact-page')">
-          <span class="qn-icon">📨</span>
           <span class="qn-label">Reports</span>
-          <span class="qn-desc">Report archive</span>
+          <span class="qn-desc">Live report archive, document links and reporting filters.</span>
         </button>
         <button class="quick-nav-card" onclick="showPage('panel-page')">
-          <span class="qn-icon">🎯</span>
           <span class="qn-label">Funding Panel</span>
-          <span class="qn-desc">Panel notes and decisions</span>
+          <span class="qn-desc">Applications, decisions and current panel notes.</span>
         </button>
-        <button class="quick-nav-card" onclick="window.open('https://www.notion.so/Partner-Interactions-344a3446301880beb9c1ca6e36f59c8a','_blank')">
-          <span class="qn-icon">📓</span>
-          <span class="qn-label">Partner Interactions</span>
-          <span class="qn-desc">Relationship notes</span>
-        </button>
-        <button class="quick-nav-card" onclick="window.open('https://airtable.com/apptbaQtEuT07ybq7/pagykN4GWFeSTwsKu','_blank')">
-          <span class="qn-icon">📊</span>
-          <span class="qn-label">Airtable Dashboard</span>
-          <span class="qn-desc">Source data and metrics</span>
-        </button>
+      </div>
+
+      <div class="partner-link-card">
+        <div>
+          <span class="partner-link-kicker">Relationship record</span>
+          <h4>Partner Interactions</h4>
+          <p>Open recent calls, visits and relationship notes in Notion.</p>
+        </div>
+        <button type="button" onclick="window.open('https://www.notion.so/Partner-Interactions-344a3446301880beb9c1ca6e36f59c8a','_blank')">Open interactions ↗</button>
       </div>
     </div>
 
