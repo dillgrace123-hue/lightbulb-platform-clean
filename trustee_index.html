@@ -1384,6 +1384,7 @@ function showPage(id, btn, updateHash = true){
     history.replaceState(null, '', `#${id}`);
   }
 
+  loadDataForPage(id);
   window.scrollTo({top:0, behavior:'auto'});
 }
 
@@ -1394,11 +1395,41 @@ function restorePageFromHash(){
   }
 }
 
+const loadedPageData = {};
+
+function markPageLoaded(key){
+  loadedPageData[key] = true;
+}
+
+function hasPageLoaded(key){
+  return loadedPageData[key] === true;
+}
+
+function loadDataForPage(pageId){
+  if (!pageId) return;
+
+  if (pageId === 'portfolio-page') {
+    if (hasPageLoaded('portfolio')) return;
+    loadPortfolioGrants();
+    markPageLoaded('portfolio');
+    return;
+  }
+
+  if (pageId === 'reports-page') {
+    if (hasPageLoaded('reports')) return;
+    loadLiveReports();
+    markPageLoaded('reports');
+    return;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   restorePageFromHash();
+
+  const currentPageId = document.querySelector('.page.active')?.id || 'dashboard-page';
+  loadDataForPage(currentPageId);
+
   document.body.classList.remove('preload');
-  loadPortfolioGrants();
-  loadLiveReports();
 });
 </script>
 

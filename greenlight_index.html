@@ -1708,7 +1708,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
 </style>
 </head>
 
-<body>
+<body class="preload">
 <div class="app">
 
   <!-- ===== PLATFORM SHELL ===== -->
@@ -2532,9 +2532,9 @@ function showPage(id, btn, updateHash = true){
     history.replaceState(null, '', `#${id}`);
   }
 
-  window.scrollTo({top:0, behavior:'smooth'});
+  loadDataForPage(id);
+  window.scrollTo({top:0, behavior:'auto'});
 }
-
 function restorePageFromHash(){
   const id = window.location.hash ? window.location.hash.slice(1) : 'home-page';
   if (document.getElementById(id)) {
@@ -2857,6 +2857,8 @@ async function loadPortfolioInvestments(){
 }
 
 function setInvestmentSection(section, button){
+  localStorage.setItem('greenlight_investment_section', section);
+
   document.querySelectorAll('.investment-section-panel').forEach(panel => {
     panel.classList.remove('active');
   });
@@ -2868,7 +2870,18 @@ function setInvestmentSection(section, button){
   const panel = document.getElementById(`investment-${section}-tab`);
 
   if (panel) panel.classList.add('active');
-  if (button) button.classList.add('active');
+  if (button) {
+    button.classList.add('active');
+  } else {
+    document.querySelectorAll('.investment-section-tab').forEach(tab => {
+      if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes(`'${section}'`)) tab.classList.add('active');
+    });
+  }
+}
+
+function restoreInvestmentSection(){
+  const saved = localStorage.getItem('greenlight_investment_section') || 'portfolio';
+  setInvestmentSection(saved, null);
 }
 
 // =========================================
@@ -3341,9 +3354,23 @@ function downloadBlob(content, name, type){
 
 function setFilter(f, b){
   activeFilter = f;
+  localStorage.setItem('greenlight_timeline_filter', f);
+
   document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
-  b.classList.add('active');
+  if (b) {
+    b.classList.add('active');
+  } else {
+    document.querySelectorAll('.pill').forEach(x => {
+      if (x.getAttribute('onclick') && x.getAttribute('onclick').includes(`'${f}'`)) x.classList.add('active');
+    });
+  }
+
   buildTimeline();
+}
+
+function restoreTimelineFilter(){
+  const saved = localStorage.getItem('greenlight_timeline_filter') || 'active';
+  setFilter(saved, null);
 }
 
 // =========================================
@@ -3433,13 +3460,27 @@ function reportCardHtml(report){
 }
 
 function setReportFundView(fund, button){
+  localStorage.setItem('greenlight_report_fund_view', fund);
+
   const hidden = document.getElementById('reportFundFilter');
   if (hidden) hidden.value = fund;
 
   document.querySelectorAll('.report-view-btn').forEach(btn => btn.classList.remove('active'));
-  if (button) button.classList.add('active');
+  if (button) {
+    button.classList.add('active');
+  } else {
+    document.querySelectorAll('.report-view-btn').forEach(btn => {
+      if (btn.dataset.reportFund === fund) btn.classList.add('active');
+    });
+  }
 
   renderLiveReports();
+}
+
+function restoreReportFundView(){
+  const fallback = 'GLT';
+  const saved = localStorage.getItem('greenlight_report_fund_view') || fallback;
+  setReportFundView(saved, null);
 }
 
 function getFilteredReports(){
@@ -4110,29 +4151,99 @@ async function loadAverageGrantSize() {
   }
 }
 
+
+
+// =========================================
+// LAZY PAGE DATA LOADING
+// =========================================
+const loadedPageData = {};
+
+function markPageLoaded(key){
+  loadedPageData[key] = true;
+}
+
+function hasPageLoaded(key){
+  return loadedPageData[key] === true;
+}
+
+function loadDataForPage(pageId){
+  if (!pageId) return;
+
+  if (pageId === 'home-page') {
+    if (hasPageLoaded('home')) return;
+    renderDashboard();
+    loadDashboardSummary();
+    loadPlatformContent();
+    loadAttentionCards();
+    markPageLoaded('home');
+    return;
+  }
+
+  if (pageId === 'impact-page') {
+    if (hasPageLoaded('reports')) return;
+    restoreReportFundView();
+    loadLiveReports();
+    markPageLoaded('reports');
+    return;
+  }
+
+  if (pageId === 'portfolio-page') {
+    if (hasPageLoaded('portfolio')) return;
+    loadPortfolioGrants();
+    markPageLoaded('portfolio');
+    return;
+  }
+
+  if (pageId === 'investments-page') {
+    if (hasPageLoaded('investments')) return;
+    restoreInvestmentSection();
+    loadPortfolioInvestments();
+    if (typeof loadInvestmentNews === 'function') {
+      loadInvestmentNews();
+    }
+    markPageLoaded('investments');
+    return;
+  }
+
+  if (pageId === 'timeline-page') {
+    if (hasPageLoaded('timeline')) return;
+    restoreTimelineFilter();
+    loadTimelineItemsFromAirtable();
+    markPageLoaded('timeline');
+    return;
+  }
+
+  if (pageId === 'panel-page') {
+    if (hasPageLoaded('panel')) return;
+    loadFundingPanelCards();
+    markPageLoaded('panel');
+    return;
+  }
+}
+
 // =========================================
 // INIT
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
   restorePageFromHash();
-  renderDashboard();
-  loadDashboardSummary();
-  loadPlatformContent();
-  loadAttentionCards();
-  loadFundingPanelCards();
-  loadLiveReports();
-  loadPortfolioGrants();
-  loadPortfolioInvestments();
-  loadTimelineItemsFromAirtable();
+
+  const currentPageId = document.querySelector('.page.active')?.id || 'home-page';
+  loadDataForPage(currentPageId);
+
+  restoreInvestmentSection();
+  restoreTimelineFilter();
+
+  document.body.classList.remove('preload');
   setupEditables();
-document.getElementById('dashboardModal').addEventListener('click', e => {
+
+  document.getElementById('dashboardModal').addEventListener('click', e => {
     if (e.target.id === 'dashboardModal') closeDashboardModal();
   });
 
   document.getElementById('removeInvestmentNewsModal').addEventListener('click', e => {
     if (e.target.id === 'removeInvestmentNewsModal') closeRemoveInvestmentNewsModal();
   });
-});
+})
 </script>
 
 
@@ -4171,14 +4282,6 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
     if (profile.role === 'admin') {
       userNameEl.textContent = 'Admin';
       document.body.dataset.userRole = 'admin';
-
-      if (typeof window.loadAttentionCards === 'function') {
-        window.loadAttentionCards();
-      }
-
-      if (typeof loadInvestmentNews === 'function') {
-        loadInvestmentNews();
-      }
 
       return;
     }
@@ -4511,9 +4614,6 @@ document.getElementById('dashboardModal').addEventListener('click', e => {
 
   loadAdminSession();
 
-  if (typeof loadInvestmentNews === 'function') {
-    loadInvestmentNews();
-  }
 </script>
 
 </body>
