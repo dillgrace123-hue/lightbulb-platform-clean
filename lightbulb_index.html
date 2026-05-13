@@ -194,6 +194,185 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 /* Timeline action buttons */
 .timeline-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
+/* Portfolio page */
+.portfolio-shell{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.portfolio-hero{
+  background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:28px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  box-shadow:0 18px 46px rgba(0,0,0,.035);
+}
+
+.portfolio-hero h2{
+  font-size:34px;
+  font-weight:850;
+  letter-spacing:-.055em;
+  margin:0 0 8px;
+  color:var(--ink);
+  line-height:1;
+}
+
+.portfolio-hero p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+  max-width:720px;
+}
+
+.portfolio-hero-meta{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.portfolio-hero-meta span{
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#3f6f8e;
+  background:#e8eff4;
+  border-radius:999px;
+  padding:8px 10px;
+  white-space:nowrap;
+}
+
+.portfolio-controls{
+  display:grid;
+  grid-template-columns:1fr 180px 180px;
+  gap:10px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 10px 26px rgba(0,0,0,.025);
+}
+
+.portfolio-controls input,
+.portfolio-controls select{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px 12px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  color:var(--ink);
+  background:#fbfaf7;
+}
+
+
+.portfolio-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.portfolio-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 12px 32px rgba(0,0,0,.03);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.portfolio-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.portfolio-card h3{
+  font-size:18px;
+  font-weight:850;
+  letter-spacing:-.035em;
+  margin:0 0 4px;
+  color:var(--ink);
+}
+
+.portfolio-card-sub{
+  font-size:12.5px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.portfolio-status{
+  font-size:10.5px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  border-radius:999px;
+  padding:6px 8px;
+  background:#e6f0ec;
+  color:#3f8d77;
+  white-space:nowrap;
+}
+
+.portfolio-status.closed{
+  background:#f4f0e8;
+  color:var(--muted);
+}
+
+.portfolio-card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.portfolio-field{
+  background:#fbfaf7;
+  border:1px solid rgba(0,0,0,.055);
+  border-radius:13px;
+  padding:11px;
+}
+
+.portfolio-field span{
+  display:block;
+  font-size:9.8px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--soft);
+  margin-bottom:4px;
+}
+
+.portfolio-field strong{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.25;
+}
+
+.portfolio-note{
+  font-size:12.5px;
+  line-height:1.55;
+  color:var(--muted);
+  border-top:1px solid var(--line);
+  padding-top:12px;
+}
+
+@media(max-width:900px){
+  .portfolio-controls{grid-template-columns:1fr}
+  .portfolio-list{grid-template-columns:1fr}
+  .portfolio-card-grid{grid-template-columns:1fr 1fr}
+}
+
+
 /* Dashboard home page */
 .executive-overview-card{
   background:linear-gradient(135deg,#fff 0%,#fbfaf7 100%);
@@ -963,6 +1142,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
   <!-- Nav -->
   <div class="main-nav">
     <button class="navbtn active" onclick="showPage('home-page',this)">Home</button>
+    <button class="navbtn" onclick="showPage('portfolio-page',this)">Grants</button>
     <button class="navbtn" onclick="showPage('timeline-page',this)">Timeline</button>
     <button class="navbtn" onclick="showPage('impact-page',this)">Reports</button>
     <button class="navbtn" onclick="showPage('panel-page',this)">Funding Panel</button>
@@ -1120,6 +1300,39 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
         <span>Reference links</span>
         <p>Use these links for deeper oversight of the underlying portfolio and partner records.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO PAGE -->
+  <div id="portfolio-page" class="page">
+    <div class="portfolio-shell">
+      <div class="portfolio-hero">
+        <div>
+          <div class="section-kicker">Grant Portfolio</div>
+          <h2>Lightbulb Grants</h2>
+          <p>Search and review Lightbulb grant commitments in one place. Grant records are view-only here, with source records maintained in Airtable.</p>
+        </div>
+        <div class="portfolio-hero-meta">
+          <span>Default view: Lightbulb grants</span>
+          <span>View only</span>
+        </div>
+      </div>
+
+      <div class="portfolio-controls">
+        <input id="portfolioSearch" type="search" placeholder="Search by organisation..." oninput="renderPortfolioItems()">
+        <select id="portfolioFundFilter" onchange="renderPortfolioItems()">
+          <option value="LBT">Lightbulb</option>
+          <option value="GLT">Greenlight</option>
+          <option value="all">All funds</option>
+        </select>
+        <select id="portfolioStatusFilter" onchange="renderPortfolioItems()">
+          <option value="active">Active</option>
+          <option value="all">All statuses</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+
+      <div class="portfolio-list" id="portfolioList"></div>
     </div>
   </div>
 
@@ -1600,6 +1813,98 @@ function restorePageFromHash(){
   if (document.getElementById(id)) {
     showPage(id, null, false);
   }
+}
+
+// =========================================
+// PORTFOLIO PAGE
+// =========================================
+const portfolioGrants = [
+  {
+    organisation: 'West London Action for Children',
+    fund: 'LBT',
+    amount: '£29,640',
+    status: 'Active',
+    start: 'Apr 2024',
+    end: 'Apr 2027',
+    type: 'Standard grant',
+    followOn: 'Yes',
+    notes: 'Multi-year support. Follow-on context and reporting should be reviewed before the next decision point.'
+  },
+  {
+    organisation: 'Response Community Projects',
+    fund: 'LBT',
+    amount: '£20,000',
+    status: 'Active',
+    start: 'Feb 2025',
+    end: 'Apr 2027',
+    type: 'Standard grant',
+    followOn: 'Yes',
+    notes: 'Active relationship with recent interim reporting. Eligible for further consideration after current period.'
+  },
+  {
+    organisation: 'Fit For Life Youth',
+    fund: 'LBT',
+    amount: '£20,000',
+    status: 'Active',
+    start: 'Jun 2026',
+    end: 'Jun 2027',
+    type: 'Standard grant',
+    followOn: 'Yes',
+    notes: 'New Lightbulb relationship. Payment and setup actions are currently being processed.'
+  }
+];
+
+
+function portfolioMatchesFilters(item){
+  const search = (document.getElementById('portfolioSearch')?.value || '').toLowerCase();
+  const fund = document.getElementById('portfolioFundFilter')?.value || 'LBT';
+  const status = document.getElementById('portfolioStatusFilter')?.value || 'active';
+
+  const haystack = Object.values(item).join(' ').toLowerCase();
+
+  if (search && !haystack.includes(search)) return false;
+  if (fund !== 'all' && item.fund !== fund) return false;
+  if (status !== 'all' && String(item.status || '').toLowerCase() !== status) return false;
+
+  return true;
+}
+
+function renderGrantCard(item){
+  return `
+    <article class="portfolio-card">
+      <div class="portfolio-card-head">
+        <div>
+          <h3>${esc(item.organisation)}</h3>
+          <div class="portfolio-card-sub">${esc(item.type)} · ${esc(item.fund)}</div>
+        </div>
+        <span class="portfolio-status ${String(item.status).toLowerCase() === 'closed' ? 'closed' : ''}">${esc(item.status)}</span>
+      </div>
+      <div class="portfolio-card-grid">
+        <div class="portfolio-field"><span>Amount</span><strong>${esc(item.amount)}</strong></div>
+        <div class="portfolio-field"><span>Start</span><strong>${esc(item.start)}</strong></div>
+        <div class="portfolio-field"><span>End</span><strong>${esc(item.end)}</strong></div>
+        <div class="portfolio-field"><span>Funding type</span><strong>${esc(item.type)}</strong></div>
+        <div class="portfolio-field"><span>Follow-on</span><strong>${esc(item.followOn)}</strong></div>
+        <div class="portfolio-field"><span>Fund</span><strong>${esc(item.fund)}</strong></div>
+      </div>
+      <div class="portfolio-note">${esc(item.notes || '')}</div>
+    </article>
+  `;
+}
+
+function renderPortfolioItems(){
+  const list = document.getElementById('portfolioList');
+  if (!list) return;
+
+  const source = portfolioGrants;
+  const filtered = source.filter(portfolioMatchesFilters);
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="portfolio-card"><h3>No records found</h3><div class="portfolio-card-sub">Try changing the search or filter options.</div></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(renderGrantCard).join('');
 }
 
 // =========================================
@@ -2651,6 +2956,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAttentionCards();
   loadFundingPanelCards();
   loadLiveReports();
+  renderPortfolioItems();
   buildTimeline();
   loadTimelineItemsFromSupabase();
   restorePageFromHash();
