@@ -2041,7 +2041,7 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
           <p>Every live commitment Lightbulb has made, organised by the financial year in which it ends. Bars are coloured by ending year. Admin users can click any row to edit.</p>
         </div>
         <div class="timeline-actions">
-          <button class="btn admin-only" onclick="openAddModal()">+ Add grant</button>
+          
           <button class="btn" onclick="exportCSV()">Export CSV</button>
           <button class="btn dark" onclick="window.print()">Print / save PDF</button>
         </div>
@@ -2051,7 +2051,8 @@ body[data-user-role="admin"] .panel-card:hover .panel-delete{opacity:1}
     <div class="toolbar">
       <div class="filters">
         <span class="filter-label">Show</span>
-        <button class="pill active" onclick="setFilter('all',this)">All</button>
+        <button class="pill active" onclick="setFilter('active',this)">Active</button>
+        <button class="pill" onclick="setFilter('recent',this)">Recently completed</button>
         <button class="pill" onclick="setFilter('fof',this)">Follow-on eligible</button>
         <button class="pill" onclick="setFilter('not',this)">Not eligible</button>
       </div>
@@ -2482,7 +2483,7 @@ function loadDashboard(){
 
 let grants = loadGrants();
 dashboard = loadDashboard();
-let activeFilter = 'all';
+let activeFilter = 'active';
 
 function loadGrants(){
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(document.getElementById('grant-data').textContent); }
@@ -2499,16 +2500,18 @@ function mapTimelineItemToGrant(item, index){
     fof: item.follow_on_eligible || 'No',
     yrs: Number(item.funding_year || 1),
     note: item.notes || '',
+    totalYearsFunded: item.total_years_funded ?? '',
+    eligibleFofYears: item.eligible_fof_years ?? '',
     status: item.status || 'Active',
     type: item.type || 'Standard grant',
     sort_order: item.sort_order || index + 1
   };
 }
 
-async function loadTimelineItemsFromSupabase(){
+async function loadTimelineItemsFromAirtable(){
   try {
-    const response = await fetch('/.netlify/functions/timeline-items?page=Lightbulb');
-    if (!response.ok) throw new Error('Timeline items function failed');
+    const response = await fetch('/.netlify/functions/timeline-grants?programme=Lightbulb%20Trust');
+    if (!response.ok) throw new Error('Timeline grants function failed');
 
     const data = await response.json();
     const items = Array.isArray(data.items) ? data.items : [];
@@ -2519,7 +2522,7 @@ async function loadTimelineItemsFromSupabase(){
     document.getElementById('grant-data').textContent = JSON.stringify(grants, null, 2);
     buildTimeline();
   } catch (error) {
-    console.warn('Could not load Supabase timeline items:', error);
+    console.warn('Could not load Airtable timeline grants:', error);
   }
 }
 
@@ -3218,15 +3221,24 @@ function saveDashboard(){
 // TIMELINE
 // =========================================
 function visibleGrants(){
+  const recentCutoff = new Date(TODAY);
+  recentCutoff.setMonth(recentCutoff.getMonth() - 3);
+
   return grants.filter(g => {
     const start = pd(g.start);
     const end = pd(g.end);
 
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
-    if (end < TODAY || end > END) return false;
-    if (activeFilter === 'fof') return g.fof === 'Yes';
-    if (activeFilter === 'not') return g.fof === 'No';
-    return true;
+    if (end > END) return false;
+
+    const isActive = end >= TODAY;
+    const isRecentlyCompleted = end < TODAY && end >= recentCutoff;
+
+    if (activeFilter === 'recent') return isRecentlyCompleted;
+    if (activeFilter === 'fof') return isActive && g.fof === 'Yes';
+    if (activeFilter === 'not') return isActive && g.fof === 'No';
+
+    return isActive;
   }).sort((a,b) => pd(a.end) - pd(b.end));
 }
 
@@ -3305,10 +3317,7 @@ function buildRow(g){
 }
 
 function buildPanel(g, open){
-  if (!isAdminUser()) return '';
-  const id = String(g.id);
-  const safeId = esc(id);
-  return `<div class="panel ${open ? 'open' : ''}"><h3>${esc(g.name)}</h3><div class="edit-grid"><div class="field"><label>Organisation</label><input id="e-name-${safeId}" value="${esc(g.name)}"></div><div class="field"><label>Start</label><input id="e-start-${safeId}" type="date" value="${g.start}"></div><div class="field"><label>End</label><input id="e-end-${safeId}" type="date" value="${g.end}"></div><div class="field"><label>Amount</label><input id="e-amt-${safeId}" type="number" value="${g.amt}"></div><div class="field"><label>Years</label><input id="e-yrs-${safeId}" type="number" min="1" max="4" value="${g.yrs}"></div><div class="field"><label>FoF</label><select id="e-fof-${safeId}"><option ${g.fof==='Yes'?'selected':''}>Yes</option><option ${g.fof==='No'?'selected':''}>No</option></select></div><div class="field notes"><label>Notes</label><input id="e-note-${safeId}" value="${esc(g.note)}"></div></div><div class="panel-actions-row"><button class="smallbtn" onclick="saveEdit('${safeId}')">Save changes</button><button class="smallbtn light" onclick="cancelEdit()">Cancel</button><span class="hint">Changes now save to Supabase.</span><button class="smallbtn danger" onclick="deleteGrant('${safeId}')">Remove</button></div></div>`;
+  return '';
 }
 
 function toggleEdit(id){
@@ -3500,6 +3509,8 @@ function showHover(e, id){
       <div><div class="hover-k">End</div><div class="hover-v">${fmtDate(g.end)}</div></div>
       <div><div class="hover-k">Amount</div><div class="hover-v">${fmtAmt(g.amt)}</div></div>
       <div><div class="hover-k">Follow-on</div><div class="hover-v">${g.fof}</div></div>
+      <div><div class="hover-k">Total years funded by grant end</div><div class="hover-v">${esc(g.totalYearsFunded || '')}</div></div>
+      <div><div class="hover-k">FOF years remaining</div><div class="hover-v">${esc(g.eligibleFofYears || '')}</div></div>
     </div>
     ${g.note ? `<div class="hover-note">${esc(g.note)}</div>` : ''}
   `;
@@ -4260,8 +4271,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLiveReports();
   loadPortfolioGrants();
   loadPortfolioInvestments();
-  buildTimeline();
-  loadTimelineItemsFromSupabase();
+  loadTimelineItemsFromAirtable();
   restorePageFromHash();
   setupEditables();
   document.getElementById('addModal').addEventListener('click', e => {
