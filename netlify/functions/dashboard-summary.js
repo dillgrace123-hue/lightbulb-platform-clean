@@ -1,7 +1,9 @@
-exports.handler = async function () {
+exports.handler = async function (event) {
   const token = process.env.AIRTABLE_TOKEN;
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = "Individual Grants";
+  const programmeFilter = event.queryStringParameters?.programme || "Lightbulb Trust";
+  const includeInvestments = programmeFilter === "Lightbulb Trust" || programmeFilter === "Greenlight";
 
   if (!token || !baseId) {
     return {
@@ -54,6 +56,8 @@ exports.handler = async function () {
     sixMonthsFromToday.setMonth(sixMonthsFromToday.getMonth() + 6);
 
     let totalActiveFunding = 0;
+    let totalGrantFunding = 0;
+    let totalInvestmentFunding = 0;
     let liveGrants = 0;
     let investments = 0;
     let grantsEndingSoon = 0;
@@ -69,29 +73,35 @@ exports.handler = async function () {
       const endDateValue = fields["End Date"];
 
       const isActive = status === "Active";
-      const isLightbulb = programme === "Lightbulb Trust";
+      const isRequestedProgramme = programme === programmeFilter;
       const isInvestment = programme === "Investment";
 
-      if ((isLightbulb || isInvestment) && isActive && typeof amount === "number") {
+      if (isRequestedProgramme && isActive && typeof amount === "number") {
+        totalGrantFunding += amount;
         totalActiveFunding += amount;
       }
 
-      if (isLightbulb && isActive) {
+      if (includeInvestments && isInvestment && isActive && typeof amount === "number") {
+        totalInvestmentFunding += amount;
+        totalActiveFunding += amount;
+      }
+
+      if (isRequestedProgramme && isActive) {
         liveGrants += 1;
       }
 
-      if (isInvestment && isActive) {
+      if (includeInvestments && isInvestment && isActive) {
         investments += 1;
       }
 
-      if (isLightbulb && isActive && endDateValue) {
+      if (isRequestedProgramme && isActive && endDateValue) {
         const endDate = new Date(endDateValue);
         if (!Number.isNaN(endDate.getTime()) && endDate >= today && endDate <= sixMonthsFromToday) {
           grantsEndingSoon += 1;
         }
       }
 
-      if (isLightbulb && fundingType === "Grant" && typeof amount === "number") {
+      if (isRequestedProgramme && fundingType === "Grant" && typeof amount === "number") {
         grantTotal += amount;
         grantCount += 1;
       }
@@ -103,7 +113,10 @@ exports.handler = async function () {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        programme: programmeFilter,
         totalActiveFunding,
+        totalGrantFunding,
+        totalInvestmentFunding,
         liveGrants,
         investments,
         grantsEndingSoon,
