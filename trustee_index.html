@@ -2750,69 +2750,11 @@ table.simple .neg{color:var(--red);font-weight:600}
             <h2>Governance actions</h2>
             <p>Current and upcoming actions requiring trustee, team or filing attention.</p>
           </div>
-          <div class="governance-count-pill">5 items</div>
+          <div class="governance-count-pill" id="governanceActionsCount">Loading</div>
         </div>
 
-        <div class="governance-list">
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Update trustee details on register</div>
-              <div class="governance-item-date">Needs action</div>
-            </div>
-            <div class="governance-item-desc">New trustee appointment to be notified to the Charity Commission.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip red">Overdue</span>
-              <span class="governance-chip purple">Charity Commission</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Trustees’ Annual Report 2025/26 draft</div>
-              <div class="governance-item-date">Jun 2026</div>
-            </div>
-            <div class="governance-item-desc">For review and sign-off at the June trustee meeting.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip amber">Due soon</span>
-              <span class="governance-chip">Board review</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Annual Return 2025/26 preparation</div>
-              <div class="governance-item-date">Oct 2026</div>
-            </div>
-            <div class="governance-item-desc">Draft in preparation, with submission due in the next reporting cycle.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip amber">Upcoming</span>
-              <span class="governance-chip">Filing</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Annual Return 2024/25 submitted</div>
-              <div class="governance-item-date">14 Oct 2025</div>
-            </div>
-            <div class="governance-item-desc">Submitted and acknowledged by the Charity Commission.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip green">Complete</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Trustees’ Annual Report 2024/25 filed</div>
-              <div class="governance-item-date">28 Oct 2025</div>
-            </div>
-            <div class="governance-item-desc">Filed as part of the previous year-end governance cycle.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip green">Complete</span>
-            </div>
-          </article>
-
+        <div class="governance-list" id="governanceActionsList">
+          <div class="portfolio-empty">Loading governance actions...</div>
         </div>
       </section>
 
@@ -2823,59 +2765,11 @@ table.simple .neg{color:var(--red);font-weight:600}
             <h2>Policy reviews</h2>
             <p>Core policies and their review status for trustee oversight.</p>
           </div>
-          <div class="governance-count-pill">4 policies</div>
+          <div class="governance-count-pill" id="governancePoliciesCount">Loading</div>
         </div>
 
-        <div class="governance-list">
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Reserves policy</div>
-              <div class="governance-item-date">Jun 2026</div>
-            </div>
-            <div class="governance-item-desc">Triennial review scheduled for the June 2026 board meeting.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip amber">Review due</span>
-              <span class="governance-chip">Finance</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Safeguarding policy</div>
-              <div class="governance-item-date">Nov 2026</div>
-            </div>
-            <div class="governance-item-desc">Last reviewed November 2025. Next review due November 2026.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip green">Current</span>
-              <span class="governance-chip">Annual review</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Investment policy</div>
-              <div class="governance-item-date">Mar 2028</div>
-            </div>
-            <div class="governance-item-desc">Last reviewed March 2026. Next review due March 2028.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip green">Current</span>
-              <span class="governance-chip">Two-year review</span>
-            </div>
-          </article>
-
-          <article class="governance-item">
-            <div class="governance-item-top">
-              <div class="governance-item-title">Conflict of interest policy</div>
-              <div class="governance-item-date">Sep 2025</div>
-            </div>
-            <div class="governance-item-desc">Last reviewed September 2025. Annual declarations are on file.</div>
-            <div class="governance-mini-meta">
-              <span class="governance-chip green">Current</span>
-              <span class="governance-chip">Declarations</span>
-            </div>
-          </article>
-
+        <div class="governance-list" id="governancePoliciesList">
+          <div class="portfolio-empty">Loading policy reviews...</div>
         </div>
       </section>
 
@@ -5181,6 +5075,19 @@ function loadDataForPage(pageId){
     }
 
     markPageLoaded('decisions');
+    return;
+  }
+
+  if (pageId === 'governance-page') {
+    if (hasPageLoaded('governance')) return;
+
+    if (window.supabaseClient) {
+      loadTrusteeGovernanceItems();
+    } else {
+      window.addEventListener('supabase-ready', loadTrusteeGovernanceItems, { once: true });
+    }
+
+    markPageLoaded('governance');
     return;
   }
 }
