@@ -402,6 +402,35 @@ body[data-user-role="admin"] .admin-only{display:inline-flex}
   color:var(--ink);
 }
 
+
+.dashboard-section-actions{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:12px;
+}
+
+.recent-activity-actions{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+}
+
+.recent-activity-actions button{
+  font-size:11px;
+  font-weight:800;
+  border-radius:999px;
+  padding:6px 10px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--ink);
+}
+
+.recent-activity-actions button.delete{
+  color:var(--red);
+  background:var(--red-soft);
+  border-color:rgba(163,58,43,.16);
+}
+
 /* Funding decision card */
 .decision-card{background:#fbfaf7;border:1px solid var(--line);border-radius:12px;padding:16px;position:relative}
 .decision-card.approved{border-left:3px solid var(--green)}
@@ -1972,35 +2001,12 @@ table.simple .neg{color:var(--red);font-weight:600}
           </div>
         </div>
         <div class="section-body">
-          <div class="row-list">
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">FFLY grant payment processed</div>
-                <div class="row-desc">£20,000 to Fit For Life Youth (Lightbulb).</div>
-              </div>
-              <div class="row-meta">9 May</div>
-            </div>
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">Q1 impact report received</div>
-                <div class="row-desc">WLAC Q1 update filed and reviewed by team.</div>
-              </div>
-              <div class="row-meta">2 May</div>
-            </div>
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">Bank reconciliation completed</div>
-                <div class="row-desc">April reconciliation signed off by Dillon.</div>
-              </div>
-              <div class="row-meta">30 Apr</div>
-            </div>
-            <div class="row">
-              <div class="row-main">
-                <div class="row-title">New panel scheduled</div>
-                <div class="row-desc">May/June funding panel agenda circulated.</div>
-              </div>
-              <div class="row-meta">22 Apr</div>
-            </div>
+          <div class="dashboard-section-actions admin-only">
+            <button class="btn dark" type="button" onclick="openTrusteeRecentActivityModal()">+ Add activity</button>
+          </div>
+
+          <div class="row-list" id="trusteeRecentActivityList">
+            <div class="portfolio-empty">Loading recent activity...</div>
           </div>
         </div>
       </div>
@@ -2692,6 +2698,51 @@ table.simple .neg{color:var(--red);font-weight:600}
     <div class="modal-actions">
       <button class="smallbtn light" type="button" onclick="closeTrusteeDecisionModal()">Cancel</button>
       <button class="smallbtn" type="button" onclick="saveTrusteeFundingDecision()">Save decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trustee recent activity modal -->
+<div class="modal-bg" id="trusteeRecentActivityModal">
+  <div class="modal">
+    <h2 id="trusteeRecentActivityModalTitle">Recent activity</h2>
+    <input id="trustee-recent-activity-id" type="hidden">
+
+    <div class="modal-grid">
+      <div class="modal-full field">
+        <label>Title</label>
+        <input id="trustee-recent-activity-title">
+      </div>
+
+      <div class="modal-full field">
+        <label>Description</label>
+        <textarea id="trustee-recent-activity-description" style="font-family:'DM Sans',sans-serif;min-height:80px;resize:vertical"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Label</label>
+        <input id="trustee-recent-activity-label" placeholder="Funding, Dashboard, Governance">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="smallbtn light" type="button" onclick="closeTrusteeRecentActivityModal()">Cancel</button>
+      <button class="smallbtn" type="button" onclick="saveTrusteeRecentActivity()">Save activity</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trustee recent activity delete modal -->
+<div class="modal-bg" id="trusteeRecentActivityDeleteModal">
+  <div class="modal">
+    <h2>Delete recent activity</h2>
+    <input id="trustee-recent-activity-delete-id" type="hidden">
+    <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:8px 0 18px">
+      This will remove the activity item from the trustee dashboard.
+    </p>
+    <div class="modal-actions">
+      <button class="smallbtn light" type="button" onclick="closeTrusteeRecentActivityDeleteModal()">Cancel</button>
+      <button class="smallbtn" type="button" onclick="confirmDeleteTrusteeRecentActivity()">Delete</button>
     </div>
   </div>
 </div>
@@ -4080,6 +4131,215 @@ async function loadTrusteeAttentionItems(){
 }
 
 
+
+// ===== TRUSTEE RECENT ACTIVITY =====
+let trusteeRecentActivity = [];
+window.currentTrusteeRecentActivity = {};
+
+function setTrusteeRecentActivityField(id, value){
+  const el = document.getElementById(id);
+  if (el) el.value = value || '';
+}
+
+function getTrusteeRecentActivityField(id){
+  return document.getElementById(id)?.value?.trim() || '';
+}
+
+function renderTrusteeRecentActivityRow(item){
+  const safeId = esc(item.id);
+  const isAdmin = document.body.dataset.userRole === 'admin';
+
+  const actions = isAdmin ? `
+    <div class="recent-activity-actions">
+      <button type="button" onclick="editTrusteeRecentActivity('${safeId}')">Edit</button>
+      <button class="delete" type="button" onclick="deleteTrusteeRecentActivity('${safeId}')">Delete</button>
+    </div>
+  ` : '';
+
+  return `
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">${esc(item.title || 'Untitled activity')} <span class="tag grey">${esc(item.label || 'Update')}</span></div>
+        ${item.description ? `<div class="row-desc">${esc(item.description)}</div>` : ''}
+        ${actions}
+      </div>
+      <div class="row-meta">${esc(item.activity_date || '')}</div>
+    </div>
+  `;
+}
+
+function renderTrusteeRecentActivity(){
+  const list = document.getElementById('trusteeRecentActivityList');
+
+  if (!list) return;
+
+  const activeItems = trusteeRecentActivity
+    .filter(item => item.is_active !== false)
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+  window.currentTrusteeRecentActivity = {};
+  activeItems.forEach(item => {
+    if (item.id) window.currentTrusteeRecentActivity[item.id] = item;
+  });
+
+  if (!activeItems.length) {
+    list.innerHTML = '<div class="portfolio-empty">No recent activity has been added yet.</div>';
+    return;
+  }
+
+  list.innerHTML = activeItems.map(renderTrusteeRecentActivityRow).join('');
+}
+
+async function loadTrusteeRecentActivity(){
+  const list = document.getElementById('trusteeRecentActivityList');
+
+  if (!list) return;
+
+  list.innerHTML = '<div class="portfolio-empty">Loading recent activity...</div>';
+
+  if (!window.supabaseClient) {
+    window.addEventListener('supabase-ready', loadTrusteeRecentActivity, { once: true });
+    return;
+  }
+
+  try {
+    const { data, error } = await window.supabaseClient
+      .from('trustee_recent_activity')
+      .select('id,title,description,label,activity_date,sort_order,is_active,created_at,updated_at')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+
+    trusteeRecentActivity = Array.isArray(data) ? data : [];
+    renderTrusteeRecentActivity();
+  } catch (error) {
+    console.warn('Could not load trustee recent activity:', error);
+    list.innerHTML = '<div class="portfolio-empty">Could not load recent activity.</div>';
+  }
+}
+
+function openTrusteeRecentActivityModal(item = null){
+  document.getElementById('trusteeRecentActivityModalTitle').textContent = item ? 'Edit recent activity' : 'Add recent activity';
+
+  setTrusteeRecentActivityField('trustee-recent-activity-id', item?.id || '');
+  setTrusteeRecentActivityField('trustee-recent-activity-title', item?.title || '');
+  setTrusteeRecentActivityField('trustee-recent-activity-description', item?.description || '');
+  setTrusteeRecentActivityField('trustee-recent-activity-label', item?.label || 'Update');
+
+  document.getElementById('trusteeRecentActivityModal').classList.add('open');
+}
+
+function closeTrusteeRecentActivityModal(){
+  document.getElementById('trusteeRecentActivityModal').classList.remove('open');
+}
+
+function editTrusteeRecentActivity(id){
+  const item = window.currentTrusteeRecentActivity?.[id];
+
+  if (!item) {
+    alert('Could not find this activity item.');
+    return;
+  }
+
+  openTrusteeRecentActivityModal(item);
+}
+
+async function saveTrusteeRecentActivity(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet.');
+    return;
+  }
+
+  const id = getTrusteeRecentActivityField('trustee-recent-activity-id');
+
+  const payload = {
+    title: getTrusteeRecentActivityField('trustee-recent-activity-title'),
+    description: getTrusteeRecentActivityField('trustee-recent-activity-description'),
+    label: getTrusteeRecentActivityField('trustee-recent-activity-label') || 'Update',
+    activity_date: id
+      ? (window.currentTrusteeRecentActivity?.[id]?.activity_date || 'Today')
+      : 'Today',
+    is_active: true,
+    updated_at: new Date().toISOString()
+  };
+
+  if (!payload.title) {
+    alert('Please add a title.');
+    return;
+  }
+
+  let result;
+
+  if (id) {
+    result = await window.supabaseClient
+      .from('trustee_recent_activity')
+      .update(payload)
+      .eq('id', id);
+  } else {
+    const nextSortOrder = trusteeRecentActivity.length + 1;
+
+    result = await window.supabaseClient
+      .from('trustee_recent_activity')
+      .insert({
+        ...payload,
+        sort_order: nextSortOrder
+      });
+  }
+
+  if (result.error) {
+    alert('Could not save recent activity: ' + result.error.message);
+    return;
+  }
+
+  closeTrusteeRecentActivityModal();
+  await loadTrusteeRecentActivity();
+}
+
+function deleteTrusteeRecentActivity(id){
+  const item = window.currentTrusteeRecentActivity?.[id];
+
+  if (!item) {
+    alert('Could not find this activity item.');
+    return;
+  }
+
+  setTrusteeRecentActivityField('trustee-recent-activity-delete-id', id);
+  document.getElementById('trusteeRecentActivityDeleteModal').classList.add('open');
+}
+
+function closeTrusteeRecentActivityDeleteModal(){
+  document.getElementById('trusteeRecentActivityDeleteModal').classList.remove('open');
+  setTrusteeRecentActivityField('trustee-recent-activity-delete-id', '');
+}
+
+async function confirmDeleteTrusteeRecentActivity(){
+  if (!window.supabaseClient) {
+    alert('Supabase is not ready yet.');
+    return;
+  }
+
+  const id = getTrusteeRecentActivityField('trustee-recent-activity-delete-id');
+
+  if (!id) {
+    alert('Could not find this activity item.');
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from('trustee_recent_activity')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert('Could not delete recent activity: ' + error.message);
+    return;
+  }
+
+  closeTrusteeRecentActivityDeleteModal();
+  await loadTrusteeRecentActivity();
+}
+
 // ===== PAGE NAVIGATION =====
 function showPage(id, btn, updateHash = true){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4124,6 +4384,7 @@ function loadDataForPage(pageId){
     if (hasPageLoaded('dashboard')) return;
     loadTrusteeDashboardSummary();
     loadTrusteeAttentionItems();
+    loadTrusteeRecentActivity();
     markPageLoaded('dashboard');
     return;
   }
