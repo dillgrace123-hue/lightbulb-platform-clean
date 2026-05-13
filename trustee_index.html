@@ -257,6 +257,7 @@ table.simple .neg{color:var(--red);font-weight:600}
   <div class="main-nav">
     <button class="navbtn active" onclick="showPage('dashboard-page',this)">Dashboard</button>
     <button class="navbtn" onclick="showPage('portfolio-page',this)">Portfolio</button>
+    <button class="navbtn" onclick="showPage('reports-page',this)">Reporting</button>
     <button class="navbtn" onclick="showPage('decisions-page',this)">Funding Decisions</button>
     <button class="navbtn" onclick="showPage('finances-page',this)">Finances</button>
     <button class="navbtn" onclick="showPage('governance-page',this)">Governance</button>
@@ -418,6 +419,62 @@ table.simple .neg{color:var(--red);font-weight:600}
     </div>
 
   </div>
+
+  <!-- =========================
+       REPORTING PAGE
+       ========================= -->
+  <div id="reports-page" class="page">
+
+    <div class="section-block">
+      <div class="section-title">
+        <div>
+          <h2>Reporting archive</h2>
+          <p>Shared trustee view of Lightbulb and Greenlight reports, pulled live from Airtable.</p>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="portfolio-controls">
+          <input id="reportSearch" type="search" placeholder="Search by organisation..." oninput="renderLiveReports()">
+          <select id="reportFundFilter" onchange="renderLiveReports()">
+            <option value="all">All funds</option>
+            <option value="LBT">Lightbulb</option>
+            <option value="GLT">Greenlight</option>
+          </select>
+          <select id="reportTypeFilter" onchange="renderLiveReports()">
+            <option value="all">All report types</option>
+          </select>
+        </div>
+
+        <div class="row-list" id="latestReportsGrid" style="margin-bottom:18px">
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Loading latest reports...</div>
+              <div class="row-desc">Pulling report records from Airtable.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="padding:0;margin:22px 0 12px;border:0;box-shadow:none">
+          <div>
+            <h2 style="font-size:18px">Full report library</h2>
+            <p id="reportsFilterMeta">Loading reports...</p>
+          </div>
+        </div>
+
+        <div class="row-list" id="reportLibraryGrid">
+          <div class="row">
+            <div class="row-main">
+              <div class="row-title">Loading report library...</div>
+              <div class="row-desc">Pulling report records from Airtable.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 
   <!-- =========================
        FUNDING DECISIONS PAGE
@@ -1059,6 +1116,215 @@ function renderPortfolioItems(){
 
 document.addEventListener('DOMContentLoaded', () => {
   loadPortfolioGrants();
+});
+
+
+
+
+// ===== TRUSTEE REPORTING VIEW =====
+
+let liveReports = [];
+
+let reportsLoaded = false;
+
+function cleanReportLink(value){
+
+  const link = String(value || '').trim();
+
+  if (!link || link.toLowerCase() === 'n/a') return '';
+
+  return link;
+
+}
+
+function reportFundLabel(fund){
+
+  if (fund === 'GLT') return 'Greenlight';
+
+  if (fund === 'LBT') return 'Lightbulb';
+
+  return fund || 'Unspecified';
+
+}
+
+function formatReportDate(dateString){
+
+  if (!dateString) return 'No date';
+
+  try {
+
+    return new Date(dateString).toLocaleDateString('en-GB', {
+
+      day: 'numeric',
+
+      month: 'short',
+
+      year: 'numeric'
+
+    });
+
+  } catch (error) {
+
+    return dateString;
+
+  }
+
+}
+
+function reportRowHtml(report){
+
+  const formResponseLink = cleanReportLink(report.reportLink);
+
+  const openReportLink = cleanReportLink(report.additionalReports);
+
+  const reportType = report.reportType || 'Report';
+
+  return `
+
+    <div class="row">
+
+      <div class="row-main">
+
+        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag purple">${esc(reportFundLabel(report.fund))}</span></div>
+
+        <div class="row-desc">${esc(reportType)} · submitted ${esc(formatReportDate(report.submissionDate))}</div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px">
+
+          ${formResponseLink ? `<a class="meeting-link" href="${esc(formResponseLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : `<span class="meeting-link grey">No form response</span>`}
+
+          ${openReportLink ? `<a class="meeting-link grey" href="${esc(openReportLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
+
+        </div>
+
+      </div>
+
+      <div class="row-meta">${esc(formatReportDate(report.submissionDate))}</div>
+
+    </div>
+
+  `;
+
+}
+
+function getFilteredReports(){
+
+  const search = (document.getElementById('reportSearch')?.value || '').toLowerCase().trim();
+
+  const fundFilter = document.getElementById('reportFundFilter')?.value || 'all';
+
+  const typeFilter = document.getElementById('reportTypeFilter')?.value || 'all';
+
+  return liveReports.filter(report => {
+
+    const haystack = Object.values(report).join(' ').toLowerCase();
+
+    const matchesSearch = !search || haystack.includes(search);
+
+    const matchesFund = fundFilter === 'all' || report.fund === fundFilter;
+
+    const matchesType = typeFilter === 'all' || report.reportType === typeFilter;
+
+    return matchesSearch && matchesFund && matchesType;
+
+  });
+
+}
+
+function populateReportTypeFilter(){
+
+  const select = document.getElementById('reportTypeFilter');
+
+  if (!select) return;
+
+  const current = select.value || 'all';
+
+  const types = [...new Set(liveReports.map(report => report.reportType).filter(Boolean))].sort();
+
+  select.innerHTML = '<option value="all">All report types</option>' + types.map(type => (
+
+    `<option value="${esc(type)}">${esc(type)}</option>`
+
+  )).join('');
+
+  select.value = types.includes(current) ? current : 'all';
+
+}
+
+function renderLiveReports(){
+
+  const latestEl = document.getElementById('latestReportsGrid');
+
+  const libraryEl = document.getElementById('reportLibraryGrid');
+
+  const metaEl = document.getElementById('reportsFilterMeta');
+
+  if (!latestEl || !libraryEl) return;
+
+  const filtered = getFilteredReports();
+
+  const latest = filtered.slice(0, 3);
+
+  latestEl.innerHTML = latest.length
+
+    ? latest.map(reportRowHtml).join('')
+
+    : '<div class="row"><div class="row-main"><div class="row-title">No latest reports found</div><div class="row-desc">Try changing the search or filters.</div></div></div>';
+
+  libraryEl.innerHTML = filtered.length
+
+    ? filtered.map(reportRowHtml).join('')
+
+    : '<div class="row"><div class="row-main"><div class="row-title">No reports found</div><div class="row-desc">Try changing the search or filters.</div></div></div>';
+
+  if (metaEl) {
+
+    metaEl.textContent = reportsLoaded ? `${filtered.length} reports shown` : 'Loading reports...';
+
+  }
+
+}
+
+async function loadLiveReports(){
+
+  const latestEl = document.getElementById('latestReportsGrid');
+
+  const libraryEl = document.getElementById('reportLibraryGrid');
+
+  if (!latestEl || !libraryEl) return;
+
+  try {
+
+    const response = await fetch('/.netlify/functions/reports');
+
+    if (!response.ok) throw new Error('Reports function failed');
+
+    const data = await response.json();
+
+    liveReports = Array.isArray(data.reports) ? data.reports : [];
+
+    reportsLoaded = true;
+
+    populateReportTypeFilter();
+
+    renderLiveReports();
+
+  } catch (error) {
+
+    console.warn('Could not load live reports:', error);
+
+    latestEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load latest reports</div><div class="row-desc">Check the reports function or Airtable connection.</div></div></div>';
+
+    libraryEl.innerHTML = '<div class="row"><div class="row-main"><div class="row-title">Could not load report library</div><div class="row-desc">Check the reports function or Airtable connection.</div></div></div>';
+
+  }
+
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  loadLiveReports();
+
 });
 
 

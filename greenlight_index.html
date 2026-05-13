@@ -3411,8 +3411,8 @@ function formatReportDate(dateString){
 }
 
 function reportCardHtml(report){
-  const primaryLink = cleanReportLink(report.reportLink);
-  const additionalLink = cleanReportLink(report.additionalReports);
+  const formResponseLink = cleanReportLink(report.reportLink);
+  const openReportLink = cleanReportLink(report.additionalReports);
 
   return `
     <article class="report-card">
@@ -3425,8 +3425,8 @@ function reportCardHtml(report){
         <span class="report-chip">${esc(report.reportType || 'Report')}</span>
       </div>
       <div class="report-actions">
-        ${primaryLink ? `<a class="report-action" href="${esc(primaryLink)}" target="_blank" rel="noopener noreferrer">Open report ↗</a>` : `<span class="report-action disabled">No form link</span>`}
-        ${additionalLink ? `<a class="report-action secondary" href="${esc(additionalLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : ''}
+        ${formResponseLink ? `<a class="report-action" href="${esc(formResponseLink)}" target="_blank" rel="noopener noreferrer">Form response ↗</a>` : `<span class="report-action disabled">No form response</span>`}
+        ${openReportLink ? `<a class="report-action secondary" href="${esc(openReportLink)}" target="_blank" rel="noopener noreferrer">Additional report ↗</a>` : ''}
       </div>
     </article>
   `;
