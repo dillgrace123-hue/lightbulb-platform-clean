@@ -120,6 +120,25 @@ button{font-family:'DM Sans',sans-serif;border:0;cursor:pointer;transition:.15s 
 .tag.grey{background:var(--bg);color:var(--soft)}
 .tag.fund-greenlight{background:var(--green-soft);color:var(--green)}
 .tag.fund-lightbulb{background:#e8f4fb;color:#3f7fa2}
+.tag.report-type{
+  background:#f1f0ec;
+  color:#6f6f76;
+  font-weight:800;
+  border:1px solid rgba(0,0,0,.06);
+}
+.tag.report-type.final{
+  background:#171717;
+  color:#fff;
+  border-color:#171717;
+}
+.report-library-scroll{
+  max-height:720px;
+  overflow:auto;
+  padding-right:6px;
+}
+.report-library-scroll::-webkit-scrollbar{width:8px}
+.report-library-scroll::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16);border-radius:999px}
+.report-library-scroll::-webkit-scrollbar-track{background:transparent}
 
 /* Portfolio */
 .portfolio-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
@@ -448,7 +467,14 @@ table.simple .neg{color:var(--red);font-weight:600}
           </select>
         </div>
 
-        <div class="row-list" id="latestReportsGrid" style="margin-bottom:18px">
+        <div class="section-title" style="padding:0;margin:4px 0 12px;border:0;box-shadow:none">
+          <div>
+            <h2 style="font-size:18px">Latest reports received</h2>
+            <p id="latestReportsMeta">The three most recently submitted reports across both funds.</p>
+          </div>
+        </div>
+
+        <div class="row-list latest-report-list" id="latestReportsGrid" style="margin-bottom:18px">
           <div class="row">
             <div class="row-main">
               <div class="row-title">Loading latest reports...</div>
@@ -464,7 +490,7 @@ table.simple .neg{color:var(--red);font-weight:600}
           </div>
         </div>
 
-        <div class="row-list" id="reportLibraryGrid">
+        <div class="row-list report-library-scroll" id="reportLibraryGrid">
           <div class="row">
             <div class="row-main">
               <div class="row-title">Loading report library...</div>
@@ -1197,9 +1223,9 @@ function reportRowHtml(report){
 
       <div class="row-main">
 
-        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag ${reportFundTagClass(report.fund)}">${esc(reportFundLabel(report.fund))}</span></div>
+        <div class="row-title">${esc(report.organisation || 'Untitled organisation')} <span class="tag ${reportFundTagClass(report.fund)}">${esc(reportFundLabel(report.fund))}</span> <span class="tag report-type ${String(reportType).toLowerCase().includes('final') ? 'final' : ''}">${esc(reportType)}</span></div>
 
-        <div class="row-desc">${esc(reportType)} · submitted ${esc(formatReportDate(report.submissionDate))}</div>
+        <div class="row-desc">Submitted ${esc(formatReportDate(report.submissionDate))}</div>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px">
 
@@ -1271,6 +1297,8 @@ function renderLiveReports(){
 
   const metaEl = document.getElementById('reportsFilterMeta');
 
+  const latestMetaEl = document.getElementById('latestReportsMeta');
+
   if (!latestEl || !libraryEl) return;
 
   const filtered = getFilteredReports();
@@ -1292,6 +1320,14 @@ function renderLiveReports(){
   if (metaEl) {
 
     metaEl.textContent = reportsLoaded ? `${filtered.length} reports shown` : 'Loading reports...';
+
+  }
+
+  if (latestMetaEl) {
+
+    latestMetaEl.textContent = reportsLoaded
+      ? `Showing the latest ${latest.length} reports from ${filtered.length} matching records.`
+      : 'Loading latest reports...';
 
   }
 
